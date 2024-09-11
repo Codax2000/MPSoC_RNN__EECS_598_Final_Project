@@ -1,8 +1,7 @@
-import pandas as pd
-from scipy.fft import fft
 import seaborn
-import sklearn
-import skimage
+import scipy
+import pandas
+import numpy
 
 from my_file import foo
 
