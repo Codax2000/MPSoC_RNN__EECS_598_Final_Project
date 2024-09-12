@@ -23,4 +23,20 @@ Main runs, installation successful!
 ```
 
 ### Vivado setup and testing
-You should be able to run Vivado based in the hdl\_design folder, which is the toplevel folder for the FPGA design. Note that only the project structure and the source files are kept when you push due to the .gitignore file, so you will have to recompile upon cloning or pulling from the repository.
+You should be able to run Vivado based in the `vivado_project` folder, which is the toplevel folder for the FPGA design. Note that only the project structure and the source files are kept when you push due to the .gitignore file, so you will have to recompile upon cloning or pulling from the repository.
+
+When opening the project for the first time, you should navigate to the `vivado_project` folder and open the `vivado_project.xpr` file, and Vivado should open the rest. To test that the project runs correctly, run the `sim_1` simulation, which runs a simple 8-bit adder that has an output register, and you should see this waveform:
+
+![Vivado adder waveform](pictures/simulation_waveforms/simple_adder_tb_waveform.png)
+
+## Best Practices
+
+### Python Style
+- Up to use, but probably stick to `flake8` linting standards
+- Please make sure you have function and file comments
+
+### Vivado Best Practices
+- Kindly use Vivado to create files. It manages the directory for you and stores it in the `vivado_project.srcs` folder.
+- Git only tracks the `.xpr` project file and the `vivado_project.srcs` folder. If there are any other folders that Git starts tracking (except for eventual physical constraints), please add them to the .gitignore file.
+- Have a separate simulation set for each simulation you want to run. This ensures you can still go back and debug if a higher-level simulation goes wrong.
+- Use Vivado IP where possible, especially with multiply-accumulate functions. Vivado has a DSP slice macro that can make life much easier.
