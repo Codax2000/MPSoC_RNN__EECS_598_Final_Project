@@ -1,1 +1,7 @@
 .vscode/
+python_scripts/test_install/__pycache__
+
+vivado_project/vivado_project.cache
+vivado_project/vivado_project.hw
+vivado_project/vivado_project.ip_user_files
+vivado_project/vivado_project.sim
