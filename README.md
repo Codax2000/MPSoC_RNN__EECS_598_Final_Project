@@ -31,6 +31,10 @@ When opening the project for the first time, you should navigate to the `vivado_
 
 ## Best Practices
 
+### GitHub Style
+- Please open a new issue, and GitHub will create an associated branch. This will make things easy to document and track what's going well or not.
+- Before merging branches, kindly give others a heads up about the changes. We can do code reviews if we feel like it.
+
 ### Python Style
 - Up to use, but probably stick to `flake8` linting standards
 - Please make sure you have function and file comments
