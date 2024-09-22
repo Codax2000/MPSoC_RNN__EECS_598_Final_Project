@@ -1,10 +1,10 @@
 .vscode/
 *.pyc
 
-vivado_project/vivado_project.cache
-vivado_project/vivado_project.hw
-vivado_project/vivado_project.ip_user_files
-vivado_project/vivado_project.sim
+hdl_design/hdl_design.cache
+hdl_design/hdl_design.hw
+hdl_design/hdl_design.ip_user_files
+hdl_design/hdl_design.sim
 
 dve.log
 simv.log
