@@ -66,6 +66,10 @@ When opening the project for the first time, you should navigate to the `vivado_
 
 ![Vivado adder waveform](pictures/simulation_waveforms/simple_adder_tb_waveform.png)
 
+You can also test that the VCS simulator is running by loading the modules from the eecs598 directory and running `make dve` in the toplevel directory. You will need to change the Makefile depending on the file you want to debug, but for the initial setup, the output should look like the Vivado waveform:
+
+![VCS adder waveform](pictures/simulation_waveforms/VCS_simple_adder_tb_waveform.png)
+
 ## Best Practices
 
 ### GitHub Style
@@ -80,6 +84,7 @@ When opening the project for the first time, you should navigate to the `vivado_
 - Kindly use Vivado to create files. It manages the directory for you and stores it in the `vivado_project.srcs` folder.
 - Git only tracks the `.xpr` project file and the `vivado_project.srcs` folder. If there are any other folders that Git starts tracking (except for eventual physical constraints), please add them to the .gitignore file.
 - Have a separate simulation set for each simulation you want to run. This ensures you can still go back and debug if a higher-level simulation goes wrong.
+- If you would like to run simulations with VCS instead of Vivado, the Makefile from 598 has been modified for that purpose. Please still use Vivado to manage files.
 - When writing testbenches, use `assert` statements to compare equality wherever possible so that you don't have to spend time with the waveform viewer. `$display()` statements are your friend, even just to find times and such in complex simulations.
 - Use Vivado IP where possible, especially with multiply-accumulate functions. Vivado has a DSP slice macro that can make life much easier.
 

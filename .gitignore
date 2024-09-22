@@ -5,3 +5,6 @@ vivado_project/vivado_project.cache
 vivado_project/vivado_project.hw
 vivado_project/vivado_project.ip_user_files
 vivado_project/vivado_project.sim
+
+dve.log
+simv.log
