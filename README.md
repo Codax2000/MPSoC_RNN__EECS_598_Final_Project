@@ -1,6 +1,8 @@
 # EECS 598 Group Project
 Version control for EECS 598 at UMich (go blue!)
 
+[Video Walkthrough](https://youtu.be/CqfMzEyPPNQ)
+
 ## Installation Instructions
 You should have Anaconda (Miniconda recommended) and Xilinx Vivado installed. We are designing for the ZCU102 development board.
 
