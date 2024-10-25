@@ -21,7 +21,17 @@ def fp_quantize(x, n=16, r=8):
     outputs:
     x_fp - quantized mantissa values of x
     '''
-    pass
+    x = np.array(x)
+    upper_max = np.power(2, n - 1) - 1
+    lower_max = -np.power(2, n - 1)
+    x *= np.power(2, r)
+    x = np.array(np.floor(x))
+
+    is_over_max = x > upper_max
+    is_under_min = x < lower_max
+    x[is_over_max] = upper_max
+    x[is_under_min] = lower_max
+    return x
 
 
 def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
@@ -30,7 +40,7 @@ def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     and outputs z in fixed point
     Inputs:
     x - array 1
-    y - array 2
+    y - array 2, must be same shape as x
     n_x - number of bits in x, default 16
     r_x - number of fractional bits in x, default 8
     n_y - number of bits in y, default 16
@@ -41,13 +51,31 @@ def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     Outputs:
     z: x * y quantized to Q(n_z, r_z)
     '''
-    pass
+    mantissa_prod = x * y  # product of mantissa values
+    R_out = r_x + r_y
+    N_out = n_x + n_y
+
+    # now do fractional bit stuff
+    # if Rout > R3, then we have more fractional bits than we want
+    # but we need to shift by the difference to make mantissas work
+    # so: Rout > R3, must right shift
+    mantissa_prod = mantissa_prod / np.power(2, (R_out - r_z))
+    mantissa_prod = np.floor(mantissa_prod)
+    if n_z < N_out:
+        # saturate
+        max_value = np.power(2, n_z - 1) - 1
+        min_value = -np.power(2, n_z - 1)
+        is_over_max_value = mantissa_prod > max_value
+        is_under_min_value = mantissa_prod < min_value
+        mantissa_prod[is_over_max_value] = max_value
+        mantissa_prod[is_under_min_value] = min_value
+    return mantissa_prod
 
 
 def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     '''
     Adds fixed-point arrays x and y in fixed point form
-    and outputs z in fixed point
+    and outputs z in fixed point. x and y must have the same shape.
     Inputs:
     x - array 1
     y - array 2
@@ -61,4 +89,39 @@ def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     Outputs:
     z: x * y quantized to Q(n_z, r_z)
     '''
-    pass
+    diff = r_x - r_y
+    if diff < 0:  # then shift x
+        x *= np.power(2, -diff)
+    else:
+        y *= np.power(2, diff)
+    r_out = np.max([r_x, r_y])
+    z_out = x + y
+
+    # now get to the correct number of bits
+    z_out *= np.power(2, r_z - r_out)
+    z_out = np.floor(z_out)  # truncate decimals
+    upper_max = np.power(2, n_z - 1) - 1
+    lower_max = -np.power(2, n_z - 1)
+    is_over_max = z_out > upper_max
+    is_under_min = z_out < lower_max
+    z_out[is_over_max] = upper_max
+    z_out[is_under_min] = lower_max
+    return z_out
+
+
+if __name__ == '__main__':
+    # self-test module when run
+    a = 1.5345
+    b = -2.12345
+    # quantize to 3 integer, 5 fractional bits
+    a_fp = fp_quantize(a, 8, 5)
+    b_fp = fp_quantize(b, 9, 6)
+    sum_fp = fp_add(a_fp, b_fp, 8, 9, 5, 6, 8, 4) / (2 ** 4)
+    mult_fp = fp_mult(a_fp, b_fp, 8, 9, 5, 6, 8, 3) / (2 ** 3)
+
+    # generate expected values
+    mult = np.round(a * b, 4)
+    add = np.rount(a + b, 4)
+
+    print(f'Multiplication: Expected: {mult}, Received {mult_fp}')
+    print(f'Addition: Expected {add}, Received {sum_fp}')
