@@ -54,13 +54,15 @@ def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     mantissa_prod = x * y  # product of mantissa values
     R_out = r_x + r_y
     N_out = n_x + n_y
-
+    print(mantissa_prod / 2**R_out)
+    print(x / (2**r_x))
+    print(y/(2**r_y))
     # now do fractional bit stuff
     # if Rout > R3, then we have more fractional bits than we want
     # but we need to shift by the difference to make mantissas work
     # so: Rout > R3, must right shift
     mantissa_prod = mantissa_prod / np.power(2, (R_out - r_z))
-    mantissa_prod = np.floor(mantissa_prod)
+    mantissa_prod = np.array(np.floor(mantissa_prod))
     if n_z < N_out:
         # saturate
         max_value = np.power(2, n_z - 1) - 1
@@ -91,15 +93,15 @@ def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     '''
     diff = r_x - r_y
     if diff < 0:  # then shift x
-        x *= np.power(2, -diff)
+        x *=  np.array(x) * np.power(2, -diff)
     else:
-        y *= np.power(2, diff)
+        y = np.array(y) * np.power(2, diff)
     r_out = np.max([r_x, r_y])
     z_out = x + y
 
     # now get to the correct number of bits
-    z_out *= np.power(2, r_z - r_out)
-    z_out = np.floor(z_out)  # truncate decimals
+    z_out *= np.power(2.0, r_z - r_out)
+    z_out = np.array(np.floor(z_out))  # truncate decimals
     upper_max = np.power(2, n_z - 1) - 1
     lower_max = -np.power(2, n_z - 1)
     is_over_max = z_out > upper_max
@@ -114,14 +116,20 @@ if __name__ == '__main__':
     a = 1.5345
     b = -2.12345
     # quantize to 3 integer, 5 fractional bits
-    a_fp = fp_quantize(a, 8, 5)
-    b_fp = fp_quantize(b, 9, 6)
-    sum_fp = fp_add(a_fp, b_fp, 8, 9, 5, 6, 8, 4) / (2 ** 4)
-    mult_fp = fp_mult(a_fp, b_fp, 8, 9, 5, 6, 8, 3) / (2 ** 3)
+    n_a = 16
+    r_a = 7
+    n_b = 8
+    r_b = 4
+    a_fp = fp_quantize(a, n_a, r_a)
+    b_fp = fp_quantize(b, n_b, r_b)
+    sum_fp = fp_add(a_fp, b_fp, n_a, n_b, r_a, r_b, 11, 9) / (2 ** 9)
+    mult_fp = fp_mult(a_fp, b_fp, n_a, n_b, r_a, r_b, 8, 3) / (2 ** 3)
 
     # generate expected values
     mult = np.round(a * b, 4)
-    add = np.rount(a + b, 4)
+    add = np.round(a + b, 4)
 
+    print(f'Quantization A: Expected {a}, Received {a_fp / (2**r_a)}')
+    print(f'Quantization A: Expected {b}, Received {b_fp / (2**r_b)}')
     print(f'Multiplication: Expected: {mult}, Received {mult_fp}')
     print(f'Addition: Expected {add}, Received {sum_fp}')
