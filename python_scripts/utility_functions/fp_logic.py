@@ -21,7 +21,8 @@ def fp_quantize(x, n=16, r=8):
     outputs:
     x_fp - quantized mantissa values of x
     '''
-    x = np.array(x)
+    if type(x) != type(np.array([1])):
+        x = np.array([x])
     upper_max = np.power(2, n - 1) - 1
     lower_max = -np.power(2, n - 1)
     x *= np.power(2, r)
@@ -54,9 +55,6 @@ def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     mantissa_prod = x * y  # product of mantissa values
     R_out = r_x + r_y
     N_out = n_x + n_y
-    print(mantissa_prod / 2**R_out)
-    print(x / (2**r_x))
-    print(y/(2**r_y))
     # now do fractional bit stuff
     # if Rout > R3, then we have more fractional bits than we want
     # but we need to shift by the difference to make mantissas work
@@ -71,7 +69,7 @@ def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
         is_under_min_value = mantissa_prod < min_value
         mantissa_prod[is_over_max_value] = max_value
         mantissa_prod[is_under_min_value] = min_value
-    return mantissa_prod
+    return np.array(mantissa_prod)
 
 
 def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
@@ -108,7 +106,7 @@ def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     is_under_min = z_out < lower_max
     z_out[is_over_max] = upper_max
     z_out[is_under_min] = lower_max
-    return z_out
+    return np.array(z_out)
 
 
 if __name__ == '__main__':
