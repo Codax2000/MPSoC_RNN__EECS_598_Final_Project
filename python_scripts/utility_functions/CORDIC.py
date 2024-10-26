@@ -157,7 +157,7 @@ class CORDIC:
             while(extra < self._n_rotations):
                 extra_numbers.append(extra)
                 extra = 3 * extra + 1
-            extra = np.array(extra)
+            extra = np.array(extra_numbers)
             index = np.concatenate((index, extra))
             index = np.sort(index)
             index = index[:self._n_rotations]

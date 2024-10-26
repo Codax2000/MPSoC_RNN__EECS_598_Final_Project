@@ -23,6 +23,8 @@ def fp_quantize(x, n=16, r=8):
     '''
     if type(x) != type(np.array([1])):
         x = np.array([x])
+    else:
+        x = np.copy(x)
     upper_max = np.power(2, n - 1) - 1
     lower_max = -np.power(2, n - 1)
     x *= np.power(2, r)

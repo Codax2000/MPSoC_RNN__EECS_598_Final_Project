@@ -7,21 +7,31 @@ import pdb
 def main():
     cord = CORDIC(12, 16, 14, 18, 14)
     a = 1
-    theta = -3 * np.pi / 4
-    theta = np.linspace(-np.pi, np.pi)
+    theta = np.linspace(-np.pi/3, np.pi/3)
     theta_fp = fp_quantize(theta, 18, 14)
     a_fp = fp_quantize(a, 16, 14)
-    result = cord.vector(-a_fp, -a_fp, 0)
+    a1_fp = fp_quantize(1.5, 16, 14)
+    a2_fp = fp_quantize(-0.5, 16, 14)
+    results = cord.rotate(a_fp, 0, theta_fp, True)
+    results_hyp_vector = cord.vector(a1_fp, a2_fp, 0, True)
 
     # uncomment to look at the iterations of a single value
-    xo, yo, zo, sigo = result
+    xo, yo, zo, sigo = results_hyp_vector
     result = np.zeros([xo.shape[0], 4])
-    print(xo.shape)
     result[:, 0] = xo[:, 0] / 2**14
     result[:, 1] = yo[:, 0] / 2**14
     result[:, 2] = zo[:, 0] / 2**14
     result[1:(1+sigo.shape[0]), 3] = sigo[:, 0]
+    print("Hyperbolic Vectoring Mode")
     print(result)
+
+    x = results[0][-1, :] / 2.0**14
+    y = results[1][-1, :] / 2.0**14
+    plt.figure()
+    plt.plot(x, y, 'k+')
+    plt.plot(np.cosh(theta), np.sinh(theta))
+    plt.title('Hyperbolic mode: +/- 60 degrees')
+    plt.show()
 
     # uncomment to do the datapath of HW3 P2
     fs = 735e3
@@ -37,6 +47,7 @@ def main():
     plt.plot(x)
     plt.plot(y)
     plt.grid()
+    plt.title('Analog of HW3 P2')
     plt.show()
 
     # back to HW3 P1
@@ -47,10 +58,9 @@ def main():
     plt.figure()
     plt.plot(f_inst)
     plt.ylabel('Frequency [kHz]')
+    plt.title('Analog of HW3 P1')
     plt.grid()
     plt.show()
-
-
 
 
 if __name__ == '__main__':
