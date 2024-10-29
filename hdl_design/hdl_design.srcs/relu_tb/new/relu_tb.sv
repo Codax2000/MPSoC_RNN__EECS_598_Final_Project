@@ -22,7 +22,7 @@ module relu_tb();
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
-    logic signed [N-1:0] data_i, data_o, expected_data_o;
+    logic [N-1:0] data_i, data_o, expected_data_o;
     logic rstb_i, clk_i;
     
     // create send and receive modules locally
@@ -49,9 +49,11 @@ module relu_tb();
     assign yumi_i = lfsr_r[0] && (input_counter_r != L1);
     assign valid_i = lfsr_r[1] && (output_counter_r != L2);
     
+    // send values from memories
     assign data_i = input_test_vals[input_counter_r];
     assign expected_data_o = output_test_vals[output_counter_r];
     
+    // deal with counters and LFSR
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin
             input_counter_r <= '0;
