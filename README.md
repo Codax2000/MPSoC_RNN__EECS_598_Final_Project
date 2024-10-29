@@ -84,13 +84,15 @@ hdl_design.srcs
   - toplevel.v
 -- simple_adder_tb
   |- sv
-    |- simple_adder_tb.sv
+    - simple_adder_tb.sv
 -- template_tb
   |- mem
-    |- relu_input.mem
-    |- relu_output.mem
+    - relu_input.mem
+    - relu_output.mem
   |- sv
-    |- template_tb.sv
+    - template_tb.sv
+  |- waveform_config
+    - toplevel_waveform.wcfg
 ```
 
 There is a folder for design sources (generally module files), which has
@@ -116,6 +118,7 @@ which maps to a simulation set in Vivado.
 - Have a separate simulation set for each simulation you want to run. This ensures you can still go back and debug if a higher-level simulation goes wrong.
 - If you would like to run simulations with VCS instead of Vivado, the Makefile is present in the directory, please use and update as necessary.
 - Use Vivado IP where possible, especially with multiply-accumulate functions. Vivado has a DSP slice macro that can make life much easier, in addition to block memories that can take `.mif` files, so we won't have to write anything.
+- Prefer `generate` blocks and formulas over large lookup tables. If you can generalize, you will have to debug less.
 
 Creating a new simulation set is easy, but please be careful to keep things clean. To create a new simulation set:
 1. Copy the `template_tb` directory and add/change files as necessary, including writing `.mem` files. Please stick to the directory structure.
@@ -126,6 +129,7 @@ Creating a new simulation set is easy, but please be careful to keep things clea
 1. Unless you are running toplevel simulations, make sure the **Include all design sources for simulation** checkbox is **unchecked**. This keeps the directory readable.
 1. Manually add whatever design sources you need. Yes, this is a little tedious, but it keeps things legible.
 1. To run your new simulation set, right-click the testbench module you created (or copied) and click **Set as Top**, then right-click on the simulation set itself and select **Make Active**. Click **Run Simulation** on the far left, and select the appropriate simulation to run.
+1. If you want to save a particular set of waves to look at with each run, you can save a waveform configuration file, if you don't already. You will have to add it to your simulation set just like other files.
 1. If you want to use the `output.csv` file to run analysis, you will find it in the `hdl_design.sim` folder, which is by default ignored when pushing to GitHub. Please copy it to the `python_scripts` directory to use it and push it to GitHub.
 
 ### SystemVerilog Coding Standards
