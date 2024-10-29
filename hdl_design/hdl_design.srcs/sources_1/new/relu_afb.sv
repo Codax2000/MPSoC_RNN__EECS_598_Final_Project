@@ -23,17 +23,19 @@ module relu_afb #(
     end
     
     // next data logic
-    logic signed [N-1:0] data_o_n, abs_data_i;
-    assign abs_data_i = data_i[N-1] ? {N{1'b0}} : data_i; // ReLU function
-    assign data_o_n = (ready_o && valid_i) ? abs_data_i : data_o;
+    logic signed [N-1:0] data_o_n, data_o_r;
+    assign data_o_n = (ready_o && valid_i) ? data_i : data_o_r;
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin
-            data_o <= {N{1'b0}};
+            data_o_r <= {N{1'b0}};
             ps_e <= eEMPTY;
         end else begin
-            data_o <= data_o_n;
+            data_o_r <= data_o_n;
             ps_e <= ns_e;
         end
     end
+    
+    // ReLU function on output register, should help timing
+    assign data_o = data_o_r[N-1] ? {N{1'b0}} : data_o_r;
 
 endmodule
