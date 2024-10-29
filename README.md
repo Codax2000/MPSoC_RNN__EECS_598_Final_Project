@@ -116,7 +116,7 @@ which maps to a simulation set in Vivado.
 ### Vivado Best Practices
 - Git only tracks the `.xpr` project file and the `vivado_project.srcs` folder. If there are any other folders that Git starts tracking (except for eventual physical constraints), please add them to the .gitignore file.
 - Have a separate simulation set for each simulation you want to run. This ensures you can still go back and debug if a higher-level simulation goes wrong.
-- If you would like to run simulations with VCS instead of Vivado, the Makefile is present in the directory, please use and update as necessary.
+- If you would like to run simulations with VCS instead of Vivado, the Makefile is present in the directory, please use and update as necessary. One current problem is making sure `.mem` files are correctly read and saved. 
 - Use Vivado IP where possible, especially with multiply-accumulate functions. Vivado has a DSP slice macro that can make life much easier, in addition to block memories that can take `.mif` files, so we won't have to write anything.
 - Prefer `generate` blocks and formulas over large lookup tables. If you can generalize, you will have to debug less.
 

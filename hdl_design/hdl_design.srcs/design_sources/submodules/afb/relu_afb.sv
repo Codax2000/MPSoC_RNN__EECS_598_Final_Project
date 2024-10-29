@@ -1,3 +1,11 @@
+/**
+Alex Knowlton
+10/29/2024
+
+ReLU activation function block. Assumes a signed input and
+computes max(0, data_i). Conforms to standard handshake signals.
+*/
+
 module relu_afb #(
     parameter N = 16
 ) (

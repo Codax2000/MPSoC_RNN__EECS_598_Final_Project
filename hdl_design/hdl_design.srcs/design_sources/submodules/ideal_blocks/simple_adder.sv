@@ -1,5 +1,17 @@
-`timescale 1ns / 1ps
+/**
+Alex Knowlton
 
+Synchronous adder: at positive clock edge, latches the sum of a_i and b_i with one extra
+bit to avoid overflow.
+
+Inputs:
+    a_i, b_i: N_BITS long, signed input values
+    clk_i: input clock
+    rstn_i: active low reset
+
+Output:
+    sum_o: N_BITS+1 long, signed sum of a_i and b_i
+*/
 module simple_adder #(parameter N_BITS=16)(
     input  logic signed [N_BITS-1:0] a_i,
     input  logic signed [N_BITS-1:0] b_i,
@@ -13,7 +25,7 @@ module simple_adder #(parameter N_BITS=16)(
     
     always_ff @(posedge clk_i) begin
         if (~rstn_i)
-            sum_o <= 17'h0_0000;
+            sum_o <= {{N_BITS+1}{1'b0}};
         else
             sum_o <= sum_n;
     end

@@ -1,39 +1,82 @@
+`timescale 1ns/10ps
+/**
+Alex Knowlton
+10/29/2024
+
+Testbench template lightly based on UVM and BaseJump SystemVerilog coding standards.
+Assumes a module with helpful valid/ready interfaces at both ends and sends data from
+a .mem file generated externally. Compares to another .mem file generated externally
+and runs assertion testing on the comparison.
+
+Assumes the following input and output to the DUT:
+Input handshake:
+logic valid_i, ready_o;
+logic [L1-1:0][N-1:0] data_i;
+
+Output handshake:    
+logic yumi_i, valid_o;
+logic [L2-1:0][N-1:0] data_o, expected_data_o;
+
+Global clock and sync reset (active low)
+logic rstb_i, clk_i;
+
+You should define the following variables based on external Matlab/Python simulations:
+N1 - number of bits in an input word
+N2 - number of bits in an output word
+R1 - number of fractional bits in input word
+R2 - number of fractional bits in output word
+L1 - number of words in input array
+L2 - number of words in output array
+T1 - number of values to send into DUT
+T2 - number of values to receive from DUT
+
+Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
+*/
+
 module template_tb();
 
-    // N: Number of bits in a word
-    parameter N=16;
+    // Define fixed-point values
+    parameter N1 = 16;
+    parameter N2 = 16;
+    parameter R1 = 0;
+    parameter R2 = 0;
     
     // L1: Number of words in input
-    parameter L1=1;
+    parameter L1 = 1;
     
     // L2: Number of words in output
     parameter L2 = 1;
     
-    // T: Number of testcases
-    parameter T = 10;
+    // T1: Number of value to send to DUT
+    parameter T1 = 10;
+    
+    // T2: Number of values we expect to receive from DUT
+    parameter T2 = 10;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
-    logic [L1-1:0][N-1:0] data_i;
-    logic [L2-1:0][N-1:0] data_o, expected_data_o;
+    logic [L1-1:0][N1-1:0] data_i;
+    logic [L2-1:0][N2-1:0] data_o, expected_data_o;
     logic rstb_i, clk_i;
     
     // create send and receive modules locally
     // create DUT
-    relu_afb #(.N(N)) DUT(.*);
+    relu_afb #(.N(N1)) DUT(.*);
     
     // create memories for input/output values and initialize them
-    logic [L1-1:0][N-1:0] input_test_vals [T-1:0];
-    logic [L2-1:0][N-1:0] output_test_vals [T-1:0];
+    logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
+    logic [L2-1:0][N2-1:0] output_test_vals [T2-1:0];
     
     initial begin
         $readmemh("relu_input.mem", input_test_vals);
         $readmemh("relu_output.mem", output_test_vals);
     end
     
+    // **************** DO NOT EDIT BELOW THIS LINE ******************
+    
     // counters for input/output addresses
-    logic [$clog2(T)-1:0] input_counter_n, input_counter_r;
-    logic [$clog2(T)-1:0] output_counter_n, output_counter_r;
+    logic [$clog2(T1)-1:0] input_counter_n, input_counter_r;
+    logic [$clog2(T2)-1:0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;
@@ -41,17 +84,17 @@ module template_tb();
     assign handshake_out = valid_o && yumi_i;
     
     // next address counter assignment
-    assign input_counter_n = (valid_i && ready_o) && (input_counter_r != T) ? 
+    assign input_counter_n = (valid_i && ready_o) && (input_counter_r != T1) ? 
         input_counter_r + 1 : input_counter_r;
-    assign output_counter_n = valid_o && yumi_i && (output_counter_r != T) ? 
+    assign output_counter_n = valid_o && yumi_i && (output_counter_r != T2) ? 
         output_counter_r + 1 : output_counter_r;
     
     // Create an LFSR to assign other two ready and valid signals
     // this makes things more robust, since ready/valid should be independent of each other
     logic [3:0] lfsr_n, lfsr_r;
     assign lfsr_n = {lfsr_r[0]^lfsr_r[3], lfsr_r[3:1]};
-    assign yumi_i = lfsr_r[0] && (output_counter_r != T);
-    assign valid_i = lfsr_r[2] && (input_counter_r != T);
+    assign yumi_i = lfsr_r[0] && (output_counter_r != T2);
+    assign valid_i = lfsr_r[2] && (input_counter_r != T1);
     
     // assign input and expected data from memories
     assign data_i = input_test_vals[input_counter_r];
@@ -82,7 +125,7 @@ module template_tb();
             // reasoning: if the output counter has gone all the way up, we are done
             // sending data and can do final checks
             // should be able to check that valid_o is low
-            if (output_counter_r == T) begin
+            if (output_counter_r == T2) begin
                 $fclose(fd);
                 $stop;
             end else if (valid_o && yumi_i) begin
