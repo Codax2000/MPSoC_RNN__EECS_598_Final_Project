@@ -64,13 +64,42 @@ Main runs, installation successful!
 ### Vivado setup and testing
 You should be able to run Vivado based in the `vivado_project` folder, which is the toplevel folder for the FPGA design. Note that only the project structure and the source files are kept when you push due to the .gitignore file, so you will have to recompile upon cloning or pulling from the repository.
 
-When opening the project for the first time, you should navigate to the `vivado_project` folder and open the `vivado_project.xpr` file, and Vivado should open the rest. To test that the project runs correctly, run the `sim_1` simulation, which runs a simple 8-bit adder that has an output register, and you should see this waveform:
+When opening the project for the first time, you should navigate to the `vivado_project` folder and open the `vivado_project.xpr` file, and Vivado should open the rest. To test that the project runs correctly, run the `simple_adder_tb` simulation, which runs a simple 8-bit adder that has an output register, and you should see this waveform:
 
 ![Vivado adder waveform](pictures/simulation_waveforms/simple_adder_tb_waveform.png)
 
 You can also test that the VCS simulator is running by loading the modules from the eecs598 directory and running `make dve` in the toplevel directory. You will need to change the Makefile depending on the file you want to debug, but for the initial setup, the output should look like the Vivado waveform:
 
 ![VCS adder waveform](pictures/simulation_waveforms/VCS_simple_adder_tb_waveform.png)
+
+## Directory Structure
+The directory is carefully structured, as follows:
+```
+hdl_design.srcs
+-- design_sources
+  |- layers
+  |- mem_init
+  |- submodules
+  - geoNet.sv
+  - toplevel.v
+-- simple_adder_tb
+  |- sv
+    |- simple_adder_tb.sv
+-- template_tb
+  |- mem
+    |- relu_input.mem
+    |- relu_output.mem
+  |- sv
+    |- template_tb.sv
+```
+
+There is a folder for design sources (generally module files), which has
+directories inside it for `.mif` files and RTL submodules. Please add new
+design files to either the `layers` or `submodules` directories, since we want
+the directory to be clean and legible.
+
+Each simulation you would like to save should have its own folder, each of
+which maps to a simulation set in Vivado.
 
 ## Best Practices
 
@@ -83,12 +112,21 @@ You can also test that the VCS simulator is running by loading the modules from 
 - Please make sure you have function and file comments
 
 ### Vivado Best Practices
-- Kindly use Vivado to create files. It manages the directory for you and stores it in the `vivado_project.srcs` folder.
 - Git only tracks the `.xpr` project file and the `vivado_project.srcs` folder. If there are any other folders that Git starts tracking (except for eventual physical constraints), please add them to the .gitignore file.
 - Have a separate simulation set for each simulation you want to run. This ensures you can still go back and debug if a higher-level simulation goes wrong.
-- If you would like to run simulations with VCS instead of Vivado, the Makefile from 598 has been modified for that purpose. Please still use Vivado to manage files.
-- When writing testbenches, use `assert` statements to compare equality wherever possible so that you don't have to spend time with the waveform viewer. `$display()` statements are your friend, even just to find times and such in complex simulations.
-- Use Vivado IP where possible, especially with multiply-accumulate functions. Vivado has a DSP slice macro that can make life much easier.
+- If you would like to run simulations with VCS instead of Vivado, the Makefile is present in the directory, please use and update as necessary.
+- Use Vivado IP where possible, especially with multiply-accumulate functions. Vivado has a DSP slice macro that can make life much easier, in addition to block memories that can take `.mif` files, so we won't have to write anything.
+
+Creating a new simulation set is easy, but please be careful to keep things clean. To create a new simulation set:
+1. Copy the `template_tb` directory and add/change files as necessary, including writing `.mem` files. Please stick to the directory structure.
+1. Under the `Sources` tab, click the `+` button.
+1. Select the **Add or create simulation sources** radio button
+1. Select **Create Simulation Set** from the dropdown and enter the name of your new simulation set
+1. Click on `Add Files`, and select the all the files from your new directory. Note: you will likely have to select the `.mem` files manually, since Vivado will not add them automatically.
+1. Unless you are running toplevel simulations, make sure the **Include all design sources for simulation** checkbox is **unchecked**. This keeps the directory readable.
+1. Manually add whatever design sources you need. Yes, this is a little tedious, but it keeps things legible.
+1. To run your new simulation set, right-click the testbench module you created (or copied) and click **Set as Top**, then right-click on the simulation set itself and select **Make Active**. Click **Run Simulation** on the far left, and select the appropriate simulation to run.
+1. If you want to use the `output.csv` file to run analysis, you will find it in the `hdl_design.sim` folder, which is by default ignored when pushing to GitHub. Please copy it to the `python_scripts` directory to use it and push it to GitHub.
 
 ### SystemVerilog Coding Standards
 - Please add module headers with your name, the date of modification, and a brief description of the file, including detailed descriptions of inputs and outputs, such that a user can treat your module as a black box and that it works.
