@@ -1,6 +1,9 @@
 `timescale 1ns / 1ps
+/**
+Alex Knowlton
 
-
+Testbench for simple adder, which serves to ensure Vivado is running correctly.
+*/
 module simple_adder_tb();
 
     logic [7:0] a_i, b_i;
