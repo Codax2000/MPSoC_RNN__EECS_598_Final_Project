@@ -78,8 +78,8 @@ module template_tb();
         $readmemh("relu_input.mem", input_test_vals);
         $readmemh("relu_output.mem", output_test_vals);
 	`else
-	$readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
-	$readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
 	`endif
     end
     
@@ -131,7 +131,7 @@ module template_tb();
 	`ifdef VIVADO
         fd = $fopen("output.csv", "w");
 	`else
-	fd = $fopen("./python_scripts/output.csv", "w");
+	    fd = $fopen("./python_scripts/output.csv", "w");
 	`endif
         $fwrite(fd, "test_index,expected,received\n");
         forever begin

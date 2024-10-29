@@ -138,3 +138,19 @@ Creating a new simulation set is easy, but please be careful to keep things clea
 - Other than that, please reference and use the BaseJump SystemVerilog coding guidelines. We will not be using the BaseJump STL library (for now), but please pay careful attention to the sections titled **Employ Latency Insensitive Interfaces** and **Coding Style**.
 - For documenting design decisions, please use the Issues page to reference what you are working on at the current moment and the fixes you have gone through. Please upload proof of bug fixes when making a Pull Request (such as a Verilog waveform from Vivado).
 
+### Simulating with VCS
+The Makefile is set up for use with VCS, but to use it, you will have to be careful with your definitions. We use `define` statements to get this to work in both VCS and Vivado, since Vivado can manage paths, and VCS can't. When copying a testbench, it is critical that you copy over the `define` statements too, or both Vivado and VCS could break. The definitions are as follows:
+
+```c
+`ifndef SYNOPSIS
+`define VIVADO
+`endif
+`ifdef VIVADO
+`timescale 1ns/10ps
+`endif
+```
+
+Since the Makefile will define `SYNOPSIS` if we are using VCS, we want to ensure `VIVADO` is defined if we are using Vivado. If `VIVADO` is defined, then we want to set the timescale (VCS breaks if we define the timescale there).
+
+Also, if using VCS, your testbench file will have to specify full relative paths to any files, instead of just file names (because VCS can't manage files the same way Vivado can). The template testbench saves `output.csv` to the `python_scripts` directory, where Vivado saves it to the `hdl_design.sim` directory, and, consequently, it is ignored by GitHub.
+
