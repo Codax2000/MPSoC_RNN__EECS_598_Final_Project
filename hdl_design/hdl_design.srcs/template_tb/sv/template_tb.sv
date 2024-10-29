@@ -1,4 +1,4 @@
-module relu_tb();
+module template_tb();
 
     // N: Number of bits in a word
     parameter N=16;
