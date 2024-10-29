@@ -1,4 +1,10 @@
+`ifndef SYNOPSIS
+`define VIVADO
+`endif
+`ifdef VIVADO
 `timescale 1ns/10ps
+`endif
+
 /**
 Alex Knowlton
 10/29/2024
@@ -68,8 +74,13 @@ module template_tb();
     logic [L2-1:0][N2-1:0] output_test_vals [T2-1:0];
     
     initial begin
+	`ifdef VIVADO
         $readmemh("relu_input.mem", input_test_vals);
         $readmemh("relu_output.mem", output_test_vals);
+	`else
+	$readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
+	$readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	`endif
     end
     
     // **************** DO NOT EDIT BELOW THIS LINE ******************
@@ -117,7 +128,11 @@ module template_tb();
     initial begin
         // Note: this csv file is for later analysis only and is a convenient wavedump,
         // but is in the sim directory, so not super useful
+	`ifdef VIVADO
         fd = $fopen("output.csv", "w");
+	`else
+	fd = $fopen("./python_scripts/output.csv", "w");
+	`endif
         $fwrite(fd, "test_index,expected,received\n");
         forever begin
             @(negedge clk_i); // wait for the negative edge of the clock

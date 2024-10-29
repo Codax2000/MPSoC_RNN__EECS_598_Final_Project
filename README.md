@@ -37,7 +37,8 @@ You can insert your own folder name if you don't want the folder to be called `e
 | `git add .` | Stage all changed files for commmit (except those in .gitignore) |
 | `git commit -m "comment here"` | Commit branch for push with a comment of changes |
 | `git fetch origin` | Fetch most recent changes before switching branches |
-| `git checkout branch_name` | Checkout the branch `branch_name`. Change `branch_name` based on the GitHub branch.
+| `git checkout branch_name` | Checkout the branch `branch_name`. Change `branch_name` based on the GitHub branch. |
+| `git branch -d branch_name` | Delete the local branch `branch_name`. Useful when the GitHub branch it's tracking is deleted. |
 | `git stash` | Temporarily remove changes so you can restore them later on (useful for moving changes between branches) |
 | `git stash apply` | Apply changes from the stach and keep them in the stash |
 | `git stash pop` | Apply changes from the stach but clear the stash |

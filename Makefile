@@ -12,30 +12,25 @@
 # similar to the information in those scripts but that seems hard to avoid.
 #
 
-VCS = SW_VCS=2020.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+
-LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
-
-all:	simv
-	./simv | tee program.out
+all:	dve
 
 ##### 
 # Modify starting here
 #####
 
-TESTBENCH = vivado_project/vivado_project.srcs/sim_1/new/simple_adder_tb.sv
-SIMFILES = vivado_project/vivado_project.srcs/sources_1/new/*.sv
-
+TESTBENCH = hdl_design/hdl_design.srcs/template_tb/sv/template_tb.sv
+DESIGN_DIR = $(shell find ./hdl_design/hdl_design.srcs/design_sources -name "*.sv" -o -name "*.v")
+VCS = SW_VCS=2020.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+SYNOPSIS
 
 #####
 # Should be no need to modify after here
 #####
-simv:	$(SIMFILES) $(TESTBENCH)
-	$(VCS) $(TESTBENCH) $(SIMFILES) -o simv | tee simv.log
+.PHONY: dve clean nuke
 
-dve:	$(SIMFILES) $(TESTBENCH) 
-	$(VCS) $(TESTBENCH) $(SIMFILES) -o dve -R -gui -debug_acccess+all -kdb | tee dve.log
+dve:	 
+	$(VCS) $(DESIGN_DIR) $(TESTBENCH) -o dve -R -gui -debug_acccess+all -kdb | tee dve.log
 
-.PHONY: dve
+
 
 clean:
 	rm -rvf simv *.daidir csrc vcs.key program.out \
