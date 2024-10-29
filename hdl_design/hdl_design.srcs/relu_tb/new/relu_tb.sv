@@ -4,10 +4,10 @@ module relu_tb();
     parameter N=8;
     
     // L1: Number of words in input
-    parameter L1=1;
+    parameter L1=10;
     
     // L2: Number of words in output
-    parameter L2 = 1;
+    parameter L2 = 10;
     
     // initialize memories and counters
     logic [$clog2(L1)-1:0] input_counter_n, input_counter_r;
@@ -16,8 +16,8 @@ module relu_tb();
     logic [N-1:0] output_test_vals [L2-1:0];
     
     initial begin
-        $readmemh("input.mem", input_test_vals);
-        $readmemh("expected.mem", output_test_vals);
+        $readmemh("relu_input.mem", input_test_vals);
+        $readmemh("relu_output.mem", output_test_vals);
     end
     
     // declare variables for DUT
@@ -34,6 +34,12 @@ module relu_tb();
     initial begin
         clk_i = 1'b0;
         forever #(CLOCK_PERIOD / 2) clk_i = ~clk_i;
+    end
+    
+    // reset the circuit
+    initial begin
+        rstb_i = 1'b0;
+        #(2.5 * CLOCK_PERIOD) rstb_i = 1'b1;
     end
     
     // handle stuff for address counters
@@ -58,7 +64,7 @@ module relu_tb();
         if (~rstb_i) begin
             input_counter_r <= '0;
             output_counter_r <= '0;
-            lfsr_r <= '0;
+            lfsr_r <= 4'hF;
         end else begin
             input_counter_r <= input_counter_n;
             output_counter_r <= output_counter_n;
@@ -68,19 +74,21 @@ module relu_tb();
     
     integer fd;
     initial begin
+        // Note: this csv file is for later analysis only and is a convenient wavedump,
+        // but is in the sim directory, so not super useful
         fd = $fopen("output.csv", "w");
-        $fprintf(fd, "test_index,expected,received\n");
+        $fwrite(fd, "test_index,expected,received\n");
         forever begin
             @(negedge clk_i); // wait for the negative edge of the clock
             
             // reasoning: if the output counter has gone all the way up, we are done
             // sending data and can do final checks
             // should be able to check that valid_o is low
-            if (output_counter_r == L2) begin
+            if (output_counter_r == (L2-1)) begin
                 $fclose(fd);
                 $stop;
             end else if (valid_o && yumi_i) begin
-                $fprintf(fd,"%u,%d,%d\n", output_counter_r,expected_data_o,data_o);
+                $fwrite(fd,"%u,%d,%d\n", output_counter_r,expected_data_o,data_o);
             end
         end
     end
