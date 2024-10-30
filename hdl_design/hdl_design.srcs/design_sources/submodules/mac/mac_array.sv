@@ -3,7 +3,10 @@ Alex Knowlton
 10/29/24
 
 Ideal MAC array. Delays one cycle between each handshake to test robustness
-of interfaces in other layer components, but computes 
+of interfaces in other layer components, but computes sum of products. Data
+input must be formatted as a packed array as follows:
+{[N_X-1:0][[ARRAY_LENGTH-1:0][N_W-1:0]]}
+ | X in   | packed weight array, N_W bits each |
 */
 
 module mac_array #(
