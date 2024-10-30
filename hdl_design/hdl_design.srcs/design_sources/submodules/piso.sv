@@ -1,43 +1,121 @@
+/**
+Alex Knowlton
+4/4/2023
+
+Output for fully-connected layer. Performs parallel-to-serial shifting.
+
+parameters:
+    LAYER HEIGHT:   number of words the layer should serialize
+    WORD_SIZE   :   size of a word in bits
+
+sync signals:
+    clk_i   : input clock
+    reset_i : input reset
+    
+helpful input handshake:
+    valid_i : signal that incoming data is valid
+    ready_o : signal that layer is ready to receive incoming data
+    data_i  : WORD_SIZE*LAYER_HEIGHT bits. incoming data.
+    
+helpful output handshake:
+    valid_o : signal that outgoing data is valid
+    yumi_i  : signal that outgoing data has been consumed
+    data_o  : WORD_SIZE bits. outgoing data.
+*/
+
 module piso #(
-    parameter L = 10,
-    parameter N = 16
-) (
-    input logic [L-1:0][N-1:0] data_i,
+    parameter LAYER_HEIGHT=5,
+    parameter WORD_SIZE=16 ) (
+    input logic clk_i,
+    input logic reset_i,
+    
+    // helpful handshake to prev layer
     input logic valid_i,
     output logic ready_o,
-    
-    output logic [N-1:0] data_o,
+    input logic [LAYER_HEIGHT-1:0][WORD_SIZE-1:0] data_i,
+
+    // helpful handshake to next layer
     output logic valid_o,
     input logic yumi_i,
-    
-    input logic clk_i,
-    input logic rstb_i
-);
+    output logic [WORD_SIZE-1:0] data_o
+    );
 
-    logic [L-1:0][N-1:0] data_captured;
-    enum logic {eREADY, eSHIFTING} ps_e, ns_e;
+    logic [$clog2(LAYER_HEIGHT+1)-1:0] count_shift_r, count_shift_n;
+    enum logic {eREADY=1'b1, eSHIFT=1'b0} ps_e, ns_e;
     
-    // count number of handshakes in
-    assign valid_o = ps_e == eSHIFTING;
-    logic [$clog2(L)-1:0] count_r, count_n;
-    assign count_n = (valid_o && yumi_i) && (count_r == L - 1) ? 0 :
-                     (valid_o && yumi_i) ? count_r + 1 : count_r;
-    assign ready_o = (ps_e == eREADY) || ((valid_o && yumi_i) && (count_r == L - 1));
+    logic [LAYER_HEIGHT-1:0][WORD_SIZE-1:0] data_r, data_n;
+    
+    //// CONTROL LOGIC FSM
     always_comb begin
-        case(ps_e)
-            eREADY: ns_e = (ready_o && valid_i) ? eSHIFTING : eREADY;
-            eSHIFTING: ns_e = ((valid_o && yumi_i) && (count_r == L - 1)) && ~(valid_i) ? eREADY : eSHIFTING;
+        case (ps_e)
+            eREADY:
+                if (valid_i)
+                    ns_e = eSHIFT;
+                else
+                    ns_e = eREADY;
+            eSHIFT:
+                if ((count_shift_r == LAYER_HEIGHT - 1) && yumi_i)
+                    ns_e = eREADY;
+                else
+                    ns_e = eSHIFT;
         endcase
     end
     
     always_ff @(posedge clk_i) begin
-        if (~rstb_i) begin
+        if (reset_i)
             ps_e <= eREADY;
-            count_r <= '0;
-        end else begin
+        else
             ps_e <= ns_e;
-            count_r <= count_n;
-        end
     end
-
+    
+    //// END CONTROL LOGIC ////
+    
+    //// BEGIN SUBSIDIARY CONTROL LOGIC ////
+    assign valid_o = ps_e == eSHIFT;
+    assign ready_o = ps_e == eREADY;
+    
+    // shift counter
+    always_comb begin
+        if ((count_shift_r == LAYER_HEIGHT) && yumi_i)
+            count_shift_n = '0;
+        else if (yumi_i)
+            count_shift_n = count_shift_r + 1;
+        else
+            count_shift_n = count_shift_r;
+    end
+    
+    always_ff @(posedge clk_i) begin
+        if (reset_i || ps_e == eREADY)
+            count_shift_r <= '0;
+        else
+            count_shift_r <= count_shift_n;
+    end
+    
+    //// DATAPATH ////
+    logic shift;
+    assign shift = ps_e == eSHIFT && yumi_i;
+    always_comb begin
+        case (ps_e)
+            eSHIFT:
+                if (yumi_i)
+                    data_n = data_r >> WORD_SIZE;
+                else
+                    data_n = data_r;
+            eREADY:
+                if (valid_i)
+                    data_n = data_i;
+                else
+                    data_n = '0;
+        endcase
+    end
+    
+    always_ff @(posedge clk_i) begin
+        if (reset_i)
+            data_r <= '0;
+        else
+            data_r <= data_n;
+    end
+    
+    assign data_o = data_r[0];
+    
 endmodule

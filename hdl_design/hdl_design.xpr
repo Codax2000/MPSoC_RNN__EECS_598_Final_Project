@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="k24c"/>
-    <Option Name="WTXSimLaunchSim" Val="61"/>
+    <Option Name="WTXSimLaunchSim" Val="71"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -116,6 +116,7 @@
       </Config>
     </FileSet>
     <FileSet Name="simple_adder_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/simple_adder_tb" RelGenDir="$PGENDIR/simple_adder_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/simple_adder_tb/sv/simple_adder_tb.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -145,6 +146,7 @@
       </Config>
     </FileSet>
     <FileSet Name="template_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/template_tb" RelGenDir="$PGENDIR/template_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/template_tb/sv/template_tb.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
