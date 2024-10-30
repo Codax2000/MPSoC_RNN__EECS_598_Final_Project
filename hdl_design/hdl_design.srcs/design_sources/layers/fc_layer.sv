@@ -65,7 +65,12 @@ module fc_layer #(
     logic [OUTPUT_LENGTH-1:0][N_X-1:0] mac_data_lo;
 
     mac_array #(
-        // TODO: add parameters once mac_array is written
+        .N_X(N_X),
+        .N_W(N_W),
+        .R_X(R_X),
+        .R_W(R_W),
+        .ARRAY_LENGTH(OUTPUT_LENGTH),
+        .N_SUMS(INPUT_LENGTH+1)
     ) mac (
         .clk_i,
         .rstb_i,
