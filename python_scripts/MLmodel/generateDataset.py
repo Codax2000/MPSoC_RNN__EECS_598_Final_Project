@@ -18,7 +18,7 @@ import pandas as pd
 from glob import glob
 
 # Define the files to read
-file_numbers = [2, 3, 11, 14, 6, 5, 10, 9, 12, 13]
+file_numbers = [2, 3, 7, 11, 14, 6, 5, 10, 9, 12, 13]
 file_paths = [f"python_scripts\\MLmodel\\Dataset\\stbernard-meteo-{num}.txt" for num in file_numbers]
 
 # Define the columns we want to keep (Python indices start at 0, so subtract 1 from each column index)
@@ -70,7 +70,38 @@ else:
     merged_df.dropna(inplace=True)
 
     # Write to a new file
-    output_file = "merged_stbernard_meteo.txt"
+    output_file = "python_scripts\\MLmodel\\Dataset\\merged_stbernard_meteo.txt" #9553 data entries
     merged_df.to_csv(output_file, sep='\t', index=False)
     print(f"Data successfully merged into {output_file}")
 
+
+# Load the tab-separated file with headers
+df = pd.read_csv(output_file, sep='\t')
+
+# Define the list of column headers to be extracted
+columns_to_extract = ['AmbientTemp_13']
+columns_to_delete = ['TimeEpoch', 'SurfaceTemp_13', 'SolarRadiation_13', 'RelHumidity_13',
+    'SoilMoisture_13', 'Watermark_13', 'RainMeter_13', 'WindSpeed_13', 'WindDirection_13']
+    
+
+# Separate the dataframe into two: one with the specified columns, and one with the remaining columns
+
+df_extracted = df[columns_to_extract]
+df_remaining = df.drop(columns=columns_to_extract)
+df_remaining = df.drop(columns = columns_to_delete)
+
+df_train_data = df_remaining.iloc[0:7643] #80% train
+df_train_key = df_extracted.iloc[0:7643] #80% train
+
+df_val_data = df_remaining.iloc[7643:8598] #10% val
+df_val_key = df_extracted.iloc[7643:8598] #10% val
+
+df_test_data = df_remaining.iloc[8598:] #10% val
+df_test_key = df_extracted.iloc[8598:] #10% val
+
+df_train_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_data.txt', sep='\t', index=False)
+df_train_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_key.txt', sep='\t', index=False)
+df_val_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_data.txt', sep='\t', index=False)
+df_val_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_key.txt', sep='\t', index=False)
+df_test_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_data.txt', sep='\t', index=False)
+df_test_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_key.txt', sep='\t', index=False)
