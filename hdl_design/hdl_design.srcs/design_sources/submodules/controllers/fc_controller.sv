@@ -39,10 +39,10 @@ module fc_controller #(
     output logic valid_o,
 
     input logic rstb_i,
-    input logic clk_i,
+    input logic clk_i
 );
 
-    enum logic {eREADY, eFULL, eBIAS} ps_e, ns_e;
+    enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;
     logic handshake_in, handshake_out;
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;
@@ -69,7 +69,7 @@ module fc_controller #(
                 ready_o = handshake_out && (addr_r != N_INPUTS - 1);
                 ns_e = (~handshake_out) ? eFULL :
                        (addr_r == N_INPUTS - 1) ? eBIAS : 
-                       (handshake_in) ? eFULL: eEMPTY;
+                       (handshake_in) ? eFULL: eREADY;
                 addr_n = handshake_out ? addr_r + 2'b01 : addr_r; 
             end
             eBIAS: begin
@@ -104,8 +104,8 @@ module fc_controller #(
         .N_BITS(N_BITS_MEM),
         .LAYER_NUMBER(LAYER_NUMBER),
         .ARRAY_LENGTH(N_OUTPUTS),
-        .N_WEIGHTS(N_INPUTS)
-    ) (
+        .N_WEIGHTS(N_INPUTS+1)
+    ) memories (
         .addr_i(addr_n),
         .clk_i,
         .data_o(mem_data_lo)

@@ -56,7 +56,7 @@ def main():
     print(x_q[:3])
     print(result[:3])
     write_matrix_to_files(A_q, path, Nw)
-    write_mem_file(x_q.T[0], f'{path}/fc_input', Nx)
+    write_mem_file(x_q.T[0, :-1], f'{path}/fc_input', Nx)
     write_mem_file(result.T[0], f'{path}/fc_output', Nx)
 
 

@@ -39,14 +39,14 @@ module fc_layer #(
 
     // instantiate controller to handle data from previous layer to MAC
     logic ctrl_valid_lo, ctrl_yumi_li;
-    logic [(N_BITS_DATA+N_OUTPUTS*N_BITS_MEM)-1:0] ctrl_data_lo;
+    logic [(N_X+OUTPUT_LENGTH*N_W)-1:0] ctrl_data_lo;
 
     fc_controller #(
         .LAYER_NUMBER(LAYER_NUMBER),
         .N_INPUTS(INPUT_LENGTH),
         .N_OUTPUTS(OUTPUT_LENGTH),
         .N_BITS_MEM(N_W),
-        .N_BITS_DATA(N_X),
+        .N_BITS_DATA(N_X)
     ) control (
         .clk_i,
         .rstb_i,
@@ -98,6 +98,5 @@ module fc_layer #(
         .yumi_i,
         .data_o
     );
-
 
 endmodule

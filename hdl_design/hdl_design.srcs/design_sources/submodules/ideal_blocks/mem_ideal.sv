@@ -27,7 +27,12 @@ module mem_ideal #(
 
     // initialize memory
     // TODO: make this parametrized as LAYER_NUMBER_MEMORY_INDEX.mem
-    localparam INIT_FILE = "4_000.mem";
+    localparam logic [7:0] zero = 8'h30;
+    localparam logic [7:0] ones = zero + (MEMORY_INDEX % 10);
+    localparam logic [7:0] tens = zero + ((MEMORY_INDEX / 10) % 10);
+    localparam logic [7:0] hundreds = zero + (MEMORY_INDEX / 100);
+    localparam logic [31:0] extension = 32'h2e6d656d;
+    localparam logic [71:0] INIT_FILE = {zero+LAYER_NUMBER, 8'h5f, hundreds, tens, ones, extension};
     initial begin
         $readmemh(INIT_FILE, mem);
     end

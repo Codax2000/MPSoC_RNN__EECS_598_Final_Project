@@ -55,7 +55,7 @@ module mac_array #(
                 count_n = ~handshake_out ? count_r : 
                         handshake_in ? 1 : 0;
                 ns_e = ~handshake_out ? eVALID :
-                        handshake_in && (count_r == (N_SUMS - 1)) : eVALID : eADD; 
+                        handshake_in && (count_r == (N_SUMS - 1)) ? eVALID : eADD; 
             end
         endcase
     end 
@@ -77,7 +77,7 @@ module mac_array #(
                 .clk_i,
                 .rstb_i,
                 .sum_o(data_o[i])
-            )
+            );
         end
     endgenerate
 

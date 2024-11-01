@@ -9,7 +9,7 @@ array.
 module mem_array #(
     parameter N_BITS=16,
     parameter LAYER_NUMBER=1,
-    paremeter ARRAY_LENGTH=16,
+    parameter ARRAY_LENGTH=16,
     parameter N_WEIGHTS=16
 ) (
     input logic [$clog2(N_WEIGHTS)-1:0] addr_i,
