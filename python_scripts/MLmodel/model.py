@@ -1,33 +1,10 @@
-import os
-from os import walk
-import copy
-import pickle
-
-import matplotlib.pyplot as plt
-import numpy as np
-# from tqdm import tqdm
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torchinfo import summary
-import torch.optim as optim
-
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-if torch.cuda.is_available():
-    print("Using the GPU!")
-else:
-    print("WARNING: Could not find GPU! Using CPU only.")
 
 # Sample network provided by paper
-class Net(nn.Module):
+class model(nn.Module):
     def __init__(self):
         super().__init__()
-
-        # Initialize hidden and cell states
-        self.h_t = torch.zeros(1, 40)
-        self.c_t = torch.zeros(1, 40)
 
         self.fc1 = nn.Sequential(
             nn.Linear(in_features=90, out_features = 60, bias = True),
@@ -48,15 +25,24 @@ class Net(nn.Module):
             nn.Tanh())
         
     def forward(self, x):
-        # Fully connected layers
-        x = self.fc1(x)
-        x = self.fc2(x)
-        #LSTM layer
-        self.h_t, self.c_t = self.lstm(x, (self.h_t, self.c_t))
-        # Pass the last LSTM output through fully connected layers
-        x = self.fc3(self.c_t)
-        x = self.fc4(x)
+        batch_size, seq_len, _ = x.size()  
+        h_t = torch.zeros(batch_size, 40, device=x.device)
+        c_t = torch.zeros(batch_size, 40, device=x.device)
+        outputs = []
 
-net = Net()
-net.to(device)
-summary(net, input_size = (1,90))
+        for t in range(seq_len):
+            # Fully connected layers
+            x = self.fc1(x[:, t, :])
+            x = self.fc2(x)
+            #LSTM layer
+            h_t, c_t = self.lstm(x, (h_t, c_t))
+            # Pass the last LSTM output through fully connected layers
+            x = self.fc3(h_t)
+            x = self.fc4(x)
+            outputs.append(x)
+
+        outputs = torch.stack(outputs, dim=1)
+        return outputs
+
+
+
