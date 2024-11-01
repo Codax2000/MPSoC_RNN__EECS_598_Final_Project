@@ -32,8 +32,8 @@ module mac_array #(
     logic signed [N_X-1:0] x_li;
     logic [ARRAY_LENGTH-1:0][N_W-1:0] mem_li;
 
-    assign x_li = data_i[(N_X+ARRAY_LENGTH*N_W)-1:(N_X+ARRAY_LENGTH*N_W)-1-N_X];
-    assign mem_li = data_i[(N_X+ARRAY_LENGTH*N_W)-1-N_X-1:0];
+    assign x_li = data_i[(N_X+ARRAY_LENGTH*N_W)-1:((N_X+ARRAY_LENGTH*N_W)-N_X)];
+    assign mem_li = data_i[(N_X+ARRAY_LENGTH*N_W)-1-N_X:0];
 
     logic [$clog2(N_SUMS)-1:0] count_n, count_r;
     enum logic {eADD, eVALID} ps_e, ns_e;

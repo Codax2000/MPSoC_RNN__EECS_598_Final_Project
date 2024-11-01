@@ -39,22 +39,22 @@ def write_matrix_to_files(A, path, n):
 
 
 def main():
-    m = 8
-    n = 15
+    m = 4
+    n = 3
     Nx = 16
     Rx = 8
     Nw = 8
     Rw = 8
-    x = np.random.randn(15,1)
+    x = np.random.randn(n,1)
     x_hat = np.vstack((x, np.ones((1, 1))))
     path = './hdl_design/hdl_design.srcs/fc_layer_tb/mem'
     x_q = fp_quantize(x_hat, Nx, Rx)
     A = get_matrix(m, n)
     A_q = fp_quantize(A, Nw, Rw)
     result = fp_quantize((A_q @ x_q) / (2**Rw), Nx, 0)
-    print(A_q[:3, :3])
-    print(x_q[:3])
-    print(result[:3])
+    print(A_q / 2**Rw)
+    print(x_q / 2**Rx)
+    print(result / 2**Rx)
     write_matrix_to_files(A_q, path, Nw)
     write_mem_file(x_q.T[0, :-1], f'{path}/fc_input', Nx)
     write_mem_file(result.T[0], f'{path}/fc_output', Nx)

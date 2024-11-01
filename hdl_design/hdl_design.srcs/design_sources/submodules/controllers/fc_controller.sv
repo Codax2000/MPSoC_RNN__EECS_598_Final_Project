@@ -43,6 +43,7 @@ module fc_controller #(
 );
 
     enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;
+    localparam logic [N_BITS_DATA-1:0] ONE = (1 << (R_BITS_DATA));
     logic handshake_in, handshake_out;
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;
@@ -53,7 +54,7 @@ module fc_controller #(
 
     // assign outputs and registers
     assign valid_o = (ps_e == eBIAS) || (ps_e == eFULL);
-    assign data_o = {data_i_r, mem_data_lo};
+    assign data_o = ps_e == eBIAS ? {ONE, mem_data_lo} : {data_i_r, mem_data_lo};
     assign data_i_n = handshake_in ? data_i : data_i_r;
 
     // next state logic

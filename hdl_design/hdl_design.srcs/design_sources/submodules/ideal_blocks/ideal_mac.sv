@@ -52,7 +52,7 @@ module ideal_mac #(
     assign underflow = 1'b0;
 
     assign product = x_i * w_i;
-    assign sum_n = sum_r + product;
+    assign sum_n = add_i ? sum_r + product : sum_r;
     assign trimmed_sum = sum_n[N_X-1+R_W:R_W];
     assign sum_o_n = overflow  ?  MAX_VALUE :
                    underflow ? ~MAX_VALUE : trimmed_sum;

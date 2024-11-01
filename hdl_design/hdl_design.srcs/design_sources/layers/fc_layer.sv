@@ -20,10 +20,10 @@ module fc_layer #(
     parameter N_X = 16,
     parameter N_W = 8,
     parameter R_X = 8,
-    parameter R_W = 4,
+    parameter R_W = 8,
     parameter LAYER_NUMBER = 4,
-    parameter INPUT_LENGTH = 15,
-    parameter OUTPUT_LENGTH = 8
+    parameter INPUT_LENGTH = 3,
+    parameter OUTPUT_LENGTH = 4
 ) (
     input logic clk_i,
     input logic rstb_i,

@@ -11,38 +11,48 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="999,995 ps"></ZoomStartTime>
-      <ZoomEndTime time="1,000,001 ps"></ZoomEndTime>
-      <Cursor1Time time="1,000,000 ps"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="995.709 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="280"></NameColumnWidth>
-      <ValueColumnWidth column_width="298"></ValueColumnWidth>
+      <NameColumnWidth column_width="317"></NameColumnWidth>
+      <ValueColumnWidth column_width="261"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="29" />
-   <wvobject fp_name="/fc_layer_tb/valid_i" type="logic">
-      <obj_property name="ElementShortName">valid_i</obj_property>
-      <obj_property name="ObjectShortName">valid_i</obj_property>
+   <WVObjectSize size="5" />
+   <wvobject fp_name="group264" type="group">
+      <obj_property name="label">Input Handshake</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/fc_layer_tb/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/fc_layer_tb/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/fc_layer_tb/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[0:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[0:0][15:0]</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject fp_name="/fc_layer_tb/ready_o" type="logic">
-      <obj_property name="ElementShortName">ready_o</obj_property>
-      <obj_property name="ObjectShortName">ready_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/yumi_i" type="logic">
-      <obj_property name="ElementShortName">yumi_i</obj_property>
-      <obj_property name="ObjectShortName">yumi_i</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/valid_o" type="logic">
-      <obj_property name="ElementShortName">valid_o</obj_property>
-      <obj_property name="ObjectShortName">valid_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/data_i" type="array">
-      <obj_property name="ElementShortName">data_i[0:0][15:0]</obj_property>
-      <obj_property name="ObjectShortName">data_i[0:0][15:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/data_o" type="array">
-      <obj_property name="ElementShortName">data_o[0:0][15:0]</obj_property>
-      <obj_property name="ObjectShortName">data_o[0:0][15:0]</obj_property>
+   <wvobject fp_name="group265" type="group">
+      <obj_property name="label">Output Handshake</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/fc_layer_tb/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/fc_layer_tb/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/fc_layer_tb/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[0:0][15:0]</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="/fc_layer_tb/expected_data_o" type="array">
       <obj_property name="ElementShortName">expected_data_o[0:0][15:0]</obj_property>
@@ -55,85 +65,5 @@
    <wvobject fp_name="/fc_layer_tb/clk_i" type="logic">
       <obj_property name="ElementShortName">clk_i</obj_property>
       <obj_property name="ObjectShortName">clk_i</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/input_test_vals" type="array">
-      <obj_property name="ElementShortName">input_test_vals[14:0][0:0][15:0]</obj_property>
-      <obj_property name="ObjectShortName">input_test_vals[14:0][0:0][15:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/output_test_vals" type="array">
-      <obj_property name="ElementShortName">output_test_vals[7:0][0:0][15:0]</obj_property>
-      <obj_property name="ObjectShortName">output_test_vals[7:0][0:0][15:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/input_counter_n" type="array">
-      <obj_property name="ElementShortName">input_counter_n[3:0]</obj_property>
-      <obj_property name="ObjectShortName">input_counter_n[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/input_counter_r" type="array">
-      <obj_property name="ElementShortName">input_counter_r[3:0]</obj_property>
-      <obj_property name="ObjectShortName">input_counter_r[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/output_counter_n" type="array">
-      <obj_property name="ElementShortName">output_counter_n[2:0]</obj_property>
-      <obj_property name="ObjectShortName">output_counter_n[2:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/output_counter_r" type="array">
-      <obj_property name="ElementShortName">output_counter_r[2:0]</obj_property>
-      <obj_property name="ObjectShortName">output_counter_r[2:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/handshake_in" type="logic">
-      <obj_property name="ElementShortName">handshake_in</obj_property>
-      <obj_property name="ObjectShortName">handshake_in</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/handshake_out" type="logic">
-      <obj_property name="ElementShortName">handshake_out</obj_property>
-      <obj_property name="ObjectShortName">handshake_out</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/lfsr_n" type="array">
-      <obj_property name="ElementShortName">lfsr_n[3:0]</obj_property>
-      <obj_property name="ObjectShortName">lfsr_n[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/lfsr_r" type="array">
-      <obj_property name="ElementShortName">lfsr_r[3:0]</obj_property>
-      <obj_property name="ObjectShortName">lfsr_r[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/fd" type="array">
-      <obj_property name="ElementShortName">fd[31:0]</obj_property>
-      <obj_property name="ObjectShortName">fd[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/N1" type="array">
-      <obj_property name="ElementShortName">N1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">N1[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/N2" type="array">
-      <obj_property name="ElementShortName">N2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">N2[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/R1" type="array">
-      <obj_property name="ElementShortName">R1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">R1[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/R2" type="array">
-      <obj_property name="ElementShortName">R2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">R2[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/L1" type="array">
-      <obj_property name="ElementShortName">L1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">L1[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/L2" type="array">
-      <obj_property name="ElementShortName">L2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">L2[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/T1" type="array">
-      <obj_property name="ElementShortName">T1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">T1[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/T2" type="array">
-      <obj_property name="ElementShortName">T2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">T2[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/fc_layer_tb/CLOCK_PERIOD" type="array">
-      <obj_property name="ElementShortName">CLOCK_PERIOD[31:0]</obj_property>
-      <obj_property name="ObjectShortName">CLOCK_PERIOD[31:0]</obj_property>
    </wvobject>
 </wave_config>
