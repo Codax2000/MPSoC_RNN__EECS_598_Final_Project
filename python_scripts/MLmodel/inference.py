@@ -6,6 +6,7 @@ from torchinfo import summary
 import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 
@@ -51,40 +52,25 @@ class TextDataset(Dataset):
         
         return data_tensor, key_tensor
 
-def train(num_epochs, model, criterion, optimizer, train_loader, val_loader):
-    for epoch in range(num_epochs):
-        
-        train_loss = 0
-        eval_loss = 0
+def inference(model, weight_path, inference_loader, criterion):
+    ground_truth = []
+    prediction = []
+    inference_loss = 0
+    check_point = torch.load(weight_path, map_location=torch.device(device))
+    model.load_state_dict(check_point)
 
-        #train
-        print('Training Epoch [{}/{}]'.format(epoch, num_epochs))
-        for data, key in tqdm(train_loader):
-            optimizer.zero_grad()
-
+    with torch.no_grad():
+        for data, key in tqdm(inference_loader):
             data = data.to(device)
             key = key.to(device)
 
             output = model(data)
             loss = criterion(output, key)
-            loss.backward()
-            optimizer.step()
-            train_loss += loss.item()
+            inference_loss += loss.item()
+            ground_truth.append(key)
+            prediction.append(output)
+    return ground_truth, prediction, inference_loss/len(inference_loader)
         
-        # eval
-        # print('Evaluating epoch [{}/{}]'.format(epoch, num_epochs))
-        
-        with torch.no_grad():
-            for data, key in tqdm(val_loader):
-                data = data.to(device)
-                key = key.to(device)
-                output = model(data)
-                loss = criterion(output, key)
-                eval_loss += loss.item()
-        print('Epoch [{}/{}] completed: avg train loss = {:.4f}, avg eval loss = {:.4f} ' \
-              .format(epoch, num_epochs, train_loss/len(train_loader), eval_loss/len(val_loader)))
-        PATH = 'python_scripts\\MLmodel\\weights\\epoch{}.pth'.format(epoch)
-        torch.save(net.state_dict(), PATH)
 
 
 
@@ -100,32 +86,27 @@ if __name__ == "__main__":
     
     #define model
     net = model().to(device)
-    # summary(net, input_size = (32, 30, 90))
-
-    #hyper_params:
-    num_epochs = 10
-    batch_size = 32
-    sequence_len = 30
-    input_len = 90
-    lr = 0.001
     criterion = nn.SmoothL1Loss() #use MSE loss to optimize for closest abs val to target
-    optimizer  = optim.Adam(net.parameters(), lr = lr)
+
 
     # Define file paths
-    train_data_directory = 'python_scripts\\MLmodel\\Dataset\\Split\\train_data'
-    train_key_directory = 'python_scripts\\MLmodel\\Dataset\\Split\\train_key'
-
-    val_data_directory = 'python_scripts\\MLmodel\\Dataset\\Split\\val_data'
-    val_key_directory = 'python_scripts\\MLmodel\\Dataset\\Split\\val_key'
+    inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_data'
+    inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_key'
+    weights_dir = 'python_scripts\\MLmodel\\weights\\epoch9.pth'
 
     # Instantiate the dataset and DataLoader
-    train_dataset = TextDataset(data_dir=train_data_directory, key_dir=train_key_directory)
-    train_loader = DataLoader(train_dataset,batch_size=batch_size, shuffle=True)
+    test_dataset = TextDataset(data_dir=inference_data_dir, key_dir=inference_key_dir)
+    test_loader = DataLoader(test_dataset)
 
-    val_dataset = TextDataset(data_dir=val_data_directory, key_dir=val_key_directory)
-    val_loader = DataLoader(val_dataset,batch_size=batch_size, shuffle=True)
+    gt, pred, loss = inference(net, weights_dir, test_loader, criterion)
 
-    train(num_epochs, net, criterion, optimizer, train_loader, val_loader)
+    plt.plot(gt[19].squeeze().cpu())
+    plt.plot(pred[19].squeeze().cpu())
+    plt.legend(["gt", "pred"])
+    plt.show()
+    print(loss)
+
+    
 
     # for data, key in train_loader:
     #     print("Data Batch:", data.shape)
