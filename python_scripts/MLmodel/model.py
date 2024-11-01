@@ -32,14 +32,15 @@ class model(nn.Module):
 
         for t in range(seq_len):
             # Fully connected layers
-            x = self.fc1(x[:, t, :])
-            x = self.fc2(x)
+            step_in = x[:, t, :]
+            step_in = self.fc1(step_in)
+            step_in = self.fc2(step_in)
             #LSTM layer
-            h_t, c_t = self.lstm(x, (h_t, c_t))
+            h_t, c_t = self.lstm(step_in, (h_t, c_t))
             # Pass the last LSTM output through fully connected layers
-            x = self.fc3(h_t)
-            x = self.fc4(x)
-            outputs.append(x)
+            step_in = self.fc3(h_t)
+            step_in = self.fc4(step_in)
+            outputs.append(step_in)
 
         outputs = torch.stack(outputs, dim=1)
         return outputs

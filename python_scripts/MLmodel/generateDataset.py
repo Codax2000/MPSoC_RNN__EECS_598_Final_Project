@@ -80,7 +80,7 @@ df = pd.read_csv(output_file, sep='\t')
 
 # Define the list of column headers to be extracted
 columns_to_extract = ['AmbientTemp_13']
-columns_to_delete = ['TimeEpoch', 'SurfaceTemp_13', 'SolarRadiation_13', 'RelHumidity_13',
+columns_to_delete = ['TimeEpoch','AmbientTemp_13', 'SurfaceTemp_13', 'SolarRadiation_13', 'RelHumidity_13',
     'SoilMoisture_13', 'Watermark_13', 'RainMeter_13', 'WindSpeed_13', 'WindDirection_13']
     
 
