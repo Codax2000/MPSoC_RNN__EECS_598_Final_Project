@@ -58,7 +58,17 @@ module mac_array #(
                         handshake_in && (count_r == (N_SUMS - 1)) ? eVALID : eADD; 
             end
         endcase
-    end 
+    end
+    
+    always_ff @(posedge clk_i) begin
+        if (~rstb_i) begin
+            count_r <= '0;
+            ps_e <= eADD;
+        end else begin
+            count_r <= count_n;
+            ps_e <= ns_e;
+        end
+    end
 
     genvar i;
     generate

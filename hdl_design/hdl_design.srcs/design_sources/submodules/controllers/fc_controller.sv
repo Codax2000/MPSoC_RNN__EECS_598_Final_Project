@@ -49,7 +49,6 @@ module fc_controller #(
 
     logic [$clog2(N_INPUTS)-1:0] addr_r, addr_n;
     logic [N_OUTPUTS-1:0][N_BITS_MEM-1:0] mem_data_lo;
-    logic [(N_BITS_DATA+N_OUTPUTS*N_BITS_MEM)-1:0] data_o_n;
     logic [N_BITS_DATA-1:0] data_i_r, data_i_n;
 
     // assign outputs and registers
