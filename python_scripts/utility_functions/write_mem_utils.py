@@ -4,6 +4,7 @@ Alex Knowlton
 
 Defines functions to write .mem files.
 '''
+import numpy as np
 
 
 def write_mem_file(x, path, n_bits):
@@ -71,8 +72,8 @@ def get_2s_complement_hex_string(x, n_bits):
     if x < 0:
         x = (1 << n_bits) + x
     x_signed = x & ((1 << n_bits) - 1)
-    hex_string = hex(x_signed)[2:]
-    return hex_string.upper()
+    hex_string = hex(x_signed)
+    return hex_string.upper()[2:].zfill(int(np.ceil(n_bits / 4)))
 
 
 def main():
