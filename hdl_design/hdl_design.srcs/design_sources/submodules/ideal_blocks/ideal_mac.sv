@@ -42,7 +42,7 @@ module ideal_mac #(
     localparam signed [N_X-1:0] MAX_VALUE = {1'b0, {{N_X-1}{1'b1}}};
 
     logic signed [$clog2(N_SUMS)+N_X+N_W-1:0] sum_r, sum_n;
-    logic signed [N_X-1:0] trimmed_sum;
+    logic signed [N_X-1:0] trimmed_sum, sum_o_n;
     logic signed [N_X+N_W-1:0] product;
     logic overflow, underflow;
 
@@ -54,14 +54,17 @@ module ideal_mac #(
     assign product = x_i * w_i;
     assign sum_n = sum_r + product;
     assign trimmed_sum = sum_n[N_X-1+R_W:R_W];
-    assign sum_o = overflow  ?  MAX_VALUE :
+    assign sum_o_n = overflow  ?  MAX_VALUE :
                    underflow ? ~MAX_VALUE : trimmed_sum;
 
     always_ff @(posedge clk_i) begin
-        if (~rstb_i)
+        if (~rstb_i) begin
             sum_r <= '0;
-        else
+            sum_o <= '0;
+        end else begin
             sum_r <= sum_n;
+            sum_o <= sum_o_n;
+        end
     end
 
 endmodule

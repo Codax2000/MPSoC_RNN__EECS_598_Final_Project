@@ -29,4 +29,56 @@ module mac_array #(
     input logic rstb_i
 );
 
+    logic signed [N_X-1:0] x_li;
+    logic [ARRAY_LENGTH-1:0][N_W-1:0] mem_li;
+
+    assign x_li = data_i[(N_X+ARRAY_LENGTH*N_W)-1:(N_X+ARRAY_LENGTH*N_W)-1-N_X];
+    assign mem_li = data_i[(N_X+ARRAY_LENGTH*N_W)-1-N_X-1:0];
+
+    logic [$clog2(N_SUMS)-1:0] count_n, count_r;
+    enum logic {eADD, eVALID} ps_e, ns_e;
+
+    assign ready_o = (ps_e == eADD) || (yumi_i);
+    assign valid_o =  ps_e == eVALID;
+
+    logic handshake_out, handshake_in;
+    assign handshake_out = valid_o && yumi_i;
+    assign handshake_in = valid_i && ready_o;
+
+    always_comb begin
+        case (ps_e)
+            eADD: begin
+                count_n = handshake_in ? count_r + 1 : count_r;
+                ns_e = handshake_in && (count_r == (N_SUMS - 1)) ? eVALID : eADD;
+            end
+            eVALID: begin
+                count_n = ~handshake_out ? count_r : 
+                        handshake_in ? 1 : 0;
+                ns_e = ~handshake_out ? eVALID :
+                        handshake_in && (count_r == (N_SUMS - 1)) : eVALID : eADD; 
+            end
+        endcase
+    end 
+
+    genvar i;
+    generate
+        for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
+            ideal_mac # (
+                .N_X(N_X),
+                .N_W(N_W),
+                .R_W(R_W),
+                .R_X(R_X),
+                .N_SUMS(N_SUMS)
+            ) mac (
+                .x_i(x_li),
+                .w_i(mem_li[i]),
+                .add_i(handshake_in),
+                .clear_i(handshake_out),
+                .clk_i,
+                .rstb_i,
+                .sum_o(data_o[i])
+            )
+        end
+    endgenerate
+
 endmodule

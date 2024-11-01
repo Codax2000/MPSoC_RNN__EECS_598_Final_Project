@@ -1,4 +1,3 @@
-.vscode/
 *.pyc
 
 # ignore Vivado simulation and build directories

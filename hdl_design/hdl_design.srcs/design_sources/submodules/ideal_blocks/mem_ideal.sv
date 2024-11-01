@@ -26,8 +26,8 @@ module mem_ideal #(
         data_o <= mem[addr_i];
 
     // initialize memory
-    // TODO: make this parametrized, see zyNet for reference
-    localparam INIT_FILE = "test_fc_memory.mem";
+    // TODO: make this parametrized as LAYER_NUMBER_MEMORY_INDEX.mem
+    localparam INIT_FILE = "4_000.mem";
     initial begin
         $readmemh(INIT_FILE, mem);
     end
