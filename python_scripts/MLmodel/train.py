@@ -106,10 +106,10 @@ if __name__ == "__main__":
     
     #define model
     net = model().to(device)
-    summary(net)
+    # summary(net, input_size = (32, 30, 90))
 
     #hyper_params:
-    num_epochs = 5
+    num_epochs = 10
     batch_size = 32
     sequence_len = 30
     input_len = 90
@@ -133,5 +133,7 @@ if __name__ == "__main__":
 
     train(num_epochs, net, criterion, optimizer, train_loader, val_loader)
 
-
-
+    # for data, key in train_loader:
+    #     print("Data Batch:", data.shape)
+    #     print("Key Batch:", key.shape)
+    #     break
