@@ -34,7 +34,7 @@ class TextDataset(Dataset):
             data = []
             for line in f:
                 values = line.strip().split('\t')  # Split by tab character
-                data.extend([float(value) for value in values])  # Convert each value to float
+                data.append([float(value) for value in values])  # Convert each value to float
         
         # Load corresponding label/target
         key_path = os.path.join(self.key_dir, self.key_files[idx])
@@ -42,7 +42,7 @@ class TextDataset(Dataset):
             key = []
             for line in f:
                 values = line.strip().split('\t')  # Split by tab character
-                key.extend([float(value) for value in values])  # Convert each value to float
+                key.append([float(value) for value in values])  # Convert each value to float
 
         # Optionally apply any transformation
         if self.transform:
@@ -51,9 +51,9 @@ class TextDataset(Dataset):
 
         # Convert data and key to tensors
         data_tensor = torch.tensor(data, dtype=torch.float32)
-        data_tensor = data_tensor.view(-1, input_len)
+        # data_tensor = data_tensor.view(-1, input_len)
         key_tensor = torch.tensor(key, dtype=torch.float32)
-        key_tensor = key_tensor.view(-1, input_len)
+        # key_tensor = key_tensor.view(-1, input_len)
         
         return data_tensor, key_tensor
 
