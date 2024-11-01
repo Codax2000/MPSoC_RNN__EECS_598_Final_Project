@@ -21,6 +21,7 @@ Globals:
 
 Note: data_o is represented as a packed array arranged as {input X value, memory outputs}
 */
+
 module fc_controller #(
     parameter LAYER_NUMBER=1,
     parameter N_INPUTS=16,
@@ -41,7 +42,7 @@ module fc_controller #(
     input logic clk_i,
 );
 
-    enum logic {eREADY, eFULL} ps_e, ns_e;
+    enum logic {eREADY, eFULL, eBIAS} ps_e, ns_e;
     logic handshake_in, handshake_out;
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;
@@ -52,17 +53,36 @@ module fc_controller #(
     logic [N_BITS_DATA-1:0] data_i_r, data_i_n;
 
     // assign outputs and registers
-    assign ready_o = (ps_e == eREADY) || yumi_i;
-    assign valid_o = ps_e == eFULL;
+    assign valid_o = (ps_e == eBIAS) || (ps_e == eFULL);
     assign data_o = {data_i_r, mem_data_lo};
     assign data_i_n = handshake_in ? data_i : data_i_r;
-    assign addr_n = handshake_out && (addr_r == (N_INPUTS - 1)) ? '0 : addr_r + 2'b01;
 
     // next state logic
     always_comb begin
         case (ps_e)
-            eREADY: ns_e = valid_i ? eFULL : eREADY;
-            eFULL: ns_e = (yumi_i && ~valid_i) ? eREADY : eFULL;
+            eREADY: begin
+                ready_o = 1'b1;
+                ns_e = handshake_in ? eFULL : eREADY;
+                addr_n = addr_r;
+            end
+            eFULL: begin
+                ready_o = handshake_out && (addr_r != N_INPUTS - 1);
+                ns_e = (~handshake_out) ? eFULL :
+                       (addr_r == N_INPUTS - 1) ? eBIAS : 
+                       (handshake_in) ? eFULL: eEMPTY;
+                addr_n = handshake_out ? addr_r + 2'b01 : addr_r; 
+            end
+            eBIAS: begin
+                ready_o = handshake_out;
+                addr_n = handshake_out ? 0 : addr_r;
+                ns_e = (~handshake_out) ? eBIAS :
+                       (handshake_in) ? eFULL : eREADY;
+            end
+            default: begin
+                ready_o = 1'b1;
+                ns_e = handshake_in ? eFULL : eREADY;
+                addr_n = addr_r;
+            end
         endcase
     end
 

@@ -27,8 +27,9 @@ module mem_ideal #(
 
     // initialize memory
     // TODO: make this parametrized, see zyNet for reference
+    localparam INIT_FILE = "test_fc_memory.mem";
     initial begin
-        $readmemh("test_mult.mem", mem);
+        $readmemh(INIT_FILE, mem);
     end
 
 endmodule
