@@ -46,7 +46,7 @@ def main():
     Nw = 8
     Rw = 8
     x = np.random.randn(15,1)
-    x_hat = np.vstack((np.ones((1, 1)), x))
+    x_hat = np.vstack((x, np.ones((1, 1))))
     path = './hdl_design/hdl_design.srcs/fc_layer_tb/mem'
     x_q = fp_quantize(x_hat, Nx, Rx)
     A = get_matrix(m, n)
