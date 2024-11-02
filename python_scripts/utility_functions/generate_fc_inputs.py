@@ -39,8 +39,8 @@ def write_matrix_to_files(A, path, n):
 
 
 def main():
-    m = 4
-    n = 3
+    m = 56  # size of output vector Ax + b
+    n = 16  # size of X vector
     Nx = 16
     Rx = 8
     Nw = 8

@@ -48,7 +48,7 @@ module fc_controller #(
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;
 
-    logic [$clog2(N_INPUTS)-1:0] addr_r, addr_n;
+    logic [$clog2(N_INPUTS+1)-1:0] addr_r, addr_n;
     logic [N_OUTPUTS-1:0][N_BITS_MEM-1:0] mem_data_lo;
     logic [N_BITS_DATA-1:0] data_i_r, data_i_n;
 
