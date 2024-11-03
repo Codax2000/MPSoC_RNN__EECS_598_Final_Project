@@ -29,10 +29,6 @@ class TextDataset(Dataset):
             for line in f:
                 values = line.strip().split(',')  # Split by comma character
                 data.append([float(value) for value in values])  # Convert each value to float
-                # try:
-                #     data.append([float(value) for value in values])
-                # except:
-                #     raise ValueError(f"Non-numeric value found in file {data_path} at line: {line}")
         
         # Load corresponding label/target
         key_path = os.path.join(self.key_dir, self.key_files[idx])
@@ -41,12 +37,6 @@ class TextDataset(Dataset):
             for line in f:
                 values = line.strip().split(',')  # Split by comma character
                 key.append([float(value) for value in values])  # Convert each value to float
-
-                # try:
-                #     data.append([float(value) for value in values])
-                # except:
-                #     raise ValueError(f"Non-numeric value found in file {data_path} at line: {line}")
-
 
         # Optionally apply any transformation
         if self.transform:
@@ -139,8 +129,3 @@ if __name__ == "__main__":
     val_loader = DataLoader(val_dataset,batch_size=batch_size, shuffle=True)
 
     train(num_epochs, net, criterion, optimizer, train_loader, val_loader)
-
-    # for data, key in train_loader:
-    #     print("Data Batch:", data.shape)
-    #     print("Key Batch:", key.shape)
-    #     break
