@@ -83,27 +83,12 @@ columns_to_delete = ['TimeEpoch','AmbientTemp_13', 'SurfaceTemp_13', 'SolarRadia
 # Separate the dataframe into two: one with the specified columns, and one with the remaining columns
 
 df_extracted = df[columns_to_extract]
+df_extracted = df_extracted[1:]
 df_remaining = df.drop(columns = columns_to_delete)
+de_remaining = de_remaining[1:]
 
-df_remaining.to_csv('python_scripts\\MLmodel\\Dataset\\data.txt', sep=',', index=False)
-df_extracted.to_csv('python_scripts\\MLmodel\\Dataset\\key.txt', sep=',', index=False)
-
-# df_train_data = df_remaining.iloc[0:7643] #80% train
-# df_train_key = df_extracted.iloc[0:7643] #80% train
-
-# df_val_data = df_remaining.iloc[7643:8598] #10% val
-# df_val_key = df_extracted.iloc[7643:8598] #10% val
-
-# df_test_data = df_remaining.iloc[8598:] #10% test
-# df_test_key = df_extracted.iloc[8598:] #10% test
-
-# #intermediet save
-# df_train_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_data.txt', sep=',', index=False)
-# df_train_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_key.txt', sep=',', index=False)
-# df_val_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_data.txt', sep=',', index=False)
-# df_val_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_key.txt', sep=',', index=False)
-# df_test_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_data.txt', sep=',', index=False)
-# df_test_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_key.txt', sep=',', index=False)
+df_remaining.to_csv('python_scripts\\MLmodel\\Dataset\\all_data\\data.txt', sep=',', index=False)
+df_extracted.to_csv('python_scripts\\MLmodel\\Dataset\\all_key\\key.txt', sep=',', index=False)
 
 
 def split_file(filename_data, filename_key, prefix_list, rows_per_chunk=30):
@@ -113,8 +98,8 @@ def split_file(filename_data, filename_key, prefix_list, rows_per_chunk=30):
     with open(filename_key, 'r') as file:
         lines_key = file.readlines()
         
-    lines = lines[1:]
-    lines_key = lines_key[1:]
+    # lines = lines[1:]
+    # lines_key = lines_key[1:]
     num_chunks = (len(lines) + rows_per_chunk - 1) // rows_per_chunk
 
     splitList = np.array([0,0,0,0,0,0,0,0,1,2])
@@ -133,27 +118,12 @@ def split_file(filename_data, filename_key, prefix_list, rows_per_chunk=30):
             new_file.writelines(chunk_key)
 
 
-
-
 inFolder = 'python_scripts\\MLmodel\\Dataset\\'
 outFolder = 'python_scripts\\MLmodel\\Dataset\\Split\\'
 prefix_list = [[outFolder + 'train_data\\df_train_data', outFolder + 'train_key\\df_train_key'],
                [outFolder + 'test_data\\df_test_data', outFolder + 'test_key\\df_test_key'],
                [outFolder + 'val_data\\df_val_data', outFolder + 'val_key\\df_val_key']]
-# train, val, test split = 0.8, 0.1, 0.1
-# size = len(lines)
-# num_zeros = int(size * 0.8)
-# num_ones = int(size * 0.1)
-# num_twos = int(size * 0.1)
-# array = np.array([0] * num_zeros + [1] * num_ones + [2] * num_twos)
-# np.random.shuffle(array)
 
+split_file(inFolder + 'all_data\\data.txt', inFolder + 'all_key\\key.txt', prefix_list)
 
-
-split_file(inFolder + 'data.txt', inFolder + 'key.txt', prefix_list)
-# split_file(inFolder + 'df_test_key.txt', outFolder + 'test_key\\df_test_key')
-# split_file(inFolder + 'df_train_data.txt', outFolder + 'train_data\\df_train_data')
-# split_file(inFolder + 'df_train_key.txt', outFolder + 'train_key\\df_train_key')
-# split_file(inFolder + 'df_val_data.txt', outFolder + 'val_data\\df_val_data')
-# split_file(inFolder + 'df_val_key.txt', outFolder + 'val_key\\df_val_key')
 print("done")

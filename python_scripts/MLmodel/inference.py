@@ -90,8 +90,10 @@ if __name__ == "__main__":
 
 
     # Define file paths
-    inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_data'
-    inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_key'
+    # inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_data'
+    # inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_key'
+    inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\all_data'
+    inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\all_key'
     weights_dir = 'python_scripts\\MLmodel\\weights\\epoch50.pth'
 
     # Instantiate the dataset and DataLoader
@@ -106,7 +108,7 @@ if __name__ == "__main__":
         plt.plot(pred[i].squeeze().cpu())
         plt.legend(["ground truth", "prediction"])
         plt.xlabel("Time(steps)")
-        plt.ylabel("Temperature(deg C)")
+        plt.ylabel("Temperature(normalized)")
     plt.show()
     print(loss)
 
