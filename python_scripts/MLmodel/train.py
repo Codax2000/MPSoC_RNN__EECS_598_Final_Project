@@ -27,16 +27,26 @@ class TextDataset(Dataset):
         with open(data_path, 'r') as f:
             data = []
             for line in f:
-                values = line.strip().split('\t')  # Split by tab character
+                values = line.strip().split(',')  # Split by comma character
                 data.append([float(value) for value in values])  # Convert each value to float
+                # try:
+                #     data.append([float(value) for value in values])
+                # except:
+                #     raise ValueError(f"Non-numeric value found in file {data_path} at line: {line}")
         
         # Load corresponding label/target
         key_path = os.path.join(self.key_dir, self.key_files[idx])
         with open(key_path, 'r') as f:
             key = []
             for line in f:
-                values = line.strip().split('\t')  # Split by tab character
+                values = line.strip().split(',')  # Split by comma character
                 key.append([float(value) for value in values])  # Convert each value to float
+
+                # try:
+                #     data.append([float(value) for value in values])
+                # except:
+                #     raise ValueError(f"Non-numeric value found in file {data_path} at line: {line}")
+
 
         # Optionally apply any transformation
         if self.transform:
@@ -52,14 +62,15 @@ class TextDataset(Dataset):
         return data_tensor, key_tensor
 
 def train(num_epochs, model, criterion, optimizer, train_loader, val_loader):
-    for epoch in range(num_epochs):
+    for epoch in tqdm(range(num_epochs)):
         
         train_loss = 0
         eval_loss = 0
 
         #train
-        print('Training Epoch [{}/{}]'.format(epoch, num_epochs))
-        for data, key in tqdm(train_loader):
+        # print('Training Epoch [{}/{}]'.format(epoch+1, num_epochs))
+        model.train()
+        for data, key in train_loader:
             optimizer.zero_grad()
 
             data = data.to(device)
@@ -73,18 +84,20 @@ def train(num_epochs, model, criterion, optimizer, train_loader, val_loader):
         
         # eval
         # print('Evaluating epoch [{}/{}]'.format(epoch, num_epochs))
-        
+        model.eval()
         with torch.no_grad():
-            for data, key in tqdm(val_loader):
+            for data, key in val_loader:
                 data = data.to(device)
                 key = key.to(device)
                 output = model(data)
                 loss = criterion(output, key)
                 eval_loss += loss.item()
         print('Epoch [{}/{}] completed: avg train loss = {:.4f}, avg eval loss = {:.4f} ' \
-              .format(epoch, num_epochs, train_loss/len(train_loader), eval_loss/len(val_loader)))
-        PATH = 'python_scripts\\MLmodel\\weights\\epoch{}.pth'.format(epoch)
-        torch.save(net.state_dict(), PATH)
+              .format(epoch+1, num_epochs, train_loss/len(train_loader), eval_loss/len(val_loader)))
+        
+        if((epoch+1) % 5 == 0):
+            PATH = 'python_scripts\\MLmodel\\weights\\epoch{}.pth'.format(epoch+1)
+            torch.save(net.state_dict(), PATH)
 
 
 
@@ -103,7 +116,7 @@ if __name__ == "__main__":
     # summary(net, input_size = (32, 30, 90))
 
     #hyper_params:
-    num_epochs = 10
+    num_epochs = 50
     batch_size = 32
     sequence_len = 30
     input_len = 90

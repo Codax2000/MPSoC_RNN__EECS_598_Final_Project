@@ -28,7 +28,7 @@ class TextDataset(Dataset):
         with open(data_path, 'r') as f:
             data = []
             for line in f:
-                values = line.strip().split('\t')  # Split by tab character
+                values = line.strip().split(',')  # Split by tab character
                 data.append([float(value) for value in values])  # Convert each value to float
         
         # Load corresponding label/target
@@ -36,7 +36,7 @@ class TextDataset(Dataset):
         with open(key_path, 'r') as f:
             key = []
             for line in f:
-                values = line.strip().split('\t')  # Split by tab character
+                values = line.strip().split(',')  # Split by tab character
                 key.append([float(value) for value in values])  # Convert each value to float
 
         # Optionally apply any transformation
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     # Define file paths
     inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_data'
     inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_key'
-    weights_dir = 'python_scripts\\MLmodel\\weights\\epoch9.pth'
+    weights_dir = 'python_scripts\\MLmodel\\weights\\epoch50.pth'
 
     # Instantiate the dataset and DataLoader
     test_dataset = TextDataset(data_dir=inference_data_dir, key_dir=inference_key_dir)
@@ -100,9 +100,13 @@ if __name__ == "__main__":
 
     gt, pred, loss = inference(net, weights_dir, test_loader, criterion)
 
-    plt.plot(gt[19].squeeze().cpu())
-    plt.plot(pred[19].squeeze().cpu())
-    plt.legend(["gt", "pred"])
+    for i in range(len(gt)):
+        plt.figure()
+        plt.plot(gt[i].squeeze().cpu())
+        plt.plot(pred[i].squeeze().cpu())
+        plt.legend(["ground truth", "prediction"])
+        plt.xlabel("Time(steps)")
+        plt.ylabel("Temperature(deg C)")
     plt.show()
     print(loss)
 

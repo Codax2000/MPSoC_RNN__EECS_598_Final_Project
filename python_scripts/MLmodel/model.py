@@ -21,7 +21,8 @@ class model(nn.Module):
             nn.Tanh())
         
         self.fc4 = nn.Sequential(
-            nn.Linear(in_features=20, out_features = 1, bias = True))
+            nn.Linear(in_features=20, out_features = 1, bias = True),
+            nn.Tanh())
         
     def forward(self, x):
         batch_size, seq_len, _ = x.size()  

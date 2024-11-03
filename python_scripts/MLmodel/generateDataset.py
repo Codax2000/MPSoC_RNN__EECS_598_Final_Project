@@ -1,21 +1,7 @@
-# plan: 
-# 2,3,7,11,14,6,5,10,9,12 as input, try to predict 13
-# Using Time since the epoch, to match the rows. If there is no exact match take the minimum time difference
-# column that we care about:  
-    # 9. Ambient Temperature [°C]
-    # 10. Surface Temperature [°C]
-    # 11. Solar Radiation [W/m^2]
-    # 12. Relative Humidity [%]
-    # 13. Soil Moisture [%]
-    # 14. Watermark [kPa]
-    # 15. Rain Meter [mm]
-    # 16. Wind Speed [m/s]
-    # 17. Wind Direction [°]
-
-
 import os
 import pandas as pd
 from glob import glob
+import numpy as np
 
 # Define the files to read
 file_numbers = [2, 3, 7, 11, 14, 6, 5, 10, 9, 12, 13]
@@ -52,6 +38,15 @@ for path in file_paths:
     except Exception as e:
         print(f"Error loading {path}: {e}")
 
+# normalize data to [-1, 1]
+def normalize_column(col):
+    max_val = col.max()
+    min_val = col.min()
+    if min_val == max_val:
+        return col.apply(lambda x: 0)
+    else:
+        return 2 * (col - min_val) / (max_val - min_val) - 1
+
 # Ensure we have data to merge
 if not data_frames:
     print("No valid files were loaded. Please check the file contents.")
@@ -68,15 +63,16 @@ else:
 
     # Drop rows with NaN values resulting from unmatched times
     merged_df.dropna(inplace=True)
+    merged_df = merged_df.apply(normalize_column) #normalize each col
 
     # Write to a new file
     output_file = "python_scripts\\MLmodel\\Dataset\\merged_stbernard_meteo.txt" #9553 data entries
-    merged_df.to_csv(output_file, sep='\t', index=False)
+    # merged_df.to_csv(output_file, sep='\t', index=False)
     print(f"Data successfully merged into {output_file}")
 
 
 # Load the tab-separated file with headers
-df = pd.read_csv(output_file, sep='\t')
+df = merged_df
 
 # Define the list of column headers to be extracted
 columns_to_extract = ['AmbientTemp_13']
@@ -87,21 +83,77 @@ columns_to_delete = ['TimeEpoch','AmbientTemp_13', 'SurfaceTemp_13', 'SolarRadia
 # Separate the dataframe into two: one with the specified columns, and one with the remaining columns
 
 df_extracted = df[columns_to_extract]
-df_remaining = df.drop(columns=columns_to_extract)
 df_remaining = df.drop(columns = columns_to_delete)
 
-df_train_data = df_remaining.iloc[0:7643] #80% train
-df_train_key = df_extracted.iloc[0:7643] #80% train
+df_remaining.to_csv('python_scripts\\MLmodel\\Dataset\\data.txt', sep=',', index=False)
+df_extracted.to_csv('python_scripts\\MLmodel\\Dataset\\key.txt', sep=',', index=False)
 
-df_val_data = df_remaining.iloc[7643:8598] #10% val
-df_val_key = df_extracted.iloc[7643:8598] #10% val
+# df_train_data = df_remaining.iloc[0:7643] #80% train
+# df_train_key = df_extracted.iloc[0:7643] #80% train
 
-df_test_data = df_remaining.iloc[8598:] #10% val
-df_test_key = df_extracted.iloc[8598:] #10% val
+# df_val_data = df_remaining.iloc[7643:8598] #10% val
+# df_val_key = df_extracted.iloc[7643:8598] #10% val
 
-df_train_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_data.txt', sep='\t', index=False)
-df_train_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_key.txt', sep='\t', index=False)
-df_val_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_data.txt', sep='\t', index=False)
-df_val_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_key.txt', sep='\t', index=False)
-df_test_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_data.txt', sep='\t', index=False)
-df_test_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_key.txt', sep='\t', index=False)
+# df_test_data = df_remaining.iloc[8598:] #10% test
+# df_test_key = df_extracted.iloc[8598:] #10% test
+
+# #intermediet save
+# df_train_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_data.txt', sep=',', index=False)
+# df_train_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_train_key.txt', sep=',', index=False)
+# df_val_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_data.txt', sep=',', index=False)
+# df_val_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_val_key.txt', sep=',', index=False)
+# df_test_data.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_data.txt', sep=',', index=False)
+# df_test_key.to_csv('python_scripts\\MLmodel\\Dataset\\df_test_key.txt', sep=',', index=False)
+
+
+def split_file(filename_data, filename_key, prefix_list, rows_per_chunk=30):
+    with open(filename_data, 'r') as file:
+        lines = file.readlines()
+
+    with open(filename_key, 'r') as file:
+        lines_key = file.readlines()
+        
+    lines = lines[1:]
+    lines_key = lines_key[1:]
+    num_chunks = (len(lines) + rows_per_chunk - 1) // rows_per_chunk
+
+    splitList = np.array([0,0,0,0,0,0,0,0,1,2])
+    
+    for i in range(num_chunks-1): #only keep rows with 30
+        if i%10 == 0:
+            np.random.shuffle(splitList)
+        start = i * rows_per_chunk
+        end = start + rows_per_chunk
+        chunk_data = lines[start:end]
+        chunk_key = lines_key[start:end]
+
+        with open(f"{prefix_list[splitList[i%10]][0]}_{i + 1}.txt", 'w') as new_file:
+            new_file.writelines(chunk_data)
+        with open(f"{prefix_list[splitList[i%10]][1]}_{i + 1}.txt", 'w') as new_file:
+            new_file.writelines(chunk_key)
+
+
+
+
+inFolder = 'python_scripts\\MLmodel\\Dataset\\'
+outFolder = 'python_scripts\\MLmodel\\Dataset\\Split\\'
+prefix_list = [[outFolder + 'train_data\\df_train_data', outFolder + 'train_key\\df_train_key'],
+               [outFolder + 'test_data\\df_test_data', outFolder + 'test_key\\df_test_key'],
+               [outFolder + 'val_data\\df_val_data', outFolder + 'val_key\\df_val_key']]
+# train, val, test split = 0.8, 0.1, 0.1
+# size = len(lines)
+# num_zeros = int(size * 0.8)
+# num_ones = int(size * 0.1)
+# num_twos = int(size * 0.1)
+# array = np.array([0] * num_zeros + [1] * num_ones + [2] * num_twos)
+# np.random.shuffle(array)
+
+
+
+split_file(inFolder + 'data.txt', inFolder + 'key.txt', prefix_list)
+# split_file(inFolder + 'df_test_key.txt', outFolder + 'test_key\\df_test_key')
+# split_file(inFolder + 'df_train_data.txt', outFolder + 'train_data\\df_train_data')
+# split_file(inFolder + 'df_train_key.txt', outFolder + 'train_key\\df_train_key')
+# split_file(inFolder + 'df_val_data.txt', outFolder + 'val_data\\df_val_data')
+# split_file(inFolder + 'df_val_key.txt', outFolder + 'val_key\\df_val_key')
+print("done")
