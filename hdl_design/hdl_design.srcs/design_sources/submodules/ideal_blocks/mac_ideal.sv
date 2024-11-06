@@ -23,7 +23,7 @@ Output:
     never happens, but will have to deal with it later.
 */
 
-module ideal_mac #(
+module mac_ideal #(
     parameter N_X = 16,
     parameter N_W = 16,
     parameter R_X = 8,

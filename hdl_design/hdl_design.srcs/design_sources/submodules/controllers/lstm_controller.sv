@@ -43,52 +43,54 @@ module lstm_controller #(
 
     localparam logic [N_BITS_DATA-1:0] ONE = (1 << (R_BITS_DATA));
 
-    // same logic as fc layer, but assign outputs differently
-    enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;
-
-    // handshake signals for feasibility
+    // handshake signals for convenience
+    logic [N_X-1:0] selected_data_input;
+    logic ready, valid;
     logic handshake_in, handshake_out;
-    assign handshake_in = ; // TODO: change handshake in signals
-    assign handshake_out = ;
+    logic counting_x = addr_n < N_INPUTS;
+    assign x_ready_o = ready && counting_x;
+    assign h_ready_o = ready && !counting_x;
+    assign valid = counting_x ? x_valid_i : h_valid_i;
+    assign handshake_in = ready && valid;
+    assign handshake_out = valid_o && yumi_i;
+    assign selected_data_input = counting_x ? x_data_i : h_data_i;
 
+    // signals used to pass data around, including memory
     logic [$clog2(N_INPUTS+N_OUTPUTS+1)-1:0] addr_r, addr_n;
     logic [3:0][N_OUTPUTS-1:0][N_BITS_MEM-1:0] mem_data_lo;
     logic [N_BITS_DATA-1:0] data_i_r, data_i_n;
 
+    // state logic
+    enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;
+
     // assign outputs and registers
-    assign data_o = ps_e == eBIAS ? {ONE, mem_data_lo} : {data_i_r, mem_data_lo};
-
-    // TODO: change data in and ready/valid signals
     assign valid_o = (ps_e == eBIAS) || (ps_e == eFULL);
-    assign data_i_n = handshake_in ? data_i : data_i_r; 
+    assign data_o = ps_e == eBIAS ? {ONE, mem_data_lo} : {data_i_r, mem_data_lo};
+    assign data_i_n = handshake_in ? selected_data_input : data_i_r;
 
-    // next state logic
+    // state logic
     always_comb begin
         case (ps_e)
             eREADY: begin
-                x_ready_o = ;
-                h_ready_o = ;
+                ready = 1'b1;
                 ns_e = handshake_in ? eFULL : eREADY;
                 addr_n = addr_r;
             end
             eFULL: begin
-                x_ready_o = ;
-                h_ready_o = ;
+                ready = handshake_out && (addr_r != N_INPUTS - 1);
                 ns_e = (~handshake_out) ? eFULL :
                        (addr_r == N_INPUTS - 1) ? eBIAS : 
                        (handshake_in) ? eFULL: eREADY;
                 addr_n = handshake_out ? addr_r + 2'b01 : addr_r; 
             end
             eBIAS: begin
-                x_ready_o = ;
-                h_ready_o = ;
+                ready = handshake_out;
                 addr_n = handshake_out ? 0 : addr_r;
                 ns_e = (~handshake_out) ? eBIAS :
                        (handshake_in) ? eFULL : eREADY;
             end
             default: begin
-                x_ready_o = ;
-                h_ready_o = ;
+                ready = 1'b1;
                 ns_e = handshake_in ? eFULL : eREADY;
                 addr_n = addr_r;
             end
@@ -108,7 +110,7 @@ module lstm_controller #(
         end
     end
 
-    // instantiate memory arrays (all 4)
+    // instantiate memories
     genvar i;
     generate
         for (i = 0; i < 4; i = i + 1) begin

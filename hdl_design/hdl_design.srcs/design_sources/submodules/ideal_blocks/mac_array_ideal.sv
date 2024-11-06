@@ -9,7 +9,7 @@ input must be formatted as a packed array as follows:
  | X in   | packed weight array, N_W bits each |
 */
 
-module mac_array #(
+module mac_array_ideal #(
     parameter N_X=16,
     parameter N_W=16,
     parameter R_X=8,
@@ -73,7 +73,7 @@ module mac_array #(
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            ideal_mac # (
+            mac_ideal # (
                 .N_X(N_X),
                 .N_W(N_W),
                 .R_W(R_W),
