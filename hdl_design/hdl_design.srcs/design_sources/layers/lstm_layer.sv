@@ -50,7 +50,8 @@ module lstm_layer #(
     // logic for layer output
     logic queue_ready_lo, relu_valid_lo;
     logic output_handshake;
-    assign output_handshake = yumi_i && queue_ready_lo && relu_valid_lo;
+    assign output_handshake = yumi_i && valid_o;
+    assign valid_o = relu_valid_lo && queue_ready_lo;
 
     lstm_controller #(
         .N_X(N_X),

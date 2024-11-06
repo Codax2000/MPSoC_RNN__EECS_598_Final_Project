@@ -47,7 +47,8 @@ module lstm_controller #(
     logic [N_X-1:0] selected_data_input;
     logic ready, valid;
     logic handshake_in, handshake_out;
-    logic counting_x = addr_n < INPUT_LENGTH;
+    logic counting_x;
+    assign counting_x = addr_n < INPUT_LENGTH;
     assign x_ready_o = ready && counting_x;
     assign h_ready_o = ready && !counting_x;
     assign valid = counting_x ? x_valid_i : h_valid_i;
@@ -77,9 +78,9 @@ module lstm_controller #(
                 addr_n = addr_r;
             end
             eFULL: begin
-                ready = handshake_out && (addr_r != INPUT_LENGTH - 1);
+                ready = handshake_out && (addr_r != INPUT_LENGTH + OUTPUT_LENGTH- 1);
                 ns_e = (~handshake_out) ? eFULL :
-                       (addr_r == INPUT_LENGTH - 1) ? eBIAS : 
+                       (addr_r == INPUT_LENGTH + OUTPUT_LENGTH - 1) ? eBIAS : 
                        (handshake_in) ? eFULL: eREADY;
                 addr_n = handshake_out ? addr_r + 2'b01 : addr_r; 
             end
