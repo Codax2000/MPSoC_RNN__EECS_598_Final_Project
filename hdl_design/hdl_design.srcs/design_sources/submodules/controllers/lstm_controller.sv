@@ -21,9 +21,9 @@ module lstm_controller #(
     parameter N_W=8,
     parameter R_X=8,
     parameter R_W=8,
-    parameter INPUT_LENGTH=16,
-    parameter OUTPUT_LENGTH=8,
-    parameter LAYER_NUMBER=5
+    parameter INPUT_LENGTH=4,
+    parameter OUTPUT_LENGTH=3,
+    parameter LAYER_NUMBER=6
 ) (
     input logic [N_X-1:0] x_data_i,
     input logic x_valid_i,
@@ -40,5 +40,89 @@ module lstm_controller #(
     input logic clk_i,
     input logic rstb_i
 );
+
+    localparam logic [N_BITS_DATA-1:0] ONE = (1 << (R_BITS_DATA));
+
+    // same logic as fc layer, but assign outputs differently
+    enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;
+
+    // handshake signals for feasibility
+    logic handshake_in, handshake_out;
+    assign handshake_in = ; // TODO: change handshake in signals
+    assign handshake_out = ;
+
+    logic [$clog2(N_INPUTS+N_OUTPUTS+1)-1:0] addr_r, addr_n;
+    logic [3:0][N_OUTPUTS-1:0][N_BITS_MEM-1:0] mem_data_lo;
+    logic [N_BITS_DATA-1:0] data_i_r, data_i_n;
+
+    // assign outputs and registers
+    assign data_o = ps_e == eBIAS ? {ONE, mem_data_lo} : {data_i_r, mem_data_lo};
+
+    // TODO: change data in and ready/valid signals
+    assign valid_o = (ps_e == eBIAS) || (ps_e == eFULL);
+    assign data_i_n = handshake_in ? data_i : data_i_r; 
+
+    // next state logic
+    always_comb begin
+        case (ps_e)
+            eREADY: begin
+                x_ready_o = ;
+                h_ready_o = ;
+                ns_e = handshake_in ? eFULL : eREADY;
+                addr_n = addr_r;
+            end
+            eFULL: begin
+                x_ready_o = ;
+                h_ready_o = ;
+                ns_e = (~handshake_out) ? eFULL :
+                       (addr_r == N_INPUTS - 1) ? eBIAS : 
+                       (handshake_in) ? eFULL: eREADY;
+                addr_n = handshake_out ? addr_r + 2'b01 : addr_r; 
+            end
+            eBIAS: begin
+                x_ready_o = ;
+                h_ready_o = ;
+                addr_n = handshake_out ? 0 : addr_r;
+                ns_e = (~handshake_out) ? eBIAS :
+                       (handshake_in) ? eFULL : eREADY;
+            end
+            default: begin
+                x_ready_o = ;
+                h_ready_o = ;
+                ns_e = handshake_in ? eFULL : eREADY;
+                addr_n = addr_r;
+            end
+        endcase
+    end
+
+    // sequential block
+    always_ff @(posedge clk_i) begin
+        if (~rstb_i) begin
+            addr_r <= '0;
+            data_i_r <= '0;
+            ps_e <= eREADY;
+        end else begin
+            addr_r <= addr_n;
+            data_i_r <= data_i_n;
+            ps_e <= ns_e;
+        end
+    end
+
+    // instantiate memory arrays (all 4)
+    genvar i;
+    generate
+        for (i = 0; i < 4; i = i + 1) begin
+            mem_array #(
+                .N_BITS(N_BITS_MEM),
+                .LAYER_NUMBER(LAYER_NUMBER + i),
+                .ARRAY_LENGTH(N_OUTPUTS),
+                .N_WEIGHTS(N_INPUTS+1)
+            ) memories (
+                .addr_i(addr_n),
+                .clk_i,
+                .data_o(mem_data_lo[i])
+            );
+        end
+    endgenerate
 
 endmodule
