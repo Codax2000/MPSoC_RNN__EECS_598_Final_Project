@@ -43,12 +43,12 @@ module hidden_state_queue #(
     always_comb begin
         case(ps_e)
             eDRAINING: begin
-                count_n = ;
-                ns_e = ;
+                count_n = handshake_out ? count_r - 1 : count_r;
+                ns_e = handshake_out && (count_r == 1) ? eFILLING : eDRAINING;
             end
             eFILLING: begin
-                count_n = ;
-                ns_e = ;
+                count_n = handshake_in ? count_r + 1 : count_r;
+                ns_e = handshake_in && (count_r == (LENGTH - 1)) ? eDRAINING : eFILLING;
             end
         endcase
     end

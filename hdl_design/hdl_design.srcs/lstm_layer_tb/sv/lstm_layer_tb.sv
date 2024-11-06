@@ -44,8 +44,8 @@ module lstm_layer_tb();
     // Define fixed-point values
     parameter N1 = 16;
     parameter N2 = 16;
-    parameter R1 = 0;
-    parameter R2 = 0;
+    parameter R1 = 8;
+    parameter R2 = 8;
     
     // L1: Number of words in input
     parameter L1 = 1;
