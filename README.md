@@ -111,7 +111,7 @@ which maps to a simulation set in Vivado.
 - Before merging branches, kindly give others a heads up about the changes. We can do code reviews if we feel like it.
 
 ### Python Style
-- Up to use, but probably stick to `flake8` linting standards
+- Up to you, but probably stick to `flake8` linting standards
 - Please make sure you have function and file comments
 
 ### Vivado Best Practices
