@@ -86,8 +86,8 @@ module template_tb();
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1)-1:0] input_counter_n, input_counter_r;
-    logic [$clog2(T2)-1:0] output_counter_n, output_counter_r;
+    logic [$clog2(T1):0] input_counter_n, input_counter_r;
+    logic [$clog2(T2):0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;
