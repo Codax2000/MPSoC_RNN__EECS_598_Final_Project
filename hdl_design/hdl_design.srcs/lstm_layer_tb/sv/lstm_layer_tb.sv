@@ -1,7 +1,5 @@
 `ifndef SYNOPSIS
 `define VIVADO
-`endif
-`ifdef VIVADO
 `timescale 1ns/10ps
 `endif
 
@@ -54,10 +52,10 @@ module lstm_layer_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 8;
+    parameter T1 = 32;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 6;
+    parameter T2 = 32;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -86,8 +84,8 @@ module lstm_layer_tb();
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1)-1:0] input_counter_n, input_counter_r;
-    logic [$clog2(T2)-1:0] output_counter_n, output_counter_r;
+    logic [$clog2(T1):0] input_counter_n, input_counter_r;
+    logic [$clog2(T2):0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;

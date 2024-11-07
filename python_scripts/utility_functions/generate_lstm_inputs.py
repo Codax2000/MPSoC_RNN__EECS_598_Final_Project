@@ -39,19 +39,20 @@ def write_matrix_to_files(A, path, n, layer_num):
 
 
 def main():
-    m = 3  # size of output vector Ax + b
-    n = 4  # size of X vector
+    m = 16  # size of output vector Ax + b
+    n = 16  # size of X vector
     Nx = 16  # X quantized to (16,8)
     Rx = 8  # R quantized to (8,8)
     Nw = 8
     Rw = 8
 
     # generate data
+    one = fp_quantize(np.ones((1, 1)), Nx, Rx)
     x0 = np.random.randn(n,1)
     x0_q = fp_quantize(x0, Nx, Rx)  # note - this is the first input
     h0 = np.zeros((m, 1))
 
-    x_hat0 = np.vstack((x0_q, h0, np.ones((1, 1))))
+    x_hat0 = np.vstack((x0_q, h0, one))
 
     A1 = get_matrix(m, n + m)
     A2 = get_matrix(m, n + m)
@@ -77,7 +78,7 @@ def main():
     x1 = np.random.randn(n,1)
     x1_q = fp_quantize(x1, Nx, Rx)
     h1_q = y1
-    x_hat1 = np.vstack((x1_q, h1_q, np.ones((1, 1))))
+    x_hat1 = np.vstack((x1_q, h1_q, one))
 
     y5 = A1_q @ x_hat1  # choose this one!
     y6 = A2_q @ x_hat1
@@ -108,6 +109,9 @@ def main():
 
     print('A1')
     print(A1_q / 2**Rw)
+
+    print('H1')
+    print(y1 / 2**Rx)
 
     print('Result')
     print(result / 2**Rx)

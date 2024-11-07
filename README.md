@@ -144,8 +144,6 @@ The Makefile is set up for use with VCS, but to use it, you will have to be care
 ```c
 `ifndef SYNOPSIS
 `define VIVADO
-`endif
-`ifdef VIVADO
 `timescale 1ns/10ps
 `endif
 ```
