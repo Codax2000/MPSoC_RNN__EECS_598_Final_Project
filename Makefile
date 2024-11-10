@@ -18,9 +18,9 @@ all:	dve
 # Modify starting here
 #####
 
-TESTBENCH = hdl_design/hdl_design.srcs/template_tb/sv/template_tb.sv
+TESTBENCH = hdl_design/hdl_design.srcs/cordic_mac_tb_tb/sv/cordic_mac_tb.sv
 DESIGN_DIR = $(shell find ./hdl_design/hdl_design.srcs/design_sources -name "*.sv" -o -name "*.v")
-VCS = SW_VCS=2020.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+SYNOPSIS
+VCS = SW_VCS=2023.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+SYNOPSIS
 
 #####
 # Should be no need to modify after here

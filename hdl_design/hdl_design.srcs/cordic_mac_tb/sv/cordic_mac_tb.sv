@@ -2,11 +2,12 @@
 `define WIDTH 16
 
 module template_tb();
-    logic clk, rst;
+    logic clk, iterate;
     logic signed [`WIDTH-1:0] xin;
     logic signed [`WIDTH-1:0] yin;
     logic signed [`WIDTH-1:0] zin;
     logic signed [`WIDTH-1:0] y_f;
+    logic ready_o, valid_o, rst, valid_i, yumi_i;
 
     integer i;
 
@@ -19,7 +20,7 @@ module template_tb();
     initial 
     begin
         clk = 0;
-        rst = 1;
+        iterate = 0;
         // 1.625
         xin = 16'b0011101100010110;
         yin = 16'b0001100010100011;
@@ -27,14 +28,18 @@ module template_tb();
         zin = 16'b1111101000010100;
     end
 
-    cordic_mac mac
+    cordic_mac_ctrl mac_ctrl
     (
         .clk_i(clk),
         .rst_i(rst),
-        .xin_i(xin),
-        .yin_i(yin),
-        .zin_i(zin),
-        .y_o(y_f)
+        .data_0_i(xin),
+        .data_1_i(yin),
+        .data_2_i(zin),
+        .valid_i(valid_i),
+        .yumi_i(yumi_i),
+        .data_o(y_f),
+        .valid_o(valid_o),
+        .ready_o(ready_o)
     );
 
     initial 
@@ -43,7 +48,18 @@ module template_tb();
         rst = 1;
         @ (posedge clk)
         rst = 0;
-        #40
+        valid_i = 1;
+        #30
+        yumi_i = 1;
+        // 1,625
+        xin = 16'b0001101000000000;
+        yin = 16'b0000000000000000;
+        // 0.5
+        zin = 16'b0000100000000000;
+        #35
+        yumi_i = 0;
+        valid_i = 0;
+        #56
         $finish;
     end
 endmodule

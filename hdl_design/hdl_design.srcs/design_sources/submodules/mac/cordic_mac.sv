@@ -5,11 +5,13 @@ module cordic_mac
 )
 (
     input logic clk_i,
-    input logic rst_i,
+    input logic iterate,
     input logic signed [WIDTH-1:0] xin_i,
     input logic signed [WIDTH-1:0] yin_i,
     input logic signed [WIDTH-1:0] zin_i,
-    output logic signed [WIDTH-1:0] y_o
+    input logic sample_input,
+    output logic signed [WIDTH-1:0] y_o,
+    output logic ready_o
 );
 
     logic signed [1:0] dir [FRACTIONAL_BITS];
@@ -35,10 +37,17 @@ module cordic_mac
 
     always_ff @ (posedge clk_i) 
     begin
-        if (rst_i)
+        if (~iterate && sample_input == 1'b0)
         begin
             j <= 5'd0;
+            ready_o <= 1'b1;
+        end
+
+        else if (sample_input == 1'b1)
+        begin
             y <= yin_i;
+            ready_o <= 1'b0;
+            j <= 5'd0;
         end
 
         else
@@ -47,11 +56,13 @@ module cordic_mac
             begin
                 y <= y + x_reg;
                 j <= j + 5'd1;
+                ready_o <= 1'b0;
             end
             
             else
             begin
                 y_o <= y;
+                ready_o <= 1'b1;
             end
         end
     end
