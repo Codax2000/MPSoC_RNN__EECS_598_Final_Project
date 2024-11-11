@@ -74,20 +74,23 @@ def inference(model, weight_path, inference_loader, criterion):
 
 
 
-
 if __name__ == "__main__":
 
-    #check GPU
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    if torch.cuda.is_available():
-        print("Using the GPU!")
-    else:
-        print("WARNING: Could not find GPU! Using CPU only.")
+    # Quantized can only run on cpu, else check GPU
+    device = torch.device("cpu")
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # if torch.cuda.is_available():
+    #     print("Using the GPU!")
+    # else:
+    #     print("WARNING: Could not find GPU! Using CPU only.")
     
     #define model
-    net = model().to(device)
-    criterion = nn.SmoothL1Loss() #use MSE loss to optimize for closest abs val to target
+    net = model()
 
+    #dynamic quantization
+    # net = torch.quantization.quantize_dynamic(net, {nn.Linear}, dtype=torch.qint8)
+
+    criterion = nn.SmoothL1Loss() #use MSE loss to optimize for closest abs val to target
 
     # Define file paths
     # inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_data'
@@ -95,20 +98,29 @@ if __name__ == "__main__":
     inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\all_data'
     inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\all_key'
     weights_dir = 'python_scripts\\MLmodel\\weights\\epoch50.pth'
+    weights_dir_q = 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth'
 
     # Instantiate the dataset and DataLoader
     test_dataset = TextDataset(data_dir=inference_data_dir, key_dir=inference_key_dir)
     test_loader = DataLoader(test_dataset)
 
     gt, pred, loss = inference(net, weights_dir, test_loader, criterion)
+    gt_q, pred_q, loss_q = inference(net, weights_dir_q, test_loader, criterion)
 
     for i in range(len(gt)):
         plt.figure()
         plt.plot(gt[i].squeeze().cpu())
         plt.plot(pred[i].squeeze().cpu())
-        plt.legend(["ground truth", "prediction"])
+        plt.plot(pred_q[i].squeeze().cpu(), linestyle= ':')
+        plt.title("LSTM Temperature Prediction")
+        plt.legend(["ground truth", "prediction float", "prediction fixed"])
         plt.xlabel("Time(steps)")
         plt.ylabel("Temperature(normalized)")
+
+        plt.figure()
+        plt.plot(pred[i].squeeze().cpu() - pred_q[i].squeeze().cpu())
+        plt.title("Fixed Point Error")
+
     plt.show()
     print(loss)
 
