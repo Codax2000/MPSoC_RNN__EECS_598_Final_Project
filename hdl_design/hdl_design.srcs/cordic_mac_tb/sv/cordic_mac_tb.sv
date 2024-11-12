@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `define WIDTH 16
 
-module template_tb();
+module cordic_mac_tb();
     logic clk, iterate;
     logic signed [`WIDTH-1:0] xin;
     logic signed [`WIDTH-1:0] yin;

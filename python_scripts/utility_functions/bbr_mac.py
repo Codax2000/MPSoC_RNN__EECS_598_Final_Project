@@ -68,8 +68,8 @@ def plot_heatmap():
 
 
 def main():
-    z = fp_quantize(-1, 16, 12)
-    x = fp_quantize(1.615, 16, 12)
+    z = fp_quantize(0.5, 16, 12)
+    x = fp_quantize(1.625, 16, 12)
     y = 0
     print(f'z = {z}\nx = {x}, y = {y}')
     plot_heatmap()
