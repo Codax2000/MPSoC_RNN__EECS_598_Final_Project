@@ -43,7 +43,7 @@ module cordic_mac_array_tb();
     parameter R2 = 12;
     
     // L1: Number of words in input
-    parameter L1 = 1;
+    parameter L1 = 2;
     
     // L2: Number of words in output
     parameter L2 = 1;
@@ -62,7 +62,7 @@ module cordic_mac_array_tb();
     
     // create send and receive modules locally
     // create DUT
-    cordic_mac_ctrl DUT (.*);
+    cordic_mac_array DUT (.*);
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
@@ -70,19 +70,19 @@ module cordic_mac_array_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("relu_input.mem", input_test_vals);
-        $readmemh("relu_output.mem", output_test_vals);
+        $readmemh("cordic_mac_input.mem", input_test_vals);
+        $readmemh("cordic_mac_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/cordic_mac_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/cordic_mac_output.mem", output_test_vals);
 	`endif
     end
     
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1)-1:0] input_counter_n, input_counter_r;
-    logic [$clog2(T2)-1:0] output_counter_n, output_counter_r;
+    logic [$clog2(T1+1)-1:0] input_counter_n, input_counter_r;
+    logic [$clog2(T2+1)-1:0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;
