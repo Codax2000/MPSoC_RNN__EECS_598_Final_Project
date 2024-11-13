@@ -18,12 +18,12 @@ Parameters:
 
 module fc_layer #(
     parameter N_X = 16,
-    parameter N_W = 8,
-    parameter R_X = 8,
-    parameter R_W = 8,
+    parameter N_W = 16,
+    parameter R_X = 12,
+    parameter R_W = 12,
     parameter LAYER_NUMBER = 4,
-    parameter INPUT_LENGTH = 16,
-    parameter OUTPUT_LENGTH = 56
+    parameter INPUT_LENGTH = 5,
+    parameter OUTPUT_LENGTH = 3
 ) (
     input logic clk_i,
     input logic rstb_i,
@@ -64,13 +64,11 @@ module fc_layer #(
     logic mac_valid_lo, mac_yumi_li;
     logic [OUTPUT_LENGTH-1:0][N_X-1:0] mac_data_lo;
 
-    mac_array_ideal #(
-        .N_X(N_X),
-        .N_W(N_W),
-        .R_X(R_X),
-        .R_W(R_W),
-        .ARRAY_LENGTH(OUTPUT_LENGTH),
-        .N_SUMS(INPUT_LENGTH+1)
+    cordic_mac_array #(
+        .WIDTH(N_X),
+        .FRACTIONAL_BITS(R_X),
+        .N_INPUTS(INPUT_LENGTH+1),
+        .ARRAY_LENGTH(OUTPUT_LENGTH)
     ) mac (
         .clk_i,
         .rstb_i,

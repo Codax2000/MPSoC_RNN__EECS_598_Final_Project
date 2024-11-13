@@ -41,7 +41,7 @@ module lstm_controller #(
     input logic rstb_i
 );
 
-    localparam logic [N_X-1:0] ONE = (1 << R_X);
+    localparam logic [N_X-1:0] ONE = (1 << R_X) - 1;
 
     // handshake signals for convenience
     logic [N_X-1:0] selected_data_input;
