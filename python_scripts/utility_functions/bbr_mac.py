@@ -1,5 +1,4 @@
 import numpy as np
-import pdb
 from fp_logic import fp_quantize
 from write_mem_utils import write_mem_file, get_2s_complement_hex_string
 import matplotlib.pyplot as plt
