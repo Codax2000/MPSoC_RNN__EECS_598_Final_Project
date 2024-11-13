@@ -28,6 +28,8 @@ module hidden_state_queue #(
     input rstb_i
 );
 
+    localparam logic [N_X-1:0] ZERO = 0;
+
     logic [$clog2(LENGTH)-1:0] count_r, count_n;
     logic [LENGTH-1:0][N_X-1:0] shift_n, shift_r;
     enum logic {eFILLING, eDRAINING} ps_e, ns_e;
@@ -38,17 +40,17 @@ module hidden_state_queue #(
     assign valid_o = ps_e == eDRAINING;
     assign ready_o = ps_e == eFILLING;
     assign data_o = shift_r[0];
-    assign shift_n = handshake_in ? {data_i, shift_r[LENGTH-1:1]} : shift_r;
+    assign shift_n = handshake_in || handshake_out ? {data_i, shift_r[LENGTH-1:1]} : shift_r;
 
     always_comb begin
         case(ps_e)
             eDRAINING: begin
-                count_n = ;
-                ns_e = ;
+                count_n = handshake_out ? count_r - 1 : count_r;
+                ns_e = handshake_out && (count_r == 1) ? eFILLING : eDRAINING;
             end
             eFILLING: begin
-                count_n = ;
-                ns_e = ;
+                count_n = handshake_in ? count_r + 1 : count_r;
+                ns_e = handshake_in && (count_r == (LENGTH - 1)) ? eDRAINING : eFILLING;
             end
         endcase
     end

@@ -64,7 +64,7 @@ module fc_layer #(
     logic mac_valid_lo, mac_yumi_li;
     logic [OUTPUT_LENGTH-1:0][N_X-1:0] mac_data_lo;
 
-    mac_array #(
+    mac_array_ideal #(
         .N_X(N_X),
         .N_W(N_W),
         .R_X(R_X),

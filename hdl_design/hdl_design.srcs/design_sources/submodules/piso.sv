@@ -38,7 +38,7 @@ module piso #(
     output logic valid_o,
     input logic yumi_i,
     output logic [WORD_SIZE-1:0] data_o
-    );
+);
 
     logic [$clog2(LAYER_HEIGHT+1)-1:0] count_shift_r, count_shift_n;
     enum logic {eREADY=1'b1, eSHIFT=1'b0} ps_e, ns_e;

@@ -23,7 +23,7 @@ Output:
     never happens, but will have to deal with it later.
 */
 
-module ideal_mac #(
+module mac_ideal #(
     parameter N_X = 16,
     parameter N_W = 16,
     parameter R_X = 8,
@@ -52,7 +52,8 @@ module ideal_mac #(
     assign underflow = 1'b0;
 
     assign product = x_i * w_i;
-    assign sum_n = add_i ? sum_r + product : sum_r;
+    assign sum_n =  clear_i ? 0 : 
+                    add_i ? sum_r + product : sum_r;
     assign trimmed_sum = sum_n[N_X-1+R_W:R_W];
     assign sum_o_n = overflow  ?  MAX_VALUE :
                    underflow ? ~MAX_VALUE : trimmed_sum;

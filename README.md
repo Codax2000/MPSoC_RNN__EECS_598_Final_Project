@@ -111,7 +111,7 @@ which maps to a simulation set in Vivado.
 - Before merging branches, kindly give others a heads up about the changes. We can do code reviews if we feel like it.
 
 ### Python Style
-- Up to use, but probably stick to `flake8` linting standards
+- Up to you, but probably stick to `flake8` linting standards
 - Please make sure you have function and file comments
 
 ### Vivado Best Practices
@@ -144,8 +144,6 @@ The Makefile is set up for use with VCS, but to use it, you will have to be care
 ```c
 `ifndef SYNOPSIS
 `define VIVADO
-`endif
-`ifdef VIVADO
 `timescale 1ns/10ps
 `endif
 ```
