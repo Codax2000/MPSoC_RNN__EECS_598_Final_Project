@@ -45,7 +45,7 @@
     <Option Name="SimulatorGccVersionActiveHdl" Val="9.3.0"/>
     <Option Name="BoardPart" Val="xilinx.com:k24c:part0:1.0"/>
     <Option Name="SourceMgmtMode" Val="DisplayOnly"/>
-    <Option Name="ActiveSimSet" Val="lstm_layer_tb"/>
+    <Option Name="ActiveSimSet" Val="cordic_mac_array_tb"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
@@ -664,6 +664,21 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/design_sources/layers/lstm_layer.sv">
+    <FileSet Name="cordic_mac_array_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/cordic_mac_array_tb" RelGenDir="$PGENDIR/cordic_mac_array_tb">
+      <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/cordic_mac_tb/mem/cordic_mac_input.mem">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/cordic_mac_tb/mem/cordic_mac_output.mem">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/cordic_mac_tb/sv/cordic_mac_array_tb.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -1095,6 +1110,9 @@
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="lstm_layer_tb"/>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="cordic_mac_array_tb"/>
         <Option Name="TopLib" Val="xil_defaultlib"/>
         <Option Name="TransportPathDelay" Val="0"/>
         <Option Name="TransportIntDelay" Val="0"/>
