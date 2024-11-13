@@ -23,11 +23,11 @@ module cordic_mac_array
     output logic ready_o
 );
 
-    logic [WIDTH-1:0] z_input;
-    logic [ARRAY_LENGTH-1:0][WIDTH-1:0] x_input;
+    logic [WIDTH-1:0] z_input_n, z_input_r;
+    logic [ARRAY_LENGTH-1:0][WIDTH-1:0] x_input_n, x_input_r;
 
-    assign z_input = data_i[ARRAY_LENGTH];
-    assign x_input = data_i[ARRAY_LENGTH-1:0];
+    assign z_input_n = ready_o && valid_i ? data_i[ARRAY_LENGTH] : z_input_r;
+    assign x_input_n = ready_o && valid_i ? data_i[ARRAY_LENGTH-1:0]: x_input_r;
 
     logic [$clog2(N_INPUTS)-1:0] input_counter_n, input_counter_r;
     logic [$clog2(FRACTIONAL_BITS)-1:0] iterate_counter_n, iterate_counter_r;
@@ -49,8 +49,8 @@ module cordic_mac_array
                 .iterate,
                 .clear,
                 .index(iterate_counter_r),
-                .x_i(x_input[i]),
-                .z_i(z_input),
+                .x_i(x_input_r[i]),
+                .z_i(z_input_r),
                 .y_o(data_o[i])
             );
         end
@@ -65,7 +65,7 @@ module cordic_mac_array
             end
             eITERATE: begin
                 ns_e = (iterate_counter_r != (FRACTIONAL_BITS - 1)) ? eITERATE : 
-                        (input_counter_r == (N_INPUTS - 1)) ? eDONE : eSAMPLE;
+                        (input_counter_r == (N_INPUTS)) ? eDONE : eSAMPLE;
                 input_counter_n = input_counter_r;
                 iterate_counter_n = iterate_counter_n + 1;
             end
@@ -87,10 +87,14 @@ module cordic_mac_array
             ps_e <= eSAMPLE;
             iterate_counter_r = '0;
             input_counter_r = '0;
+            x_input_r <= '0;
+            z_input_r <= '0;
         end else begin
             ps_e <= ns_e;
             iterate_counter_r <= iterate_counter_n;
             input_counter_r <= input_counter_n;
+            x_input_r <= x_input_n;
+            z_input_r <= z_input_n;
         end
     end
 endmodule

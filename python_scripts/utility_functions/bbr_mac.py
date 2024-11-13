@@ -28,12 +28,12 @@ def bbr_mac(xin, yin, zin, n=12):
     Computes y_in + zin * xin where all three numbers are in (16,n) fixed
     point notation
     '''
-    dir = np.zeros((n + 1))
+    dir = np.zeros((n))
     y = yin
-    dir[0] = 1 if zin < 0 else -1
+    dir[0] = 1 if zin < 0 else 0
     zin = int_to_signed_bits(zin)
     for i in range(1, n):
-        dir[i] = 1 if zin[n - i] == 0 else -1
+        dir[i] = 1 if zin[n - i] == 0 else 0
     for j in range(n):
         xreg = np.floor(xin / 2**(j + 1))
         if dir[j] == 1:
@@ -71,6 +71,9 @@ def cordic_vector_multiply(x, z):
     y = np.zeros(x.shape)
     for i in range(len(y)):
         y[i] = bbr_mac(z[i], y[i], x[i])
+    print(f'X = {x}')
+    print(f'Z = {z}')
+    print(f'Y = {np.cumsum(y)}')
     return np.sum(y)
 
 
