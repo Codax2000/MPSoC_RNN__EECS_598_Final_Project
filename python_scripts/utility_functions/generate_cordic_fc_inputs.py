@@ -35,22 +35,22 @@ def main():
     outputs = cordic_matrix_multiply(x_hat_fp, A_fp)
     outputs2 = cordic_matrix_multiply(x2_hat_fp, A_fp)
     outputs = np.hstack((outputs, outputs2))
-    inputs = np.hstack((x_hat[:-1], x2_hat[:-1]))
+    inputs = np.hstack((x_hat_fp[:-1], x2_hat_fp[:-1]))
+
+    print('\nExpected Inputs/Outputs in fixed point')
     print(inputs)
     print(outputs)
+    print('\nExpected Fixed Point Matrix')
     print(A_fp)
 
     # real valued approximation
     A = A_fp / 2**12
+    print('\nExpected Outputs:')
     print(outputs / 2**12)
     print(A @ x_hat.reshape((n+1, 1)))
     path = './hdl_design/hdl_design.srcs/fc_layer_tb/mem'
     write_matrix_to_files(A_fp, path, 16, 4)
     write_mem_file(inputs.astype(int), f'{path}/fc_input', 16)
-
-    # ReLU function
-    filt = outputs < 0
-    outputs[filt] = 0
     write_mem_file(outputs.astype(int), f'{path}/fc_output', 16)
 
 

@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="k24c"/>
-    <Option Name="WTXSimLaunchSim" Val="181"/>
+    <Option Name="WTXSimLaunchSim" Val="206"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -352,6 +352,7 @@
       </Config>
     </FileSet>
     <FileSet Name="lstm_layer_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/lstm_layer_tb" RelGenDir="$PGENDIR/lstm_layer_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/hidden_state_queue.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>

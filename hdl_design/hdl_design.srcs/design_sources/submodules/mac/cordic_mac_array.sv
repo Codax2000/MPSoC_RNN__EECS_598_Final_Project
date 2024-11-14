@@ -71,7 +71,7 @@ module cordic_mac_array
             end
             eDONE: begin
                 ns_e = ~yumi_i ? eDONE : valid_i ? eITERATE : eSAMPLE;
-                input_counter_n = '0;
+                input_counter_n = (valid_i && ready_o) ? 1 : '0;
                 iterate_counter_n = '0;
             end
             default: begin
