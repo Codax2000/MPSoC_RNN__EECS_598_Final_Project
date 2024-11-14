@@ -1,5 +1,4 @@
 import numpy as np
-import pdb
 from fp_logic import fp_quantize
 from write_mem_utils import write_mem_file, get_2s_complement_hex_string
 import matplotlib.pyplot as plt
@@ -67,10 +66,10 @@ def plot_heatmap():
     plt.savefig('./pictures/cordic_mac_heatmap.png')
 
 
-def cordic_vector_multiply(x, z):
+def cordic_vector_multiply(x, z, n=12):
     y = np.zeros(x.shape)
     for i in range(len(y)):
-        y[i] = bbr_mac(z[i], y[i], x[i])
+        y[i] = bbr_mac(z[i], y[i], x[i], n)
     print(f'X = {x}')
     print(f'Z = {z}')
     print(f'Y = {np.cumsum(y)}')
@@ -93,8 +92,8 @@ def main():
     x1_fp = fp_quantize(x1, 16, 12)
     x2_fp = fp_quantize(x2, 16, 12)
     z_fp = fp_quantize(z, 16, 12)
-    y1_fp = cordic_vector_multiply(x1_fp, z_fp)
-    y2_fp = cordic_vector_multiply(x2_fp, z_fp)
+    y1_fp = cordic_vector_multiply(x1_fp, z_fp, 12)
+    y2_fp = cordic_vector_multiply(x2_fp, z_fp, 12)
     y1 = np.sum(x1 * z)
     y2 = np.sum(x2 * z)
     path = './hdl_design/hdl_design.srcs/cordic_mac_tb/mem'

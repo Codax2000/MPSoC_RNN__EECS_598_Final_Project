@@ -41,8 +41,13 @@ module lstm_controller #(
     input logic rstb_i
 );
 
-    localparam logic [N_X-1:0] ONE = (1 << R_X);
+    localparam logic [N_X-1:0] ONE = (1 << R_X) - 1;
 
+    // signals used to pass data around, including memory
+    logic [$clog2(INPUT_LENGTH+OUTPUT_LENGTH+1)-1:0] addr_r, addr_n;
+    logic [3:0][OUTPUT_LENGTH-1:0][N_W-1:0] mem_data_lo;
+    logic [N_X-1:0] data_i_r, data_i_n;
+    
     // handshake signals for convenience
     logic [N_X-1:0] selected_data_input;
     logic ready, valid;
@@ -55,11 +60,6 @@ module lstm_controller #(
     assign handshake_in = ready && valid;
     assign handshake_out = valid_o && yumi_i;
     assign selected_data_input = counting_x ? x_data_i : h_data_i;
-
-    // signals used to pass data around, including memory
-    logic [$clog2(INPUT_LENGTH+OUTPUT_LENGTH+1)-1:0] addr_r, addr_n;
-    logic [3:0][OUTPUT_LENGTH-1:0][N_W-1:0] mem_data_lo;
-    logic [N_X-1:0] data_i_r, data_i_n;
 
     // state logic
     enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;

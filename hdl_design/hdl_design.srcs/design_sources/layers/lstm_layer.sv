@@ -16,11 +16,11 @@ parameters:
 
 module lstm_layer #(
     parameter N_X=16,
-    parameter N_W=8,
-    parameter R_X=8,
-    parameter R_W=8,
-    parameter INPUT_LENGTH=16,
-    parameter OUTPUT_LENGTH=16,
+    parameter N_W=16,
+    parameter R_X=12,
+    parameter R_W=12,
+    parameter INPUT_LENGTH=11,
+    parameter OUTPUT_LENGTH=4,
     parameter LAYER_NUMBER=6
 ) (
     input logic [N_X-1:0] data_i,
@@ -100,13 +100,11 @@ module lstm_layer #(
         for (i = 0; i < 4; i = i + 1) begin
 
             // MAC array communicating with controller
-            mac_array_ideal #(
-                .N_X(N_X),
-                .N_W(N_W),
-                .R_X(R_X),
-                .R_W(R_W),
-                .ARRAY_LENGTH(OUTPUT_LENGTH),
-                .N_SUMS(INPUT_LENGTH+OUTPUT_LENGTH+1)
+            cordic_mac_array #(
+                .WIDTH(N_X),
+                .FRACTIONAL_BITS(R_X),
+                .N_INPUTS(INPUT_LENGTH+OUTPUT_LENGTH+1),
+                .ARRAY_LENGTH(OUTPUT_LENGTH)
             ) mac_array (
                 .data_i({lstm_data_lo, lstm_mem_lo[i]}),
                 .valid_i(lstm_valid_lo),

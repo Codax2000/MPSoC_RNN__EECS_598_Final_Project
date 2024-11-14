@@ -28,7 +28,7 @@ module fc_controller #(
     parameter N_OUTPUTS=16,
     parameter N_BITS_MEM=16,
     parameter N_BITS_DATA=16,
-    parameter R_BITS_DATA=8
+    parameter R_BITS_DATA=12
 ) (
     input logic [N_BITS_DATA-1:0] data_i,
     input logic valid_i,
@@ -43,7 +43,7 @@ module fc_controller #(
 );
 
     enum logic [1:0] {eREADY, eFULL, eBIAS} ps_e, ns_e;
-    localparam logic [N_BITS_DATA-1:0] ONE = (1 << (R_BITS_DATA));
+    localparam logic [N_BITS_DATA-1:0] ONE = (1 << (R_BITS_DATA)) - 1;
     logic handshake_in, handshake_out;
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;

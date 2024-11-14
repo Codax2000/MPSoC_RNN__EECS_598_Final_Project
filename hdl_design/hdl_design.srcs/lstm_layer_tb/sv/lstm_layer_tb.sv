@@ -42,8 +42,8 @@ module lstm_layer_tb();
     // Define fixed-point values
     parameter N1 = 16;
     parameter N2 = 16;
-    parameter R1 = 8;
-    parameter R2 = 8;
+    parameter R1 = 12;
+    parameter R2 = 12;
     
     // L1: Number of words in input
     parameter L1 = 1;
@@ -52,10 +52,10 @@ module lstm_layer_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 32;
+    parameter T1 = 11;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 32;
+    parameter T2 = 4;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -76,8 +76,8 @@ module lstm_layer_tb();
         $readmemh("lstm_input.mem", input_test_vals);
         $readmemh("lstm_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_output.mem", output_test_vals);
 	`endif
     end
     

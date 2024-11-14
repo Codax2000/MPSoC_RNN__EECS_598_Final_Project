@@ -44,8 +44,8 @@ module fc_layer_tb();
     // Define fixed-point values
     parameter N1 = 16;
     parameter N2 = 16;
-    parameter R1 = 8;
-    parameter R2 = 8;
+    parameter R1 = 12;
+    parameter R2 = 12;
     
     // L1: Number of words in input
     parameter L1 = 1;
@@ -54,10 +54,10 @@ module fc_layer_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 16;
+    parameter T1 = 10;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 56;
+    parameter T2 = 6;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -86,8 +86,8 @@ module fc_layer_tb();
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1):0] input_counter_n, input_counter_r;
-    logic [$clog2(T2):0] output_counter_n, output_counter_r;
+    logic [$clog2(T1+1):0] input_counter_n, input_counter_r;
+    logic [$clog2(T2+1):0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;

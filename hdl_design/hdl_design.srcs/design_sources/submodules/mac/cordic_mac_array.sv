@@ -29,7 +29,7 @@ module cordic_mac_array
     assign z_input_n = ready_o && valid_i ? data_i[ARRAY_LENGTH] : z_input_r;
     assign x_input_n = ready_o && valid_i ? data_i[ARRAY_LENGTH-1:0]: x_input_r;
 
-    logic [$clog2(N_INPUTS)-1:0] input_counter_n, input_counter_r;
+    logic [$clog2(N_INPUTS+1)-1:0] input_counter_n, input_counter_r;
     logic [$clog2(FRACTIONAL_BITS)-1:0] iterate_counter_n, iterate_counter_r;
 
     enum logic [2:0] {eITERATE, eSAMPLE, eDONE} ps_e, ns_e;
@@ -67,11 +67,11 @@ module cordic_mac_array
                 ns_e = (iterate_counter_r != (FRACTIONAL_BITS - 1)) ? eITERATE : 
                         (input_counter_r == (N_INPUTS)) ? eDONE : eSAMPLE;
                 input_counter_n = input_counter_r;
-                iterate_counter_n = iterate_counter_n + 1;
+                iterate_counter_n = iterate_counter_r + 1;
             end
             eDONE: begin
                 ns_e = ~yumi_i ? eDONE : valid_i ? eITERATE : eSAMPLE;
-                input_counter_n = '0;
+                input_counter_n = (valid_i && ready_o) ? 1 : '0;
                 iterate_counter_n = '0;
             end
             default: begin
