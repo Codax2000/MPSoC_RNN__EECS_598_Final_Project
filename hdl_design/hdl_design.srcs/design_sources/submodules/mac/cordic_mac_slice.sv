@@ -14,7 +14,7 @@ module cordic_mac_slice #(
 
     logic signed [N_X-1:0] y_n, x_shift, x_shift_neg, x_shift_sel;
     logic dir;
-    assign dir = index == 0 ? z_i < 0 : ~z_i[R_X - index];
+    assign dir = index == 0 ? z_i[N_X-1] : ~z_i[R_X - index];
     
     assign x_shift = x_i >>> (index + 1);
     assign x_shift_neg = ~x_shift + 1;
