@@ -12,9 +12,13 @@ module cordic_mac_slice #(
     output logic signed [N_X-1:0] y_o
 );
 
+    localparam logic [$clog2(R_X)-1:0] R_local = R_X;
+    logic [$clog2(R_X)-1:0] diff;
+    assign diff = R_local - index;
+
     logic signed [N_X-1:0] y_n, x_shift, x_shift_neg, x_shift_sel;
     logic dir;
-    assign dir = index == 0 ? z_i[N_X-1] : ~z_i[R_X - index];
+    assign dir = index == 0 ? z_i[N_X-1] : ~z_i[diff];
     
     assign x_shift = x_i >>> (index + 1);
     assign x_shift_neg = ~x_shift + 1;
