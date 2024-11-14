@@ -76,8 +76,8 @@ module lstm_layer_tb();
         $readmemh("lstm_input.mem", input_test_vals);
         $readmemh("lstm_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_output.mem", output_test_vals);
 	`endif
     end
     

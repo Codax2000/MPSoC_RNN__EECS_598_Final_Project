@@ -73,8 +73,8 @@ module cordic_mac_array_tb();
         $readmemh("cordic_mac_input.mem", input_test_vals);
         $readmemh("cordic_mac_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/cordic_mac_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/cordic_mac_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_mac_array_tb/mem/cordic_mac_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_mac_array_tb/mem/cordic_mac_output.mem", output_test_vals);
 	`endif
     end
     
