@@ -4,7 +4,7 @@ import torch.nn as nn
 from model import model
 from torch.utils.data import Dataset, DataLoader
 import os
-
+from quantize_tensor import *
 
 
 # Custom dataset class
@@ -89,27 +89,14 @@ def static_quantize(checkpoint):
     return model_int8
 
 
-
-def fixed_point_quantize(tensor, n, r):
-    # Calculate scaling factor based on the fractional bits
-    scale_factor = 2 ** r
-    
-    # Quantize: multiply by scale, round, clip to fit within n-bit range, and then scale back
-    max_val = 2 ** (n - r - 1) - 1  # Maximum integer that can be represented
-    min_val = -2 ** (n - r - 1)      # Minimum integer that can be represented
-    
-    # Apply scaling, round, and clamp to the range
-    quantized_tensor = torch.clamp((tensor * scale_factor).round(), min_val, max_val) / scale_factor
-    
-    return quantized_tensor
-
 def quantize_fix_manual(checkpoint, n, r):
     net = model()
     net.load_state_dict(checkpoint)
 
     quantized_dict = {}
     for key, tensor in net.state_dict().items():
-        quantized_dict[key] = fixed_point_quantize(tensor, n, r)
+        # quantized_dict[key] = fixed_point_quantize(tensor, n, r)
+        quantized_dict[key] = fixed_point_quantize_int(tensor, n, r)
 
     net.load_state_dict(quantized_dict)
     return net

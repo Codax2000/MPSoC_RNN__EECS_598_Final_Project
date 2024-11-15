@@ -10,7 +10,7 @@ import numpy as np
 
 def fp_quantize(x, n=16, r=8):
     '''
-    Quantizes inpu x to mantissa values in Q(n,r) format of the same
+    Quantizes input x to mantissa values in Q(n,r) format of the same
     shape as x
 
     inputs:

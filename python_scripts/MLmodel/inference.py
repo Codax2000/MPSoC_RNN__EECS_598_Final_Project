@@ -1,4 +1,4 @@
-from model import model
+from model import model, model_q
 from torch.utils.data import Dataset, DataLoader
 import torch
 import os
@@ -86,6 +86,7 @@ if __name__ == "__main__":
     
     #define model
     net = model()
+    net_q = model_q(16,8)
 
     #dynamic quantization
     # net = torch.quantization.quantize_dynamic(net, {nn.Linear}, dtype=torch.qint8)
@@ -96,16 +97,20 @@ if __name__ == "__main__":
     # inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_data'
     # inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\Split\\test_key'
     inference_data_dir = 'python_scripts\\MLmodel\\Dataset\\all_data'
+    inference_data_dir_q = 'python_scripts\\MLmodel\\Dataset\\all_data_q'
     inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\all_key'
     weights_dir = 'python_scripts\\MLmodel\\weights\\epoch50.pth'
     weights_dir_q = 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth'
 
     # Instantiate the dataset and DataLoader
     test_dataset = TextDataset(data_dir=inference_data_dir, key_dir=inference_key_dir)
+    test_dataset_q = TextDataset(data_dir=inference_data_dir_q, key_dir=inference_key_dir)
+
     test_loader = DataLoader(test_dataset)
+    test_loader_q = DataLoader(test_dataset_q)
 
     gt, pred, loss = inference(net, weights_dir, test_loader, criterion)
-    gt_q, pred_q, loss_q = inference(net, weights_dir_q, test_loader, criterion)
+    gt_q, pred_q, loss_q = inference(net_q, weights_dir_q, test_loader_q, criterion)
 
     for i in range(len(gt)):
         plt.figure()
