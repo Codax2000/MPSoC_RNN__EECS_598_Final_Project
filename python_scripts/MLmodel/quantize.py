@@ -114,7 +114,7 @@ if __name__ == "__main__":
     quantized_model = quantize_fix_manual(checkpoint,16,8)
     
     # Save the quantized model
-    torch.save(quantized_model.state_dict(), 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth')
+    torch.save(quantized_model.state_dict(), 'python_scripts\\MLmodel\\weights\\epoch50q_manual_int.pth')
     
     # Print state dict keys to verify quantization
     state_dict = quantized_model.state_dict()
