@@ -106,8 +106,8 @@ if __name__ == '__main__':
 
         lstm_i = torch.sigmoid((layer4.to(torch.float32)* 2**-fixed_r) @ f2out)
         lstm_f = torch.sigmoid((layer5.to(torch.float32)* 2**-fixed_r) @ f2out)
-        lstm_g = torch.tanh((layer6.to(torch.float32) * 2**-fixed_r)@ f2out)
-        lstm_o = torch.sigmoid((layer7.to(torch.float32) * 2**-fixed_r)@ f2out)
+        lstm_g = torch.tanh((layer6.to(torch.float32)* 2**-fixed_r)@ f2out)
+        lstm_o = torch.sigmoid((layer7.to(torch.float32)* 2**-fixed_r) @ f2out)
         c_t = lstm_f * c_t + lstm_i * lstm_g
         h_t = lstm_o * torch.tanh(c_t)
         c_t = fixed_point_quantize(c_t)
