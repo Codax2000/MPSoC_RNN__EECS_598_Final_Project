@@ -1,4 +1,3 @@
-.vscode/
 *.pyc
 
 # ignore Vivado simulation and build directories
@@ -6,6 +5,8 @@ hdl_design/hdl_design.cache/*
 hdl_design/hdl_design.hw/*
 hdl_design/hdl_design.ip_user_files/*
 hdl_design/hdl_design.sim/*
+hdl_design/hdl_design.runs/*
+hdl_design/hdl_design.gen/*
 
 # ignore simulation directories
 dve.log

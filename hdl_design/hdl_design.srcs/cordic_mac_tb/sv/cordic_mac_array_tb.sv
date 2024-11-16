@@ -1,18 +1,13 @@
 `ifndef SYNOPSIS
 `define VIVADO
-`endif
-`ifdef VIVADO
 `timescale 1ns/10ps
 `endif
 
 /**
 Alex Knowlton
-10/29/2024
+11/12/2024
 
-Testbench template lightly based on UVM and BaseJump SystemVerilog coding standards.
-Assumes a module with helpful valid/ready interfaces at both ends and sends data from
-a .mem file generated externally. Compares to another .mem file generated externally
-and runs assertion testing on the comparison.
+Testbench for looking at vector inner product using CORDIC MAC
 
 Assumes the following input and output to the DUT:
 Input handshake:
@@ -39,25 +34,25 @@ T2 - number of values to receive from DUT
 Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
 */
 
-module template_tb();
+module cordic_mac_array_tb();
 
     // Define fixed-point values
     parameter N1 = 16;
     parameter N2 = 16;
-    parameter R1 = 0;
-    parameter R2 = 0;
+    parameter R1 = 12;
+    parameter R2 = 12;
     
     // L1: Number of words in input
-    parameter L1 = 1;
+    parameter L1 = 2;
     
     // L2: Number of words in output
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 10;
+    parameter T1 = 12;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 10;
+    parameter T2 = 2;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -67,7 +62,7 @@ module template_tb();
     
     // create send and receive modules locally
     // create DUT
-    relu_afb #(.N(N1)) DUT(.*);
+    cordic_mac_array DUT (.*);
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
@@ -75,19 +70,19 @@ module template_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("relu_input.mem", input_test_vals);
-        $readmemh("relu_output.mem", output_test_vals);
+        $readmemh("cordic_mac_input.mem", input_test_vals);
+        $readmemh("cordic_mac_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_mac_tb/mem/cordic_mac_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_mac_tb/mem/cordic_mac_output.mem", output_test_vals);
 	`endif
     end
     
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1+1):0] input_counter_n, input_counter_r;
-    logic [$clog2(T2+1):0] output_counter_n, output_counter_r;
+    logic [$clog2(T1+1)-1:0] input_counter_n, input_counter_r;
+    logic [$clog2(T2+1)-1:0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;

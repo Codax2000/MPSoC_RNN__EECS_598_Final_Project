@@ -39,13 +39,13 @@ T2 - number of values to receive from DUT
 Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
 */
 
-module template_tb();
+module fc_layer_tb();
 
     // Define fixed-point values
     parameter N1 = 16;
     parameter N2 = 16;
-    parameter R1 = 0;
-    parameter R2 = 0;
+    parameter R1 = 12;
+    parameter R2 = 12;
     
     // L1: Number of words in input
     parameter L1 = 1;
@@ -57,7 +57,7 @@ module template_tb();
     parameter T1 = 10;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 10;
+    parameter T2 = 6;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -67,7 +67,7 @@ module template_tb();
     
     // create send and receive modules locally
     // create DUT
-    relu_afb #(.N(N1)) DUT(.*);
+    fc_layer DUT(.*);
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
@@ -75,11 +75,11 @@ module template_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("relu_input.mem", input_test_vals);
-        $readmemh("relu_output.mem", output_test_vals);
+        $readmemh("fc_input.mem", input_test_vals);
+        $readmemh("fc_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/relu_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/fc_layer_tb/mem/fc_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/fc_layer_tb/mem/fc_output.mem", output_test_vals);
 	`endif
     end
     

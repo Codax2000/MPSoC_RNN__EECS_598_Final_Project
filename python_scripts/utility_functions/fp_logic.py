@@ -34,7 +34,7 @@ def fp_quantize(x, n=16, r=8):
     is_under_min = x < lower_max
     x[is_over_max] = upper_max
     x[is_under_min] = lower_max
-    return x
+    return x.astype(int)
 
 
 def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):

@@ -6,10 +6,10 @@ all:	dve
 # Modify starting here
 #####
 
-TB_NAME = template_tb.sv
+TB_NAME = cordic_mac_array_tb.sv
 TESTBENCH = $(shell find . -name $(TB_NAME))
 DESIGN_DIR = $(shell find ./hdl_design/hdl_design.srcs/design_sources -name "*.sv" -o -name "*.v")
-VCS = SW_VCS=2020.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+SYNOPSIS
+VCS = SW_VCS=2023.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+SYNOPSIS
 
 #####
 # Should be no need to modify after here
