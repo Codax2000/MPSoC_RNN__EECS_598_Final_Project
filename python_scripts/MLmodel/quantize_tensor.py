@@ -1,6 +1,6 @@
 import torch
 
-def fixed_point_quantize(tensor, n, r):
+def fixed_point_quantize(tensor, n=16, r=8):
     # Calculate scaling factor based on the fractional bits
     scale_factor = 2 ** r
     
@@ -14,7 +14,7 @@ def fixed_point_quantize(tensor, n, r):
     return quantized_tensor
 
 
-def fixed_point_quantize_int(tensor, n, r):
+def fixed_point_quantize_int(tensor, n=16, r=8):
     # Calculate scaling factor based on the fractional bits
     scale_factor = 2 ** r
     

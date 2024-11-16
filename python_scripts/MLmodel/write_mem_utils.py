@@ -60,9 +60,9 @@ def write_to_file(x, path, n_bits):
     '''
     with open(path, 'w') as fd:
         for x_i in x:
-            hex_string = get_2s_complement_hex_string(x_i, n_bits)
-            print(hex_string, file=fd)
-
+            for x_j in x_i:
+                hex_string = get_2s_complement_hex_string(x_j, n_bits)
+                print(hex_string, file=fd)
 
 def get_2s_complement_hex_string(x, n_bits):
     '''
