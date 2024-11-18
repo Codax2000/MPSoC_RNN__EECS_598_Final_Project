@@ -84,7 +84,7 @@ def calculate_rotation_direction(z_in, n):
     for i in range(p_index-1, n):
         
         b_i = bit_slice(z_in, n - i)
-        print(b_i)
+        #print(b_i)
         if b_i == 0:
             directions[d_i] = 1
         else:
@@ -145,6 +145,9 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
     lut_expand = np.arctanh(1-np.power(2.0, index_expand-2))
     lut_expand = fp.fp_quantize(lut_expand, cb._n_z, cb._r_z)
 
+    print(lut_expand)
+    print(lut)
+
     for i in range(M+1):
         j_current = index_expand[i]
 
@@ -183,7 +186,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         y[i+4, :] = y[i+3, :] - sigma[i+2,:] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2,:] * fp.fp_quantize(2.0**(-j_current))
         dir_index+1
-        print(sigma[i+2,:])
+        #print(sigma[i+2,:])
     
     
     x[-1, :] = fp.fp_mult(x[-2, :], Kh, cb._n_x, cb._n_x, cb._r_x, \
@@ -266,7 +269,6 @@ def compute_tanh(z, n_rotations=16, n_x=16, r_x=8, n_z=16, r_z=8):
     cordic_block1 = cordic(n_rotations=n_rotations, n_x=n_x, r_x=r_x, n_z=n_z, r_z=r_z)
     cordic_block3 = cordic(n_rotations=n_rotations, n_x=n_x, r_x=r_x, n_z=n_z, r_z=r_z)
 
-    lut, K_fp, index, m = cordic_block3.get_rotation_constants(is_hyperbolic=True)
    
     Kh = .2652
 
