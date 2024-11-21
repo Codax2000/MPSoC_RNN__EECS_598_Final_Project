@@ -138,9 +138,9 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
     lut_expand = fp.fp_quantize(lut_expand, cb._n_z, cb._r_z)
 
    
-    print(lut)
-    print(len(lut))
-    print(index)
+    #print(lut)
+    #print(len(lut))
+    #print(index)
     for i in range(M+1):
         j_current = index_expand[i]
 
@@ -162,7 +162,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+4, :] = x[i+3, :] - sigma[i+2, :] * y[i+3, :] * (2.0**(-j_current))
         y[i+4, :] = y[i+3, :] - sigma[i+2, :] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2, :] * lut[i]
-        print(sigma[i+2,:])
+       
 
         
     
@@ -179,9 +179,9 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+4, :] = x[i+3, :] - sigma[i+2,:] * y[i+3, :] * (2.0**(-j_current))
         y[i+4, :] = y[i+3, :] - sigma[i+2,:] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2,:] * fp.fp_quantize(2.0**(-j_current))
-        print(sigma[i+2,:])
-        dir_index+1
         #print(sigma[i+2,:])
+        dir_index+1
+      
     
     
     x[-1, :] = fp.fp_mult(x[-2, :], Kh, cb._n_x, cb._n_x, cb._r_x, \
@@ -228,7 +228,7 @@ def cordic_paper_linear(x, y, z, cb, is_vectoring=True, is_hyperbolic=False):
     index  = np.array([i for i in range(cb._n_rotations+1)])
     lut = np.power(2.0, -index)
     lut = fp.fp_quantize(lut, cb._n_z, cb._r_z)
-
+    print(lut)
 
     for i in range(len(index)):
         j_current = index[i]
@@ -270,9 +270,10 @@ def compute_tanh(z, n_rotations=16, n_x=16, r_x=8, n_z=16, r_z=8):
     x_in = fp.fp_quantize(1 / Kh, n_x, r_x)
     y_in = 0
     z_in = fp.fp_quantize(z, n_z, r_z)
+    print(x_in, z_in)
     
     x1, y1, z1, _ = cordic_paper_hyperbolic(x_in, y_in, z_in, cordic_block1)
-
+    print(x1[-1,:], y1[-1,:])
     x_final, y_final, z_final, _ = cordic_paper_linear(x1[-1,:], y1[-1,:], 0, cordic_block3)
 
     return z_final[-1,:]
@@ -379,8 +380,9 @@ def testbench(z_values):
     plt.show()
 
 
+
 #z_test_values = np.linspace(-6,6, 1000)
 #testbench(z_test_values)
 
-print(compute_tanh(-1.10) / 2**8)
-print(np.tanh(-1.10))
+print(compute_tanh(-3) / 2**8)
+print(np.tanh(-3))

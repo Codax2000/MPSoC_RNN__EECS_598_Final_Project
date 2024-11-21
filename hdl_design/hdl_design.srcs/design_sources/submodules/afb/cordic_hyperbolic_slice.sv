@@ -9,11 +9,11 @@ module cordic_hyperbolic_slice
     input logic signed [WIDTH-1:0] y_in, 
     input logic signed [WIDTH-1:0] z_in, 
     input logic signed [18:0] i,
-    input expand
+    input expand,
     output logic signed [WIDTH-1:0] x_stage_out,
     output logic signed [WIDTH-1:0] y_stage_out, 
     output logic signed [WIDTH-1:0] z_stage_out
-)
+);
 
 
     logic signed [WIDTH-1:0] x_temp;
@@ -65,13 +65,13 @@ module cordic_hyperbolic_slice
         end
         else begin
             if (z_in < 0) begin
-                x_temp = x_in - (y_in >>> i)
+                x_temp = x_in - (y_in >>> i);
                 y_temp = y_in - (x_in >>> i);
-                z_temp = z_in + lut;
+                z_temp = z_in + lut[i];
             end else begin
-                x_temp = x_in + (y_in >>> i)
+                x_temp = x_in + (y_in >>> i);
                 y_temp = y_in + (x_in >>> i);
-                z_temp = z_in - lut;
+                z_temp = z_in - lut[i];
             end
         end
     end

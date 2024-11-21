@@ -1,7 +1,7 @@
 module cordic_linear
 #(
     parameter WIDTH = 16,
-    parameter FRACTIONAL_BITS = 8
+    parameter FRACTIONAL_BITS = 8,
     parameter NUM_ITERATIONS = 16
 )(
     input clk,
@@ -12,7 +12,7 @@ module cordic_linear
     output logic signed [WIDTH-1:0]x_out,
     output logic signed [WIDTH-1:0]y_out, 
     output logic signed [WIDTH-1:0]z_out
-)
+);
 
  
     logic signed [WIDTH-1:0] x_stage [0:15];

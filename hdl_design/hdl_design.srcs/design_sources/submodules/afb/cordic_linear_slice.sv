@@ -12,22 +12,23 @@ module cordic_linear_slice
     output logic signed [WIDTH-1:0]x_stage_out,
     output logic signed [WIDTH-1:0]y_stage_out, 
     output logic signed [WIDTH-1:0]z_stage_out
-)
+);
 
 
     logic signed [WIDTH-1:0] x_temp;
     logic signed [WIDTH-1:0] y_temp;
     logic signed [WIDTH-1:0] z_temp;
 
+
     always_comb begin 
         if (y_in < 0) begin
-            x_temp = x_in
+            x_temp = x_in;
             y_temp = y_in + (x_in >>> i);
-            z_temp = z_in - (z_in >>> i);
+            z_temp = z_in - (1 <<<FRACTIONAL_BITS) >>> i;
         end else begin
-            x_temp = x_in
+            x_temp = x_in;
             y_temp = y_in - (x_in >>> i);
-            z_temp = z_in + (z_in >>> i)
+            z_temp = z_in + (1 <<<FRACTIONAL_BITS) >>> i;
         end
     end
 
