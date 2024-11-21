@@ -64,34 +64,26 @@ def bit_slice(num, i):
 
 
 def calculate_rotation_direction(z_in, n):
-    """
-    Calculate the rotation directions for CORDIC using binary-to-bipolar recoding.
-    
-    This function computes the directions for the least significant
-    iterations based on the binary representation of the input angle.
-
-    Args:
-    - z_in: Input angle in binary form.
-    - n: Total number of iterations.
-
-    Returns:
-    - directions: A list of rotation directions (1 or -1).
-    """
-
     p_index = calculate_partition_index(n)
     directions = [0] * (n - p_index + 1)
+    #directions = [0] * (n)
     d_i = 0
-    for i in range(p_index-1, n):
-        
+    sign_bit = (z_in >> (n - 1)) & 1  # Extract the most significant bit (sign bit)
+    
+    for i in range(p_index, n):
+       
         b_i = bit_slice(z_in, n - i)
-        #print(b_i)
+        print(f'signbit: {sign_bit} bit2 {b_i} at {i} bit before at {bit_slice(z_in, n-i-1)}')
+
         if b_i == 0:
             directions[d_i] = 1
         else:
             directions[d_i] = -1
         d_i +=1
+    print(f"Directions: {directions}")
 
     return directions
+    
 
 
 
@@ -145,9 +137,10 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
     lut_expand = np.arctanh(1-np.power(2.0, index_expand-2))
     lut_expand = fp.fp_quantize(lut_expand, cb._n_z, cb._r_z)
 
-    print(lut_expand)
+   
     print(lut)
-
+    print(len(lut))
+    print(index)
     for i in range(M+1):
         j_current = index_expand[i]
 
@@ -169,6 +162,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+4, :] = x[i+3, :] - sigma[i+2, :] * y[i+3, :] * (2.0**(-j_current))
         y[i+4, :] = y[i+3, :] - sigma[i+2, :] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2, :] * lut[i]
+        print(sigma[i+2,:])
 
         
     
@@ -185,6 +179,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+4, :] = x[i+3, :] - sigma[i+2,:] * y[i+3, :] * (2.0**(-j_current))
         y[i+4, :] = y[i+3, :] - sigma[i+2,:] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2,:] * fp.fp_quantize(2.0**(-j_current))
+        print(sigma[i+2,:])
         dir_index+1
         #print(sigma[i+2,:])
     

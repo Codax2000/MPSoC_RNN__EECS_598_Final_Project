@@ -6,7 +6,6 @@ module cordic_linear
 )(
     input clk,
     input reset, 
-    input i,
     input signed [WIDTH-1:0]x_in, 
     input signed [WIDTH-1:0]y_in, 
     input signed [WIDTH-1:0]z_in, 
