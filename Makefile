@@ -9,7 +9,7 @@ all:	dve
 TB_NAME = cordic_divide_tb.sv
 TESTBENCH = $(shell find . -name $(TB_NAME))
 DESIGN_NAME = afb_linear_handshake.sv
-DESIGN_DIR $(shell find . -name $(DESIGN_NAME))
+DESIGN_DIR = $(shell find . -name $(DESIGN_NAME))
 # DESIGN_DIR = $(shell find ./hdl_design/hdl_design.srcs/design_sources -name "*.sv" -o -name "*.v")
 VCS = SW_VCS=2023.12-SP2-1 vcs -sverilog +vc -Mupdate -line -full64 +define+SYNOPSIS
 

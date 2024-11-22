@@ -78,8 +78,8 @@ module cordic_divide_tb();
         $readmemh("cordic_divide_inputs.mem", input_test_vals);
         $readmemh("cordic_divide_outputs.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/cordic_divide_inputs.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/template_tb/mem/cordic_divide_outputs.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_divide_tb/mem/cordic_divide_inputs.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_divide_tb/mem/cordic_divide_outputs.mem", output_test_vals);
 	`endif
     end
     
