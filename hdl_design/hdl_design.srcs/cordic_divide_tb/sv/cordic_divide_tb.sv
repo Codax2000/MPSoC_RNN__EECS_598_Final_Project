@@ -48,7 +48,7 @@ module cordic_divide_tb();
     parameter R2 = 8;
     
     // L1: Number of words in input
-    parameter L1 = 1;
+    parameter L1 = 2;
     
     // L2: Number of words in output
     parameter L2 = 1;
@@ -62,7 +62,7 @@ module cordic_divide_tb();
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
     logic [L1-1:0][N1-1:0] data_i;
-    logic [L2-1:0][N2-1:0] data_o, expected_data_o;
+    logic signed [L2-1:0][N2-1:0] data_o, expected_data_o;
     logic rstb_i, clk_i;
     
     // create send and receive modules locally
