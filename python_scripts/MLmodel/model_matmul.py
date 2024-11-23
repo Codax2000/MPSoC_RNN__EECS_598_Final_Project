@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(1, 'python_scripts/utility_functions')
 from textDataset import *
 from inference import inference
 from torch.utils.data import DataLoader
@@ -7,8 +9,10 @@ import torch
 from quantize_tensor import *
 import numpy as np
 from model import model, model_q
+from bbr_mac import cordic_vector_multiply
+from fp_logic import fp_quantize
 
-def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7):
+def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7, fixed_r = 8):
     #varify model weights:
     modelPath = "python_scripts\\MLmodel\\weights\\epoch50q_manual_int.pth"
     device = torch.device("cpu")
@@ -16,14 +20,8 @@ def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7)
     checkpoint = torch.load(modelPath, map_location='cpu')
     net.load_state_dict(checkpoint)
 
-    fixed_r = 8
-
     infilepath = 'python_scripts\\MLmodel\\Dataset\\all_data_q\\data_q.txt'
     input = np.loadtxt(infilepath, delimiter=',')
-    one = torch.tensor([1]).unsqueeze(1)
-    h_t = torch.zeros((40,1))
-    c_t = torch.zeros((40,1))
-    out = np.array([])
 
     inference_data_dir_q = 'python_scripts\\MLmodel\\Dataset\\all_data_q'
     inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\all_key'
@@ -32,10 +30,36 @@ def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7)
     weights_dir_q = 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth'
     criterion = nn.SmoothL1Loss() #use SmoothL1Loss loss to optimize
 
-    # use generate the fixedpoint model
+    #inference
     gt, pred, loss = inference(net, weights_dir_q, test_loader_q, criterion, device)
+    out_ideal = ideal_matmul_model(input, layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7, fixed_r)
+    print(input.shape)
 
-    for i in range(len(input)):
+    for i in range(len(gt)):
+        plt.figure()
+        plt.plot(gt[i].squeeze().cpu())
+        plt.plot(pred[i].squeeze().cpu())
+        plt.plot(out_ideal, linestyle= ':', linewidth=3)
+        plt.title("LSTM Temperature Prediction")
+        plt.legend(["ground truth", "prediction fixed", "prediction fixed matmul"])
+        plt.xlabel("Time(steps)")
+        plt.ylabel("Temperature(normalized)")
+
+        plt.figure()
+        plt.plot(pred[i].squeeze().cpu() - out_ideal)
+        plt.title("Diff")
+
+    plt.show()
+
+
+def ideal_matmul_model(input, layer0, layer1, layer2, layer3, 
+                       layer4, layer5, layer6, layer7, fixed_r = 8):
+    
+    one = torch.tensor([1]).unsqueeze(1)
+    h_t = torch.zeros((40,1))
+    c_t = torch.zeros((40,1))
+    out = np.array([])
+    for i in range(len(input)):        
         inputline = torch.cat((torch.tensor(input[i]).unsqueeze(1),one), dim=0)
         inputline = inputline.to(torch.float32)
         
@@ -67,19 +91,19 @@ def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7)
         f4out = fixed_point_quantize(f4out).item()
 
         out = np.append(out, f4out)
+    return out
 
-    for i in range(len(gt)):
-        plt.figure()
-        plt.plot(gt[i].squeeze().cpu())
-        plt.plot(pred[i].squeeze().cpu())
-        plt.plot(out, linestyle= ':', linewidth=3)
-        plt.title("LSTM Temperature Prediction")
-        plt.legend(["ground truth", "prediction fixed", "prediction fixed matmul"])
-        plt.xlabel("Time(steps)")
-        plt.ylabel("Temperature(normalized)")
+def cordic_matmul_model(input, layer0, layer1, layer2, layer3, layer4, layer5, 
+                        layer6, layer7, fixed_n = 16, fixed_r = 8):
+    
+    layer0_q = fp_quantize(layer0, fixed_n, fixed_r)
+    layer1_q = fp_quantize(layer1, fixed_n, fixed_r)
+    layer2_q = fp_quantize(layer2, fixed_n, fixed_r)
+    layer3_q = fp_quantize(layer3, fixed_n, fixed_r)
+    layer4_q = fp_quantize(layer4, fixed_n, fixed_r)
+    layer5_q = fp_quantize(layer5, fixed_n, fixed_r)
+    layer6_q = fp_quantize(layer6, fixed_n, fixed_r)
+    layer7_q = fp_quantize(layer7, fixed_n, fixed_r)
+    return
 
-        plt.figure()
-        plt.plot(pred[i].squeeze().cpu() - out)
-        plt.title("Diff")
-
-    plt.show()
+function 
