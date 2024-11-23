@@ -11,8 +11,12 @@ import numpy as np
 from model import model, model_q
 from bbr_mac import cordic_vector_multiply
 from fp_logic import fp_quantize
+from generate_cordic_fc_inputs import cordic_matrix_multiply
 
-def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7, fixed_r = 8):
+
+def main():
+    fixed_r = 8
+    fixed_n = 16
     #varify model weights:
     modelPath = "python_scripts\\MLmodel\\weights\\epoch50q_manual_int.pth"
     device = torch.device("cpu")
@@ -30,10 +34,17 @@ def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7,
     weights_dir_q = 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth'
     criterion = nn.SmoothL1Loss() #use SmoothL1Loss loss to optimize
 
+    layers = []
+    weightsPath = 'python_scripts\\MLmodel\\weights\\layers\\'
+
+    for i in range(8):
+        fname = 'layer{}.csv'.format(i)
+        layers.append(torch.tensor(np.loadtxt(weightsPath + fname, delimiter=',')))
+
     #inference
     gt, pred, loss = inference(net, weights_dir_q, test_loader_q, criterion, device)
-    out_ideal = ideal_matmul_model(input, layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7, fixed_r)
-    print(input.shape)
+    out_ideal = ideal_matmul_model(input, layers)
+    # out_cordic = cordic_matmul_model(input, layers, fixed_n = fixed_n, fixed_r = fixed_r)
 
     for i in range(len(gt)):
         plt.figure()
@@ -52,9 +63,12 @@ def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7,
     plt.show()
 
 
-def ideal_matmul_model(input, layer0, layer1, layer2, layer3, 
-                       layer4, layer5, layer6, layer7, fixed_r = 8):
-    
+# def torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7, fixed_r = 8):
+
+
+
+def ideal_matmul_model(input, layers, fixed_r = 8):
+    min_max = []
     one = torch.tensor([1]).unsqueeze(1)
     h_t = torch.zeros((40,1))
     c_t = torch.zeros((40,1))
@@ -63,19 +77,34 @@ def ideal_matmul_model(input, layer0, layer1, layer2, layer3,
         inputline = torch.cat((torch.tensor(input[i]).unsqueeze(1),one), dim=0)
         inputline = inputline.to(torch.float32)
         
-        f1out = torch.tanh((layer0.to(torch.float32) * 2**-fixed_r) @ inputline)
+        f1out = torch.tanh((layers[0].to(torch.float32) * 2**-fixed_r) @ inputline)
         f1out = torch.cat((f1out,one), dim=0)
+        # min_max.append(torch.min(torch.flatten((layers[0].to(torch.float32) * 2**-fixed_r) @ inputline)))
+        # min_max.append(torch.max(torch.flatten((layers[0].to(torch.float32) * 2**-fixed_r) @ inputline)))
         f1out = fixed_point_quantize(f1out)
 
-        f2out = torch.tanh((layer1.to(torch.float32) * 2**-8) @ f1out)
+        f2out = torch.tanh((layers[1].to(torch.float32) * 2**-8) @ f1out)
         f2out = torch.cat((f2out,one), dim=0)
         f2out = torch.cat((h_t,f2out), dim=0)
+        # min_max.append(torch.min(torch.flatten((layers[1].to(torch.float32) * 2**-8) @ f1out)))
+        # min_max.append(torch.max(torch.flatten((layers[1].to(torch.float32) * 2**-8) @ f1out)))
         f2out = fixed_point_quantize(f2out)
 
-        lstm_i = torch.sigmoid((layer4.to(torch.float32)* 2**-fixed_r) @ f2out)
-        lstm_f = torch.sigmoid((layer5.to(torch.float32)* 2**-fixed_r) @ f2out)
-        lstm_g = torch.tanh((layer6.to(torch.float32)* 2**-fixed_r)@ f2out)
-        lstm_o = torch.sigmoid((layer7.to(torch.float32)* 2**-fixed_r) @ f2out)
+        lstm_i = torch.sigmoid((layers[4].to(torch.float32)* 2**-fixed_r) @ f2out)
+        lstm_f = torch.sigmoid((layers[5].to(torch.float32)* 2**-fixed_r) @ f2out)
+        lstm_g = torch.tanh((layers[6].to(torch.float32)* 2**-fixed_r)@ f2out)
+        lstm_o = torch.sigmoid((layers[7].to(torch.float32)* 2**-fixed_r) @ f2out)
+
+        # min_max.append(torch.min(torch.flatten((layers[4].to(torch.float32)* 2**-fixed_r) @ f2out)))
+        # min_max.append(torch.max(torch.flatten((layers[4].to(torch.float32)* 2**-fixed_r) @ f2out)))
+        # min_max.append(torch.min(torch.flatten((layers[5].to(torch.float32)* 2**-fixed_r) @ f2out)))
+        # min_max.append(torch.max(torch.flatten((layers[5].to(torch.float32)* 2**-fixed_r) @ f2out)))
+        # min_max.append(torch.min(torch.flatten((layers[6].to(torch.float32)* 2**-fixed_r)@ f2out)))
+        # min_max.append(torch.max(torch.flatten((layers[6].to(torch.float32)* 2**-fixed_r)@ f2out)))
+        # min_max.append(torch.min(torch.flatten((layers[7].to(torch.float32)* 2**-fixed_r) @ f2out)))
+        # min_max.append(torch.max(torch.flatten((layers[7].to(torch.float32)* 2**-fixed_r) @ f2out)))
+
+
         c_t = lstm_f * c_t + lstm_i * lstm_g
         h_t = lstm_o * torch.tanh(c_t)
         c_t = fixed_point_quantize(c_t)
@@ -83,27 +112,45 @@ def ideal_matmul_model(input, layer0, layer1, layer2, layer3,
 
         h_t_1 = torch.cat((h_t,one), dim=0)
 
-        f3out = torch.tanh((layer2.to(torch.float32)* 2**-fixed_r) @ h_t_1)
+        f3out = torch.tanh((layers[2].to(torch.float32)* 2**-fixed_r) @ h_t_1)
         f3out = torch.cat((f3out,one), dim=0)
+        # min_max.append(torch.min(torch.flatten((layer2.to(torch.float32)* 2**-fixed_r) @ h_t_1)))
+        # min_max.append(torch.max(torch.flatten((layer2.to(torch.float32)* 2**-fixed_r) @ h_t_1)))
         f3out = fixed_point_quantize(f3out)
 
-        f4out = torch.tanh((layer3.to(torch.float32)* 2**-fixed_r) @ f3out)
+        f4out = torch.tanh((layers[3].to(torch.float32)* 2**-fixed_r) @ f3out)
+        # min_max.append(torch.min(torch.flatten((layer3.to(torch.float32)* 2**-fixed_r) @ f3out)))
+        # min_max.append(torch.max(torch.flatten((layer3.to(torch.float32)* 2**-fixed_r) @ f3out)))
         f4out = fixed_point_quantize(f4out).item()
 
         out = np.append(out, f4out)
+
+    # print(min(min_max))
+    # print(max(min_max))
     return out
 
 def cordic_matmul_model(input, layer0, layer1, layer2, layer3, layer4, layer5, 
                         layer6, layer7, fixed_n = 16, fixed_r = 8):
     
-    layer0_q = fp_quantize(layer0, fixed_n, fixed_r)
-    layer1_q = fp_quantize(layer1, fixed_n, fixed_r)
-    layer2_q = fp_quantize(layer2, fixed_n, fixed_r)
-    layer3_q = fp_quantize(layer3, fixed_n, fixed_r)
-    layer4_q = fp_quantize(layer4, fixed_n, fixed_r)
-    layer5_q = fp_quantize(layer5, fixed_n, fixed_r)
-    layer6_q = fp_quantize(layer6, fixed_n, fixed_r)
-    layer7_q = fp_quantize(layer7, fixed_n, fixed_r)
+    layer0_q = fp_quantize(np.array(layer0), fixed_n, fixed_r)
+    layer1_q = fp_quantize(np.array(layer1), fixed_n, fixed_r)
+    layer2_q = fp_quantize(np.array(layer2), fixed_n, fixed_r)
+    layer3_q = fp_quantize(np.array(layer3), fixed_n, fixed_r)
+    layer4_q = fp_quantize(np.array(layer4), fixed_n, fixed_r)
+    layer5_q = fp_quantize(np.array(layer5), fixed_n, fixed_r)
+    layer6_q = fp_quantize(np.array(layer6), fixed_n, fixed_r)
+    layer7_q = fp_quantize(np.array(layer7), fixed_n, fixed_r)
+    one_q = fp_quantize(np.array(torch.tensor([1]).unsqueeze(1)), fixed_n, fixed_r)
+    input_q = fp_quantize(input, fixed_n, fixed_r)
+
+
+    cordic_matrix_multiply(np.expand_dims(np.append(input_q,one_q), axis=0).transpose(), layer0_q.transpose(), fixed_r)
+
+
+
+    # cordic_matrix_multiply()
     return
 
-function 
+
+if __name__ == '__main__':
+    main()
