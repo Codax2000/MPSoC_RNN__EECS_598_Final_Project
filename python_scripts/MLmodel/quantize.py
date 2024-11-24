@@ -70,7 +70,7 @@ if __name__ == "__main__":
     checkpoint = torch.load('python_scripts\\MLmodel\\weights\\epoch50.pth', map_location='cpu')
     # quantized_model = prepare_model_for_quantization(checkpoint) 
     # quantized_model = static_quantize(checkpoint)
-    quantized_model = quantize_fix_manual(checkpoint,16,8)
+    quantized_model = quantize_fix_manual(checkpoint,16,6)
     
     # Save the quantized model
     torch.save(quantized_model.state_dict(), 'python_scripts\\MLmodel\\weights\\epoch50q_manual_int.pth')

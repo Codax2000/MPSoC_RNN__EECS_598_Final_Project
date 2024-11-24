@@ -70,14 +70,16 @@ if __name__ == '__main__':
     print("g_gate shape: ", layer6.shape)
     print("o_gate shape: ", layer7.shape)   
 
-    np.savetxt(csvOutPath + "layer0.csv", layer0, delimiter=",")
-    np.savetxt(csvOutPath + "layer1.csv", layer1, delimiter=",")
-    np.savetxt(csvOutPath + "layer2.csv", layer2, delimiter=",")
-    np.savetxt(csvOutPath + "layer3.csv", layer3, delimiter=",")
-    np.savetxt(csvOutPath + "layer4.csv", layer4, delimiter=",")
-    np.savetxt(csvOutPath + "layer5.csv", layer5, delimiter=",")
-    np.savetxt(csvOutPath + "layer6.csv", layer6, delimiter=",")
-    np.savetxt(csvOutPath + "layer7.csv", layer7, delimiter=",")
+    # print(layer0)
+
+    np.savetxt(csvOutPath + "layer0.csv", layer0, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer1.csv", layer1, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer2.csv", layer2, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer3.csv", layer3, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer4.csv", layer4, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer5.csv", layer5, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer6.csv", layer6, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer7.csv", layer7, delimiter=",", fmt="%d")
 
     
     
@@ -94,7 +96,7 @@ if __name__ == '__main__':
     # write_matrix_to_files(layer7.numpy(), outputPath, 16, 7)
 
 
-    torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7)
+    # torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7)
     
 
 

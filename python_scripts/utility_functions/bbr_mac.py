@@ -70,9 +70,9 @@ def cordic_vector_multiply(x, z, n=12):
     y = np.zeros(x.shape)
     for i in range(len(y)):
         y[i] = bbr_mac(z[i], y[i], x[i], n)
-    print(f'X = {x}')
-    print(f'Z = {z}')
-    print(f'Y = {np.cumsum(y)}')
+    # print(f'X = {x}')
+    # print(f'Z = {z}')
+    # print(f'Y = {np.cumsum(y)}')
     return np.sum(y)
 
 

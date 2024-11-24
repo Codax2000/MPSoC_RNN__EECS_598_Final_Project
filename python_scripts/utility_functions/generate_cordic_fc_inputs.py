@@ -15,7 +15,8 @@ def cordic_matrix_multiply(x, A, r=12):
     m, n = A.shape
     outputs = np.zeros((m))
     for i in range(m):
-        outputs[i] = cordic_vector_multiply(x, A[i])
+        outputs[i] = cordic_vector_multiply(A[i], x, n=r)
+        # outputs[i] = cordic_vector_multiply(x, A[i], n=r)
     return outputs
 
 
@@ -32,6 +33,7 @@ def main():
     x2_hat_fp[-1] -= 1
     A_fp = get_matrix(m, n + 1)
     print(x_hat_fp)
+    print(A_fp)
     outputs = cordic_matrix_multiply(x_hat_fp, A_fp)
     outputs2 = cordic_matrix_multiply(x2_hat_fp, A_fp)
     outputs = np.hstack((outputs, outputs2))

@@ -28,7 +28,7 @@ def fp_quantize(x, n=16, r=8):
     upper_max = np.power(2, n - 1) - 1
     lower_max = -np.power(2, n - 1)
     x *= np.power(2, r)
-    x = np.array(np.floor(x))
+    x = np.array(np.round(x))
 
     is_over_max = x > upper_max
     is_under_min = x < lower_max
