@@ -4,6 +4,7 @@ from fp_logic import fp_quantize
 from generate_lstm_inputs import write_matrix_to_files
 from generate_cordic_fc_inputs import get_matrix, cordic_matrix_multiply
 import numpy as np
+import pdb
 
 
 def main():
@@ -32,7 +33,7 @@ def main():
     filt = out1_1 < 0
     out1_1[filt] = 0
     outputs = out1_1
-
+    pdb.set_trace()
     # write inputs and outputs to mem files
     path = './hdl_design/hdl_design.srcs/lstm_layer_tb/mem'
     write_matrix_to_files(A1, path, 16, 6)
