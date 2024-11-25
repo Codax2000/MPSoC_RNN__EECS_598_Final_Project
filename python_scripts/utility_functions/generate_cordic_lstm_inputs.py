@@ -1,8 +1,8 @@
-from bbr_mac import cordic_vector_multiply
+from cordic_dnn_operations import cordic_vector_multiply
 from write_mem_utils import write_mem_file
 from fp_logic import fp_quantize
 from generate_lstm_inputs import write_matrix_to_files
-from generate_cordic_fc_inputs import get_matrix, cordic_matrix_multiply
+from cordic_dnn_operations import get_matrix, cordic_matrix_multiply
 import numpy as np
 import pdb
 
