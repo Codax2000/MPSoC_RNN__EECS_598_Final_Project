@@ -45,7 +45,7 @@
     <Option Name="SimulatorGccVersionActiveHdl" Val="9.3.0"/>
     <Option Name="BoardPart" Val="xilinx.com:k24c:part0:1.0"/>
     <Option Name="SourceMgmtMode" Val="DisplayOnly"/>
-    <Option Name="ActiveSimSet" Val="afb_linear_handshake_tb"/>
+    <Option Name="ActiveSimSet" Val="fc_layer_tb"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="k24c"/>
-    <Option Name="WTXSimLaunchSim" Val="278"/>
+    <Option Name="WTXSimLaunchSim" Val="290"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -618,6 +618,7 @@
       </Config>
     </FileSet>
     <FileSet Name="afb_linear_handshake_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/afb_linear_handshake_tb" RelGenDir="$PGENDIR/afb_linear_handshake_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/cordic_divide_tb/mem/cordic_divide_outputs.mem">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>

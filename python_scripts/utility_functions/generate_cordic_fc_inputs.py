@@ -1,22 +1,8 @@
-from bbr_mac import cordic_vector_multiply
-from write_mem_utils import write_mem_file
+from cordic_dnn_operations import cordic_matrix_multiply, get_matrix
+from write_mem_utils import write_mem_file, write_matrix_to_files
 from fp_logic import fp_quantize
-from generate_lstm_inputs import write_matrix_to_files
 import numpy as np
 import pdb
-
-def get_matrix(m, n, nx=16, rx=12):
-    A1 = 2 * np.random.randn(m, n)
-    A1_fp = fp_quantize(A1, n=nx, r=rx)
-    return A1_fp
-
-
-def cordic_matrix_multiply(x, A, r=12):
-    m, n = A.shape
-    outputs = np.zeros((m))
-    for i in range(m):
-        outputs[i] = cordic_vector_multiply(x, A[i])
-    return outputs
 
 
 def main():

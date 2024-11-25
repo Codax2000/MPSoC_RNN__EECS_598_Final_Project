@@ -2,7 +2,7 @@ from CORDIC import CORDIC
 from fp_logic import *
 import numpy as np
 import matplotlib.pyplot as plt
-import pdb
+
 
 def main():
     cord = CORDIC(12, 16, 14, 18, 14)

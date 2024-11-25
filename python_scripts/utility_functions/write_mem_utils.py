@@ -9,7 +9,18 @@ import numpy as np
 
 def write_matrix_to_files(A, path, n, layer_num):
     '''
-    writes a quantized matrix to a file
+    writes a quantized matrix to a file. Each row of the matrix A is written
+    to a mem file titled path/j_iii.mem. iii represents the row number starting
+    from 0 up to N (exclusive). j represents the layer number which is used
+    for mem file lookup.
+
+    Inputs:
+        A - fixed-point representation of A matrix
+        path - string of the folder in which to save the mem files
+        n - number of bits A has been quantized to
+
+    Outputs:
+        None
     '''
     for i in range(len(A)):
         current_vector = A[i, :]
@@ -93,7 +104,7 @@ def int_to_signed_bits(xin, bit_width=16):
 def get_2s_complement_hex_string(x, n_bits):
     '''
     given a value x, quantizes x to n_bits in 2's complement and returns
-    a hex string of n_bits.
+    a hex string of n_bits in binary.
     '''
     if x < 0:
         x = (1 << n_bits) + x

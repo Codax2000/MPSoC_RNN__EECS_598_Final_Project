@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from fp_logic import fp_quantize
 from write_mem_utils import get_2s_complement_hex_string, write_mem_file
+from cordic_dnn_operations import cordic_linear_divide
 import pandas as pd
 import pdb
 
@@ -31,34 +32,6 @@ def Kh_extended_calc(M, N):
     product_neg = np.prod([np.sqrt(1 - (1 - 2**(i-2))**2) for i in range(-M, 1)])
     product_pos = np.prod([np.sqrt(1 - (2**-i)**2) for i in range(1, N+1)])
     return product_neg * product_pos
-
-
-def cordic_linear_divide(xin, yin, n_rotations=10, is_tanh=True, N=16, R=8):
-    '''
-    Returns the linear division of yin / xin.
-
-    Inputs:
-        xin - x input array in fixed point form
-        yin - y input array in fixed point form
-        is_tanh - Boolean that if is tanh, does nothing to output, otherwise
-        adds 1 and divides by 2
-    
-    Returns
-        div_out - divided values after being adjusted for tanh
-    '''
-    div_out = np.zeros([n_rotations+2, xin.shape[0]])
-    for i in range(1, n_rotations+1):
-        filt = yin < 0
-        delta = np.ones(filt.shape)
-        delta[filt] = -1
-        theta_i = 2**R / np.power(2, i)
-        div_out[i, :] = div_out[i - 1, :] + np.trunc(delta * theta_i)
-        yin = yin - np.trunc(xin * delta / (2**i))
-    if is_tanh:
-        div_out[-1, :] = div_out[-2, :]
-    else:
-        div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
-    return div_out
 
 
 def cordic_hyperbolic_trig(theta, n_rotations=10, is_tanh=True, N=16, R=8):
@@ -98,7 +71,6 @@ def analyze_linear_divide_results():
     Imports output.csv and plots the result on top of the expected result and
     ideal
     '''
-
     R = 8
     inputs = np.linspace(-5, 5, num=500)
 
@@ -133,7 +105,6 @@ def main():
     cosh_fp = fp_quantize(np.cosh(inputs))
     sinh_fp = fp_quantize(np.sinh(inputs))
     zout = cordic_linear_divide(cosh_fp, sinh_fp)[-1, :] / 2**R
-    cordic_hyperbolic_trig(fp_quantize(inputs))
     analyze_linear_divide_results()
 
     # send expected inputs and outputs to files
