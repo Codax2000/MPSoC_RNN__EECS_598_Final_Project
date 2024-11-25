@@ -1,44 +1,10 @@
 import numpy as np
 from fp_logic import fp_quantize
 from write_mem_utils import write_mem_file, get_2s_complement_hex_string
+from cordic_dnn_operations import cordic_vector_multiply, bbr_mac
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-
-
-def int_to_signed_bits(xin, bit_width=16):
-    '''
-    Given a signed number n, return an array representing the bits of n
-    '''
-    if xin < 0:
-        xin = (1 << bit_width) + xin  # Add 2^bit_width to get the 2's complement representation
-    
-    # Convert to binary string and pad with leading zeros
-    binary_str = format(xin, '0{}b'.format(bit_width))[-bit_width:]
-    
-    # Convert the binary string to a numpy array of integers (0 and 1)
-    bits_array = np.array([int(bit) for bit in binary_str], dtype=int)
-    
-    return bits_array[::-1]
-
-
-def bbr_mac(xin, yin, zin, n=12):
-    '''
-    Computes y_in + zin * xin where all three numbers are in (16,n) fixed
-    point notation
-    '''
-    dir = np.zeros((n))
-    y = yin
-    dir[0] = 1 if zin < 0 else 0
-    zin = int_to_signed_bits(zin)
-    for i in range(1, n):
-        dir[i] = 1 if zin[n - i] == 0 else 0
-    for j in range(n):
-        xreg = np.floor(xin / 2**(j + 1))
-        if dir[j] == 1:
-            xreg = -xreg
-        y += xreg
-    return y
 
 
 def plot_heatmap():
@@ -64,16 +30,6 @@ def plot_heatmap():
     print(np.max(diff))
     print(np.min(diff))
     plt.savefig('./pictures/cordic_mac_heatmap.png')
-
-
-def cordic_vector_multiply(x, z, n=12):
-    y = np.zeros(x.shape)
-    for i in range(len(y)):
-        y[i] = bbr_mac(z[i], y[i], x[i], n)
-    print(f'X = {x}')
-    print(f'Z = {z}')
-    print(f'Y = {np.cumsum(y)}')
-    return np.sum(y)
 
 
 def write_mac_input(x, z, path, n=16):

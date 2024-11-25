@@ -13,6 +13,26 @@ import pandas as pd
 import pdb
 
 
+def Kh_extended_calc(M, N):
+    """
+    Calculate the extended constant Kh for hyperbolic CORDIC.
+    
+    This function computes the product of scaling factors for 
+    hyperbolic iterations. It combines negatively and positively
+    indexed iterations to achieve better convergence.
+
+    Args:
+    - M: Number of negatively indexed iterations.
+    - N: Number of positively indexed iterations.
+
+    Returns:
+    - Kh: The extended constant for hyperbolic scaling.
+    """
+    product_neg = np.prod([np.sqrt(1 - (1 - 2**(i-2))**2) for i in range(-M, 1)])
+    product_pos = np.prod([np.sqrt(1 - (2**-i)**2) for i in range(1, N+1)])
+    return product_neg * product_pos
+
+
 def cordic_linear_divide(xin, yin, n_rotations=10, is_tanh=True, N=16, R=8):
     '''
     Returns the linear division of yin / xin.
@@ -39,6 +59,38 @@ def cordic_linear_divide(xin, yin, n_rotations=10, is_tanh=True, N=16, R=8):
     else:
         div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
     return div_out
+
+
+def cordic_hyperbolic_trig(theta, n_rotations=10, is_tanh=True, N=16, R=8):
+    # account for being sigmoid instead of tanh
+    if is_tanh:
+        theta = np.trunc(theta / 2)
+    
+    # set initial x values, y is 0
+    x = np.ones(theta.shape) / Kh_extended_calc(1, R)
+    x = fp_quantize(x, N, R)
+
+    # calculate repeated iterations
+    repeated = []
+    k = 1
+    while 3 * k + 1 <= n_rotations:
+        repeated.append(3 * k + 1)
+        k = 3 * k + 1
+    iterations = np.arange(-1, n_rotations+1)
+    iterations = np.hstack((iterations, np.array(repeated)))
+    iterations = np.sort(iterations)
+    tanh_lut = None  # TODO: sort out tanh LUT with extended range
+    tanh_lut = fp_quantize(tanh_lut, N, R)
+    theta_results = np.zeros(len(iterations)+1, len(theta))
+    x_results = np.zeros(len(iterations)+1, len(theta))
+    y_results = np.zeros(len(iterations)+1, len(theta))
+    theta_results[0, :] = theta
+    x_results[0, :] = x
+    for i in range(len(iterations)):
+        delta = None  # TODO: compute delta based on theta and such
+        x_results[i+1, :] = None  # TODO: compute X based on CORDIC algorithm
+        y_results[i+1, :] = None  # TODO: compute Y based on CORDIC algorithm
+    return x_results, y_results
 
 
 def analyze_linear_divide_results():
@@ -81,7 +133,7 @@ def main():
     cosh_fp = fp_quantize(np.cosh(inputs))
     sinh_fp = fp_quantize(np.sinh(inputs))
     zout = cordic_linear_divide(cosh_fp, sinh_fp)[-1, :] / 2**R
-    
+    cordic_hyperbolic_trig(fp_quantize(inputs))
     analyze_linear_divide_results()
 
     # send expected inputs and outputs to files

@@ -85,8 +85,6 @@ def calculate_rotation_direction(z_in, n):
     return directions
     
 
-
-
 def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True):
     """
     Perform hyperbolic CORDIC computations.

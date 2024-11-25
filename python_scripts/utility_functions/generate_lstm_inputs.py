@@ -16,26 +16,9 @@ Writes several files:
 
 import numpy as np
 from fp_logic import *
-from write_mem_utils import write_mem_file
+from write_mem_utils import write_mem_file, write_matrix_to_files
+from cordic_dnn_operations import get_matrix
 import pdb
-
-
-def get_matrix(m, n):
-    '''
-    Returns a random A, b matrix of size m, n between -1 and 1
-    '''
-    A = np.random.randn(m, n+1) / 10
-    return A
-
-
-def write_matrix_to_files(A, path, n, layer_num):
-    '''
-    writes a quantized matrix to a file
-    '''
-    for i in range(len(A)):
-        current_vector = A[i, :]
-        padded_string = str(i).zfill(3)
-        write_mem_file(current_vector, f'{path}/{layer_num}_{padded_string}', n)
 
 
 def main():
@@ -54,10 +37,10 @@ def main():
 
     x_hat0 = np.vstack((x0_q, h0, one))
 
-    A1 = get_matrix(m, n + m)
-    A2 = get_matrix(m, n + m)
-    A3 = get_matrix(m, n + m)
-    A4 = get_matrix(m, n + m)
+    A1 = get_matrix(m, n + m + 1)
+    A2 = get_matrix(m, n + m + 1)
+    A3 = get_matrix(m, n + m + 1)
+    A4 = get_matrix(m, n + m + 1)
     A1_q = fp_quantize(A1, Nw, Rw)
     A2_q = fp_quantize(A2, Nw, Rw)
     A3_q = fp_quantize(A3, Nw, Rw)

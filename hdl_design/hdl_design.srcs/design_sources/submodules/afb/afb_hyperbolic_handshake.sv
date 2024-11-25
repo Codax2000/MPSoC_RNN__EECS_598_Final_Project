@@ -19,6 +19,7 @@ module afb_hyperbolic_handshake#(
 
     input logic valid_i,
     input logic yumi_i,
+    input logic yumi_i,
 
     output logic [1:0][N-1:0] data_o,
 
