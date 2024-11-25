@@ -1,3 +1,9 @@
+# add utils to path
+import sys
+import os
+utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
+sys.path.append(utils_path)
+
 import numpy as np
 from fp_logic import fp_quantize
 from write_mem_utils import write_mem_file, get_2s_complement_hex_string

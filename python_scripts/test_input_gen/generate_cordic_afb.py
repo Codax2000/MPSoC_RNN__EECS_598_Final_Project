@@ -5,6 +5,12 @@ Alex Knowlton
 Attempt to write AFB that does both tanh and sigmoid functions in fixed
 point logic.
 '''
+# add utils to path
+import sys
+import os
+utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
+sys.path.append(utils_path)
+
 import numpy as np
 import matplotlib.pyplot as plt
 from fp_logic import fp_quantize

@@ -1,3 +1,9 @@
+# add utils to path
+import sys
+import os
+utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
+sys.path.append(utils_path)
+
 from cordic_dnn_operations import cordic_matrix_multiply
 from write_mem_utils import write_mem_file, write_matrix_to_files
 from fp_logic import fp_quantize

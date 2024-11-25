@@ -1,11 +1,18 @@
+# add utils to path
+import sys
+import os
+utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utils'))
+sys.path.append(utils_path)
+
+# import utility functions
 from cordic_dnn_operations import cordic_matrix_multiply, get_matrix
 from write_mem_utils import write_mem_file, write_matrix_to_files
 from fp_logic import fp_quantize
 import numpy as np
-import pdb
 
 
 def main():
+
     n = 5  # number of inputs in X
     m = 3  # number of outputs of Ax + b
     x = np.random.uniform(-1, 1-1/2**12, n)
