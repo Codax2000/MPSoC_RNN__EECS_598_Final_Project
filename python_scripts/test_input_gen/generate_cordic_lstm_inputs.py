@@ -11,8 +11,8 @@ import numpy as np
 
 
 def main():
-    n = 11  # number of inputs in X
-    m = 4  # number of outputs of Ax + b
+    n = 30  # number of inputs in X
+    m = 40 # number of outputs of Ax + b
     x1 = np.random.uniform(-1, 1-1/2**12, n)
     x1_fp = fp_quantize(x1, r=12)
     x2 = np.random.uniform(-1, 1-1/2**12, n)
