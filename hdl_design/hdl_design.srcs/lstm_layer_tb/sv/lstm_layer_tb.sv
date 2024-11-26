@@ -40,10 +40,10 @@ Instantiate the DUT, you should only have to declare parameters and then connect
 module lstm_layer_tb();
 
     // Define fixed-point values
-    parameter N1 = 16;
-    parameter N2 = 16;
-    parameter R1 = 12;
-    parameter R2 = 12;
+    parameter N1 = 18;
+    parameter N2 = 18;
+    parameter R1 = 8;
+    parameter R2 = 8;
     
     // L1: Number of words in input
     parameter L1 = 1;
