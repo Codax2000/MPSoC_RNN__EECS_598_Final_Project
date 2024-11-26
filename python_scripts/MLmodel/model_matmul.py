@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, 'python_scripts/utility_functions')
+sys.path.insert(1, 'python_scripts/utils')
 from textDataset import *
 from inference import inference
 from torch.utils.data import DataLoader
@@ -9,9 +9,10 @@ import torch
 from quantize_tensor import *
 import numpy as np
 from model import model, model_q
-from bbr_mac import cordic_vector_multiply
+# from bbr_mac import cordic_vector_multiply
+from cordic_dnn_operations import *
 from fp_logic import fp_quantize
-from generate_cordic_fc_inputs import cordic_matrix_multiply, get_matrix
+# from generate_cordic_fc_inputs import cordic_matrix_multiply, get_matrix
 from tqdm import tqdm
 
 
@@ -123,8 +124,8 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         layers_q.append(np.array(layers[i]).astype(int))#)* 2**-fixed_r, fixed_n, fixed_r
 
     one_q = fp_quantize(np.array([1]), fixed_n, fixed_r) - 1
-    h_t = np.zeros((40))
-    c_t = np.zeros((40))
+    h_t = np.zeros((40)).astype(int)
+    c_t = np.zeros((40)).astype(int)
     out = np.array([])
     
     for i in tqdm(range(len(input))):
