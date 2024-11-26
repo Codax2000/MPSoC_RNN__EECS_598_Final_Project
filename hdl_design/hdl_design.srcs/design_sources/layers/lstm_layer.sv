@@ -19,8 +19,8 @@ module lstm_layer #(
     parameter N_W=16,
     parameter R_X=12,
     parameter R_W=12,
-    parameter INPUT_LENGTH=11,
-    parameter OUTPUT_LENGTH=4,
+    parameter INPUT_LENGTH=30,
+    parameter OUTPUT_LENGTH=40,
     parameter LAYER_NUMBER=6
 ) (
     input logic [N_X-1:0] data_i,
