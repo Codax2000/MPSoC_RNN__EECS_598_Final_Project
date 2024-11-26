@@ -24,10 +24,6 @@ def main():
     device = torch.device("cpu")
     net_q = model_q()
     net = model()
-    # checkpoint_q = torch.load(modelPath_q, map_location='cpu')
-    # checkpoint = torch.load(modelPath, map_location='cpu')
-    # net_q.load_state_dict(checkpoint_q)
-    # net.load_state_dict(checkpoint)
 
     infilepath_q = 'python_scripts\\MLmodel\\Dataset\\all_data_q\\data_q.txt'
     input_q = np.loadtxt(infilepath_q, delimiter=',')
@@ -88,19 +84,10 @@ def ideal_matmul_model(input, layers, fixed_r = 6):
         f1out = torch.cat((f1out,one), dim=0)
         f1out = fixed_point_quantize(f1out, r = fixed_r)
 
-
-        # print(inputline * 2**fixed_r) #
-        # print(layers[0])
-        # print(layers[0].to(torch.float32) @ (inputline* 2**fixed_r))
-        # break
-        
-
         f2out = torch.tanh((layers[1].to(torch.float32) * 2**-fixed_r) @ f1out)
         f2out = torch.cat((f2out,one), dim=0)
         f2out = torch.cat((h_t,f2out), dim=0)
         f2out = fixed_point_quantize(f2out, r = fixed_r)
-
-        
 
         lstm_i = torch.sigmoid((layers[4].to(torch.float32)* 2**-fixed_r) @ f2out)
         lstm_f = torch.sigmoid((layers[5].to(torch.float32)* 2**-fixed_r) @ f2out)
@@ -113,12 +100,7 @@ def ideal_matmul_model(input, layers, fixed_r = 6):
         h_t = fixed_point_quantize(h_t, r = fixed_r)
 
         h_t_1 = torch.cat((h_t,one), dim=0)
-
-        # if i == 1:
-        #     print(h_t_1)
-        #     print(h_t_1.shape)
-        #     break        
-
+ 
         f3out = torch.tanh((layers[2].to(torch.float32)* 2**-fixed_r) @ h_t_1)
         f3out = torch.cat((f3out,one), dim=0)
         f3out = fixed_point_quantize(f3out, r = fixed_r)
@@ -127,8 +109,7 @@ def ideal_matmul_model(input, layers, fixed_r = 6):
         f4out = torch.tanh((layers[3].to(torch.float32)* 2**-fixed_r) @ f3out)
         f4out = fixed_point_quantize(f4out, r = fixed_r).item()
         out = np.append(out, f4out)
-        # print(f4out)
-        # break
+
     return out
 
 def sigmoid(z):
@@ -155,33 +136,11 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         macOut1 = fp_quantize(macOut1, fixed_n, fixed_r)
         macOut1 = np.append(macOut1, one_q)
 
-
-        
-
-
-        # print("quantized input")
-        # print(inputline)
-        # print(inputline.shape)
-        # print("quantized weights")
-        # print(layers_q[i])
-        # print(layers_q[i].shape)
-        # print("ideal output")
-        # ideal = ((layers_q[i]/ 2**fixed_r) @ (inputline/2**fixed_r))
-        # print(ideal)
-        # print("CORDIC output")
-        # print(macOut1)
-        # print("diff")
-        # print(sum(abs(ideal-macOut1)))
-        # break
-
-
         macOut2 = cordic_matrix_multiply(macOut1, layers_q[1],fixed_r)/2**fixed_r
         macOut2 = np.tanh(macOut2)
         macOut2 = fp_quantize(macOut2, fixed_n, fixed_r)
         macOut2 = np.append(macOut2, one_q)
         macOut2 = np.append(h_t, macOut2)
-
-         
 
         lstm_i = cordic_matrix_multiply(macOut2, layers_q[4],fixed_r)/2**fixed_r
         lstm_f = cordic_matrix_multiply(macOut2, layers_q[5],fixed_r)/2**fixed_r
@@ -192,72 +151,20 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         lstm_g = np.tanh(lstm_g)
         lstm_o = sigmoid(lstm_o)
 
-        # print(lstm_f.shape)
-        # print(c_t.shape)
-        # print(lstm_i.shape)
-        # print(lstm_g.shape)
-
         c_t = lstm_f * c_t + lstm_i * lstm_g #replace with fixed point mul later
         h_t = lstm_o * np.tanh(c_t)
-        c_t = fp_quantize(c_t, fixed_n, fixed_r)
+        c_t = fp_quantize(c_t, fixed_n, fixed_r) /2**fixed_r
         h_t = fp_quantize(h_t, fixed_n, fixed_r)
         h_t_1 = np.append(h_t, one_q)
-
-        # if i == 1:
-        #     print(h_t_1 / 2**fixed_r)
-        #     print(h_t_1.shape)
-        #     break 
-
-        # print(lstm_o.shape)
-        # print(c_t.shape)
-        # print(np.tanh(c_t).shape)
-
-        
-
-        
-
-        
-
-        # print(h_t_1.shape)
-
-             
-
-        
 
         macOut3 = cordic_matrix_multiply(h_t_1, layers_q[2],fixed_r)/2**fixed_r
         macOut3 = np.tanh(macOut3)
         macOut3 = fp_quantize(macOut3, fixed_n, fixed_r)
         macOut3 = np.append(macOut3, one_q)
 
-        # print("quantized input")
-        # print(h_t_1/2**fixed_r)
-        # print(h_t_1.shape)
-        # print("quantized weights")
-        # print(layers_q[2])
-        # print(layers_q[2].shape)
-        # print("ideal output")
-        # ideal = ((layers_q[2]/ 2**fixed_r) @ (h_t_1/2**fixed_r))
-        # print(ideal)
-        # print("CORDIC output")
-        # print(macOut3)
-        # print("diff")
-        # print(sum(abs(ideal-macOut3)))
-        # break
-
-        # print(macOut3 / 2**fixed_r)
-        # break
-
-        
-
-        # print("layer3 shape")
-        # print(layers_q[3].shape)
-        # print("layer3 input")
-        # print(macOut3.shape)
-
         macOut4 = cordic_vector_multiply(macOut3, layers_q[3],fixed_r)/2**fixed_r
         macOut4 = np.tanh(macOut4)
         macOut4 = fp_quantize(macOut4, fixed_n, fixed_r)
-        # print(macOut4.shape)
 
         out = np.append(out, macOut4)
         
@@ -266,45 +173,6 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
             return out /2**fixed_r
     return out
 
-
-        # print("quantized input")
-        # print(inputline)
-        # print(inputline.shape)
-        # print("quantized weights")
-        # print(layers_q[i]*5)
-        # print(layers_q[i].shape)
-        # print("ideal output")
-        # ideal = (layers_q[i]*5/ 2**fixed_r) @ (inputline/2**fixed_r)
-        # print(ideal)
-        # macOut1 = cordic_matrix_multiply(inputline, layers_q[i]*5,6)/2**fixed_r
-        # print("CORDIC output")
-        # print(macOut1)
-        # print("diff")
-        # print(sum(abs(ideal-macOut1)))
-
-        # print("test vec")
-        # vout = cordic_vector_multiply(layers_q[i][1], inputline, 12)
-        # print(vout/2**fixed_r)
-        # print(get_matrix(60,91,16,6).shape)
-
-        # print(layers_q[i][0].shape)
-        # print(inputline.shape)
-
-        # vout = cordic_vector_multiply(inputline,layers_q[i][0])
-        # print(vout)
-        # print(np.sum(layers_q[i][0] * inputline))
-        # break
-
-
-
-
-
-    # cordic_matrix_multiply(np.expand_dims(np.append(input_q,one_q), axis=0).transpose(), layer0_q.transpose(), fixed_r)
-
-
-
-    # cordic_matrix_multiply()
-    return
 
 
 if __name__ == '__main__':
