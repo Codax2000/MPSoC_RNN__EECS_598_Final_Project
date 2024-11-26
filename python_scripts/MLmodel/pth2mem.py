@@ -86,14 +86,14 @@ if __name__ == '__main__':
 
     # print(inputline.shape)
 
-    # write_matrix_to_files(layer0.numpy(), outputPath, 16, 0)
-    # write_matrix_to_files(layer1.numpy(), outputPath, 16, 1)
-    # write_matrix_to_files(layer2.numpy(), outputPath, 16, 2)
-    # write_matrix_to_files(layer3.numpy(), outputPath, 16, 3)
-    # write_matrix_to_files(layer4.numpy(), outputPath, 16, 4)
-    # write_matrix_to_files(layer5.numpy(), outputPath, 16, 5)
-    # write_matrix_to_files(layer6.numpy(), outputPath, 16, 6)
-    # write_matrix_to_files(layer7.numpy(), outputPath, 16, 7)
+    write_matrix_to_files(layer0.numpy(), outputPath, 16, 0)
+    write_matrix_to_files(layer1.numpy(), outputPath, 16, 1)
+    write_matrix_to_files(layer2.numpy(), outputPath, 16, 2)
+    write_matrix_to_files(layer3.numpy(), outputPath, 16, 3)
+    write_matrix_to_files(layer4.numpy(), outputPath, 16, 4)
+    write_matrix_to_files(layer5.numpy(), outputPath, 16, 5)
+    write_matrix_to_files(layer6.numpy(), outputPath, 16, 6)
+    write_matrix_to_files(layer7.numpy(), outputPath, 16, 7)
 
 
     # torch_matmul(layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7)
