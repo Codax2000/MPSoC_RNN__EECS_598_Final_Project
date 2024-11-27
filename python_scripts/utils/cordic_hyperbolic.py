@@ -30,7 +30,6 @@ def cordic_hyperbolic(theta,cb = cordic(n_rotations=16, n_x=16, r_x=8, n_z=16, r
     - sigma: Rotation directions used during computation.
     """
     Kh = .2652
-    #print(theta)
     x = fp_quantize(1 / Kh, N, R)
     y = 0
     x, y, z = cb._fix_types(x, y, theta)
@@ -167,7 +166,7 @@ def analyze_hyperbolic_results():
     plt.grid()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig('./pictures/cordic_hyperbolic.png')
 
 
 def main():

@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from fp_logic import fp_quantize
 from write_mem_utils import get_2s_complement_hex_string, write_mem_file
-from cordic_dnn_operations import cordic_linear_divide
+from cordic_dnn_operations import cordic_linear_divide, cordic_hyperbolic
 import pandas as pd
 import pdb
 
@@ -40,36 +40,63 @@ def Kh_extended_calc(M, N):
     return product_neg * product_pos
 
 
-def cordic_hyperbolic_trig(theta, n_rotations=10, is_tanh=True, N=16, R=8):
-    # account for being sigmoid instead of tanh
-    if is_tanh:
-        theta = np.trunc(theta / 2)
-    
-    # set initial x values, y is 0
-    x = np.ones(theta.shape) / Kh_extended_calc(1, R)
-    x = fp_quantize(x, N, R)
+def analyze_hyperbolic_results():
+    '''
+    Compares the results of CORDIC sinh and cosh with ideal floating-point sinh and cosh.
+    '''
+    N = 16
+    R = 8
+    inputs = np.linspace(-3, 3, num=500)
 
-    # calculate repeated iterations
-    repeated = []
-    k = 1
-    while 3 * k + 1 <= n_rotations:
-        repeated.append(3 * k + 1)
-        k = 3 * k + 1
-    iterations = np.arange(-1, n_rotations+1)
-    iterations = np.hstack((iterations, np.array(repeated)))
-    iterations = np.sort(iterations)
-    tanh_lut = None  # TODO: sort out tanh LUT with extended range
-    tanh_lut = fp_quantize(tanh_lut, N, R)
-    theta_results = np.zeros(len(iterations)+1, len(theta))
-    x_results = np.zeros(len(iterations)+1, len(theta))
-    y_results = np.zeros(len(iterations)+1, len(theta))
-    theta_results[0, :] = theta
-    x_results[0, :] = x
-    for i in range(len(iterations)):
-        delta = None  # TODO: compute delta based on theta and such
-        x_results[i+1, :] = None  # TODO: compute X based on CORDIC algorithm
-        y_results[i+1, :] = None  # TODO: compute Y based on CORDIC algorithm
-    return x_results, y_results
+    # Ideal floating-point values
+    sinh_ideal = np.sinh(inputs)
+    cosh_ideal = np.cosh(inputs)
+    
+    sinh_fp, cosh_fp = np.zeros(500), np.zeros(500)
+
+    # Fixed-point values using CORDIC
+    theta_fp = fp_quantize(inputs, N, R)
+    cosh_fp, sinh_fp = cordic_hyperbolic(theta_fp, True, N, R)
+       
+    # Convert fixed-point results back to float
+    sinh_cordic = sinh_fp / (2 ** R)
+    cosh_cordic = cosh_fp / (2 ** R)
+   
+    # Quantization error
+    sinh_error = np.abs(sinh_ideal - sinh_cordic)
+    cosh_error = np.abs(cosh_ideal - cosh_cordic)
+
+    # Plot results
+    plt.figure(figsize=(12, 10))
+
+    # Quantization error
+    plt.subplot(3, 1, 1)
+    plt.title('CORDIC Hyperbolic Function Results')
+    plt.plot(inputs, sinh_error, label='sinh quantization error')
+    plt.plot(inputs, cosh_error, label='cosh quantization error')
+    plt.ylabel('Quantization Error')
+    plt.legend()
+    plt.grid()
+
+    # sinh comparison
+    plt.subplot(3, 1, 2)
+    plt.plot(inputs, sinh_ideal, label='Ideal sinh')
+    plt.plot(inputs, sinh_cordic, '--', label='CORDIC sinh')
+    plt.ylabel('sinh')
+    plt.legend()
+    plt.grid()
+
+    # cosh comparison
+    plt.subplot(3, 1, 3)
+    plt.plot(inputs, cosh_ideal, label='Ideal cosh')
+    plt.plot(inputs, cosh_cordic, '--', label='CORDIC cosh')
+    plt.xlabel('Input ($\\theta$)')
+    plt.ylabel('cosh')
+    plt.legend()
+    plt.grid()
+
+    plt.tight_layout()
+    plt.savefig('./pictures/cordic_hyperbolic.png')
 
 
 def analyze_linear_divide_results():
@@ -99,7 +126,7 @@ def analyze_linear_divide_results():
     plt.ylabel('$tanh(\\theta)$')
     plt.legend()
     plt.grid()
-    plt.show()
+    plt.savefig('./pictures/cordic_linear_divide.png')
 
 
 def main():
@@ -112,6 +139,7 @@ def main():
     sinh_fp = fp_quantize(np.sinh(inputs))
     zout = cordic_linear_divide(cosh_fp, sinh_fp)[-1, :] / 2**R
     analyze_linear_divide_results()
+    analyze_hyperbolic_results()
 
     # send expected inputs and outputs to files
     path = './hdl_design/hdl_design.srcs/cordic_divide_tb/mem/'
