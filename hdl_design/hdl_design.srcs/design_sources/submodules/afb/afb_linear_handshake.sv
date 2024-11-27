@@ -1,8 +1,8 @@
 module afb_linear_handshake #(
     parameter N=16,
-    parameter R=8,
+    parameter R=12,
     parameter logic IS_TANH=1,
-    parameter N_ITERATIONS=10
+    parameter N_ITERATIONS=12
 ) (
     input logic [1:0][N-1:0] data_i, // theta
     input logic valid_i,
@@ -29,8 +29,8 @@ module afb_linear_handshake #(
     localparam logic signed [N-1:0] ONE = 1 << R;
     assign x_shift = x_in_r >>> count_r;
     assign one_shift = ONE >>> count_r;
-    assign x_in_n = handshake_in ? data_i[0] : x_in_r;
-    assign y_in_n = handshake_in ? data_i[1] : 
+    assign x_in_n = handshake_in ? data_i[1] : x_in_r;
+    assign y_in_n = handshake_in ? data_i[0] : 
                     ps_e != eITERATE ? y_in_r : 
                     y_in_r[N-1] ? y_in_r + x_shift : y_in_r - x_shift;
     assign data_n = handshake_in ? '0 :
@@ -64,7 +64,7 @@ module afb_linear_handshake #(
         endcase
     end
 
-    assign data_o = IS_TANH ? data_r : (data_r + 1) >>> 1;
+    assign data_o = IS_TANH ? data_r : (data_r + ONE) >>> 1;
 
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin

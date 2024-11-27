@@ -16,7 +16,6 @@ get_matrix - get a fixed point matrix for testing
 import numpy as np
 from fp_logic import fp_quantize
 from write_mem_utils import int_to_signed_bits
-import pdb
 
 
 def bbr_mac(xin, yin, zin, nx=16, rx=12):
@@ -49,12 +48,22 @@ def bbr_mac(xin, yin, zin, nx=16, rx=12):
 
 
 def cordic_afb(theta, is_tanh=True, N=16, R=8):
-    sinh, cosh = cordic_hyperbolic(theta, is_tanh, N, R)
+    '''
+    Returns the activation function of the inputs using the CORDIC
+    algorithm in (N, R) notation.
+
+    Inputs:
+        theta - value or 1D numpy array of input values
+        is_tanh - if True, computes tanh. Else, computes sigmoid
+        N - number of binary bits in (N, R)
+        R - number of fractional bits, must satisfy R <= N
+    '''
+    cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
-    return div
+    return div.astype(int)
 
 
-def cordic_linear_divide(xin, yin, n_rotations=10, is_tanh=True, N=16, R=8):
+def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
     '''
     Returns the linear division of yin / xin.
 
@@ -100,7 +109,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
         sinh - 1D numpy array of sinh values corresponding to sinh(theta)
         cosh - 1D numpy array of cosh values corresponding to cosh(theta)
     """
-    n_rotations = 11
+    n_rotations = 13
     # account for sigmoid if necessary
     if not is_tanh:
         theta = np.trunc(theta / 2)
@@ -151,10 +160,10 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
             np.trunc(x[i+(M+1), :].astype(int)>>j_current)
         z[i+(M+1)+1, :] = z[i+(M+1), :] + sigma[i+(M+1), :] * lut_standard[i]
 
-    sinh = x[-1,:]
-    cosh = y[-1,:]
+    sinh = y[-1,:]
+    cosh = x[-1,:]
 
-    return sinh, cosh
+    return cosh, sinh
 
 
 def cordic_matrix_multiply(x, A, nx=16, rx=12):

@@ -14,8 +14,9 @@ sys.path.append(utils_path)
 import numpy as np
 import matplotlib.pyplot as plt
 from fp_logic import fp_quantize
-from write_mem_utils import get_2s_complement_hex_string, write_mem_file
-from cordic_dnn_operations import cordic_linear_divide, cordic_hyperbolic
+from write_mem_utils import write_mem_file, get_2s_complement_hex_string
+from cordic_dnn_operations import cordic_linear_divide, cordic_hyperbolic, \
+    cordic_afb, get_hyperbolic_constants
 import pandas as pd
 import pdb
 
@@ -25,7 +26,7 @@ def analyze_hyperbolic_results():
     Compares the results of CORDIC sinh and cosh with ideal floating-point sinh and cosh.
     '''
     N = 16
-    R = 8
+    R = 12
     inputs = np.linspace(-3, 3, num=500)
 
     # Ideal floating-point values
@@ -37,7 +38,6 @@ def analyze_hyperbolic_results():
     # Fixed-point values using CORDIC
     theta_fp = fp_quantize(inputs, N, R)
     cosh_fp, sinh_fp = cordic_hyperbolic(theta_fp, True, N, R)
-       
     # Convert fixed-point results back to float
     sinh_cordic = sinh_fp / (2 ** R)
     cosh_cordic = cosh_fp / (2 ** R)
@@ -81,16 +81,15 @@ def analyze_hyperbolic_results():
 
 def analyze_linear_divide_results():
     '''
-    Imports output.csv and plots the result on top of the expected result and
-    ideal
+    Plots expected result and ideal on top of each other
     '''
-    R = 8
+    R = 12
     inputs = np.linspace(-5, 5, num=500)
 
     # plot ideal inputs
     cosh_fp = fp_quantize(np.cosh(inputs))
     sinh_fp = fp_quantize(np.sinh(inputs))
-    zout = cordic_linear_divide(cosh_fp, sinh_fp)[-1, :] / 2**R
+    zout = cordic_linear_divide(cosh_fp, sinh_fp, 12, True, 16, R)[-1, :] / 2**R
     quant_error = np.abs(np.tanh(inputs) - zout)
 
     # plot division as a tanh function
@@ -109,26 +108,140 @@ def analyze_linear_divide_results():
     plt.savefig('./pictures/cordic_linear_divide.png')
 
 
+def analyze_afb_results():
+    '''
+    Plots sigmoid and tanh functions with full range of inputs
+    '''
+    N = 16
+    R = 12
+
+    # set input to have expanded range
+    inputs = np.linspace(-10, 10, num=500)
+    inputs_fp = fp_quantize(inputs, N, R)
+
+    # generate ideal outputs
+    sigm_ideal = np.exp(inputs) / (1 + np.exp(inputs))
+    tanh_ideal = np.tanh(inputs)
+
+    # cordic outputs in fixed point
+    sigm_fp = cordic_afb(inputs_fp, False, N, R)[-1, :] / 2**R
+    tanh_fp = cordic_afb(inputs_fp, True, N, R)[-1, :] / 2**R
+
+    # plot sigmoid outputs
+    plt.figure()
+    plt.subplot(211)
+    plt.plot(inputs, sigm_ideal, label='ideal')
+    plt.plot(inputs, sigm_fp, '--', label='CORDIC')
+    plt.ylabel('$\\sigma(\\theta)$')
+    plt.legend()
+    plt.grid()
+
+    # plot tanh outputs
+    plt.subplot(212)
+    plt.plot(inputs, tanh_ideal, label='ideal')
+    plt.plot(inputs, tanh_fp, '--', label='CORDIC')
+    plt.ylabel('$tanh(\\theta)$')
+    plt.xlabel('$\\theta$')
+    plt.legend()
+    plt.grid()
+
+    plt.tight_layout()
+    plt.savefig('./pictures/afb_comparison.png')
+
+
+def analyze_hardware_results():
+    R = 12
+    results_sigm = pd.read_csv('./hdl_design/hdl_design.sim/afb_sigmoid_tb/behav/xsim/output.csv')
+    results_tanh = pd.read_csv('./hdl_design/hdl_design.sim/afb_tanh_tb/behav/xsim/output.csv')
+
+    # ideal values
+    inputs = np.linspace(-10, 10, num=500)
+    sigm_ideal = np.exp(inputs) / (1 + np.exp(inputs))
+    tanh_ideal = np.tanh(inputs)
+
+    # received values in fixed point
+    sigm_fp = results_sigm['received'] / 2**12
+    tanh_fp = results_tanh['received'] / 2**12
+
+    # quantization error
+    q_sigm = np.abs(sigm_ideal - sigm_fp)
+    q_tanh = np.abs(tanh_ideal - tanh_fp)
+
+    # plot sigmoid
+    plt.figure(figsize=(20, 7))
+    plt.subplot(4, 2, 1)
+    plt.plot(inputs, q_sigm)
+    plt.grid()
+    plt.ylabel('Quantization Error')
+    plt.title('Sigmoid Function')
+    plt.subplot(4, 2, (3, 5))
+    plt.plot(inputs, sigm_ideal, label='ideal')
+    plt.plot(inputs, sigm_fp, '--', label='CORDIC HDL')
+    plt.xlabel('$\\theta$')
+    plt.ylabel('$\\sigma(\\theta)$')
+    plt.legend()
+    plt.grid()
+
+    # plot tanh
+    plt.subplot(4, 2, 2)
+    plt.plot(inputs, q_tanh)
+    plt.grid()
+    plt.ylabel('Quantization Error')
+    plt.title('Tanh Function')
+    plt.subplot(4, 2, (4, 6))
+    plt.plot(inputs, tanh_ideal, label='ideal')
+    plt.plot(inputs, tanh_fp, '--', label='CORDIC HDL')
+    plt.xlabel('$\\theta$')
+    plt.ylabel('$\\tanh(\\theta)$')
+    plt.legend()
+    plt.grid()
+
+    plt.tight_layout()
+    plt.savefig('./pictures/hdl_afb_comparison')
+
+
+def print_hyperbolic_constants(N, R):
+    Kh, index_expand, index_standard, lut_expand, lut_standard = \
+        get_hyperbolic_constants(1, 13, N, R)
+    Kh_str = get_2s_complement_hex_string(Kh[0], N)
+    index_expand_str = [get_2s_complement_hex_string(i, 4) for i in index_expand]
+    index_standard_str = [get_2s_complement_hex_string(i, 4) for i in index_standard]
+    lut_expand_str = [get_2s_complement_hex_string(i, N) for i in lut_expand]
+    lut_standard_str = [get_2s_complement_hex_string(i, N) for i in lut_standard]
+
+    # print outputs
+    print(f'Kh = {Kh_str}')
+    print(index_expand_str)
+    print(index_standard_str)
+    print(lut_expand_str)
+    print(lut_standard_str)
+
+
 def main():
     N = 16
-    R = 8
-    inputs = np.linspace(-5, 5, num=500)
+    R = 12
+    inputs = np.linspace(-10, 10, (500))
+    inputs_fp = fp_quantize(inputs, N, R)
 
-    # plot ideal inputs
-    cosh_fp = fp_quantize(np.cosh(inputs))
-    sinh_fp = fp_quantize(np.sinh(inputs))
-    zout = cordic_linear_divide(cosh_fp, sinh_fp)[-1, :] / 2**R
+    # analyze subblocks
     analyze_linear_divide_results()
     analyze_hyperbolic_results()
+    analyze_afb_results()
+    analyze_hardware_results()
+    print_hyperbolic_constants(N, R)
+
+    # get expected outputs
+    outputs_tanh = cordic_afb(inputs_fp, True, N, R)[-1, :]
+    outputs_sigm = cordic_afb(inputs_fp, False, N, R)[-1, :]
 
     # send expected inputs and outputs to files
-    path = './hdl_design/hdl_design.srcs/cordic_divide_tb/mem/'
-    write_mem_file((zout * 2**R).astype(int), f'{path}cordic_divide_outputs', N)
-    with open(f'{path}cordic_divide_inputs.mem', 'w') as f:
-        for i in range(len(cosh_fp)):
-            cos_str = get_2s_complement_hex_string(cosh_fp[i], N)
-            sin_str = get_2s_complement_hex_string(sinh_fp[i], N)
-            print(f'{sin_str}_{cos_str}', file=f)
+    path_tanh = './hdl_design/hdl_design.srcs/cordic_tanh_tb/mem/'
+    path_sigmoid = './hdl_design/hdl_design.srcs/cordic_sigmoid_tb/mem/'
+    write_mem_file(inputs_fp, f'{path_tanh}cordic_afb_inputs', N)
+    write_mem_file(outputs_tanh, f'{path_tanh}cordic_afb_outputs', N)
+    write_mem_file(inputs_fp, f'{path_sigmoid}cordic_afb_inputs', N)
+    write_mem_file(outputs_sigm, f'{path_sigmoid}cordic_afb_outputs', N)
+
 
 if __name__ == '__main__':
     main()
