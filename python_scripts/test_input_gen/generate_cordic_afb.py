@@ -20,26 +20,6 @@ import pandas as pd
 import pdb
 
 
-def Kh_extended_calc(M, N):
-    """
-    Calculate the extended constant Kh for hyperbolic CORDIC.
-    
-    This function computes the product of scaling factors for 
-    hyperbolic iterations. It combines negatively and positively
-    indexed iterations to achieve better convergence.
-
-    Args:
-    - M: Number of negatively indexed iterations.
-    - N: Number of positively indexed iterations.
-
-    Returns:
-    - Kh: The extended constant for hyperbolic scaling.
-    """
-    product_neg = np.prod([np.sqrt(1 - (1 - 2**(i-2))**2) for i in range(-M, 1)])
-    product_pos = np.prod([np.sqrt(1 - (2**-i)**2) for i in range(1, N+1)])
-    return product_neg * product_pos
-
-
 def analyze_hyperbolic_results():
     '''
     Compares the results of CORDIC sinh and cosh with ideal floating-point sinh and cosh.
