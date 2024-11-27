@@ -9,8 +9,7 @@ Hyperbolic handshake preceding the linear division block to get the sinh cosh ou
 
 module afb_hyperbolic_handshake#(
     parameter N = 16,
-    parameter FRACTIONAL_BITS = 8,
-    parameter NUM_ITERATIONS = 10
+    parameter NUM_ITERATIONS = 12
 )(
     input clk, 
     input rst, 
@@ -35,26 +34,28 @@ module afb_hyperbolic_handshake#(
     enum logic [2:0] {eITERATE, eREADY, eDONE} ps_e, ns_e;
     logic [$clog2(NUM_ITERATIONS+2):0] count_n, count_r;
 
-    logic [18:0] i_values [0:NUM_ITERATIONS+2];
+    logic [3:0] i_values [0:NUM_ITERATIONS+2];
     logic signed [N-1:0] lut [0:NUM_ITERATIONS+2];
     
-    assign i_values = '{19'd1, 19'd0, 19'd1, 19'd2, 19'd3, 19'd4, 19'd4, 19'd5, 
-                        19'd6, 19'd7, 19'd8, 19'd9, 19'd10};
+    assign i_values = '{4'h1, 4'h0, 4'h1, 4'h2, 4'h3, 4'h4, 4'h4, 4'h5, 
+                        4'h6, 4'h7, 4'h8, 4'h9, 4'hA, 4'hB, 4'hC};
 
-    assign lut = '{16'sb0000000101011010, // arctanh(1-2^0-2)
-                  16'sb0000000011111001, // arctanh(1-2^-1-2) 0000000101011010
+    assign lut = '{16'sh15AA, // arctanh(1-2^0-2)
+                  16'sh0F91, // arctanh(1-2^-1-2) 0000000101011010
                    // padding for clarity
-                  16'sb0000000010001100, // arctanh(2^-1) and onwards
-                  16'sb0000000001000001,
-                  16'sb0000000000100000,
-                  16'sb0000000000010000,
-                  16'sb0000000000010000,
-                  16'sb0000000000001000,
-                  16'sb0000000000000100,
-                  16'sb0000000000000010,
-                  16'sb0000000000000001,
-                  16'sb0000000000000000,
-                  16'sb0000000000000000};
+                  16'sh08C9, // arctanh(2^-1) and onwards
+                  16'sh0416,
+                  16'sh0202,
+                  16'sh0100,
+                  16'sh0100,
+                  16'sh0080,
+                  16'sh0040,
+                  16'sh0020,
+                  16'sb0010,
+                  16'sh0008,
+                  16'sh0004,
+                  16'sh0002,
+                  16'sh0001};
     
     
  
@@ -88,7 +89,7 @@ module afb_hyperbolic_handshake#(
     assign y_shift_e = (y_out_r - (y_out_r >>> (i_values[count_r] + 2)));
     assign y_shift = y_out_r >>> i_values[count_r];
 
-    assign x_out_n = handshake_in ? 16'b0000001111000101: 
+    assign x_out_n = handshake_in ? 16'h1000: 
                     ps_e != eITERATE ? x_out_r : 
                     count_r < 2 ?
                     z_in_r[N-1] ? x_out_r - (y_shift_e) :

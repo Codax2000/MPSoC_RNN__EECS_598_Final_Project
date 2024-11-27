@@ -162,7 +162,7 @@ def analyze_hardware_results():
     # received values in fixed point
     sigm_fp = results_sigm['received'] / 2**12
     tanh_fp = results_tanh['received'] / 2**12
-
+    
     # quantization error
     q_sigm = np.abs(sigm_ideal - sigm_fp)
     q_tanh = np.abs(tanh_ideal - tanh_fp)
