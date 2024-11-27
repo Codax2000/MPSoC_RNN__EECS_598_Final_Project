@@ -116,6 +116,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
     x_out[1, :] = x_out[0, :]
     y_out[1, :] = y_out[0, :]
     z_out[1, :] = z_out[0, :]
+    
    
     # rename for readability, now that things are saved
     x = x_out
@@ -136,12 +137,12 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
     lut_expand = fp.fp_quantize(lut_expand, cb._n_z, cb._r_z)
 
    
-    #print(lut)
+    #print(lut_expand)
     #print(len(lut))
     #print(index)
     for i in range(M+1):
         j_current = index_expand[i]
-
+        #print(i)
         filt = z[i+1, :] < 0
         sigma[i, filt] = 1
         sigma[i, ~filt] = -1
@@ -149,6 +150,9 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+2, :] = x[i+1, :] - sigma[i, :] * y[i+1, :] * (1- (2.0**(j_current-2)))
         y[i+2, :] = y[i+1, :] - sigma[i, :] * x[i+1, :] * (1- (2.0**(j_current-2)))
         z[i+2, :] = z[i+1, :] + sigma[i, :] * lut_expand[i]
+        
+        #print(x[i+2, :], y[i+2, :], z[i+2,:],sigma[i, :])
+        #print(lut_expand[i])
     
     for i in range(p_index):
         j_current = index[i]
@@ -160,11 +164,11 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+4, :] = x[i+3, :] - sigma[i+2, :] * y[i+3, :] * (2.0**(-j_current))
         y[i+4, :] = y[i+3, :] - sigma[i+2, :] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2, :] * lut[i]
-       
-
+        #print(x[i+4, :], y[i+4, :], z[i+4,:],sigma[i+2, :])
+    
         
     
-    directions = calculate_rotation_direction(int(z[p_index+3, :]), cb._n_rotations )
+    #directions = calculate_rotation_direction(int(z[p_index+3, :]), cb._n_rotations )
     
     for i in range(p_index-1, len(index)):
         dir_index = 0
@@ -177,7 +181,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
         x[i+4, :] = x[i+3, :] - sigma[i+2,:] * y[i+3, :] * (2.0**(-j_current))
         y[i+4, :] = y[i+3, :] - sigma[i+2,:] * x[i+3, :] * (2.0**(-j_current))
         z[i+4, :] = z[i+3, :] + sigma[i+2,:] * fp.fp_quantize(2.0**(-j_current))
-        #print(sigma[i+2,:])
+        #print(x[i+4, :], y[i+4, :], z[i+4,:],sigma[i+2, :], j_current)
         dir_index+1
       
     
@@ -187,6 +191,7 @@ def cordic_paper_hyperbolic(x, y, z, cb, is_vectoring=False, is_hyperbolic=True)
     y[-1, :] = fp.fp_mult(y[-2, :], Kh, cb._n_x, cb._n_x, cb._r_x, \
                            cb._r_x, cb._n_x, cb._r_x)
     z[-1, :] = z[-2, :]
+    print(x[-1,:], y[-1,:])
     sigma[sigma == 0] = -1
 
     return x, y, z, sigma
@@ -226,7 +231,7 @@ def cordic_paper_linear(x, y, z, cb, is_vectoring=True, is_hyperbolic=False):
     index  = np.array([i for i in range(cb._n_rotations+1)])
     lut = np.power(2.0, -index)
     lut = fp.fp_quantize(lut, cb._n_z, cb._r_z)
-    print(lut)
+    #print(lut)
 
     for i in range(len(index)):
         j_current = index[i]
@@ -238,7 +243,8 @@ def cordic_paper_linear(x, y, z, cb, is_vectoring=True, is_hyperbolic=False):
         x[i+1, :] = x[i, :]
         y[i+1, :] = y[i, :] - sigma[i, :] * x[i, :] * (2.0**(-j_current))
         z[i+1, :] = z[i, :] + sigma[i, :] * lut[i]
-        
+    
+    
     return x, y, z, sigma
 
 
@@ -268,13 +274,14 @@ def compute_tanh(z, n_rotations=16, n_x=16, r_x=8, n_z=16, r_z=8):
     x_in = fp.fp_quantize(1 / Kh, n_x, r_x)
     y_in = 0
     z_in = fp.fp_quantize(z, n_z, r_z)
-    print(x_in, z_in)
+    #print(x_in, z_in)
     
     x1, y1, z1, _ = cordic_paper_hyperbolic(x_in, y_in, z_in, cordic_block1)
-    print(x1[-1,:], y1[-1,:])
-    x_final, y_final, z_final, _ = cordic_paper_linear(x1[-1,:], y1[-1,:], 0, cordic_block3)
+    #print(x1)
+    #print(x1[-2,:], y1[-2,:])
+    x_final, y_final, z_final, _ = cordic_paper_linear(x1[-2,:], y1[-2,:], 0, cordic_block3)
 
-    return z_final[-1,:]
+    return x1[-2,:], y1[-2,:],z_final[-1,:]
 
 def compute_sigmoid(z, n_rotations=16, n_x=16, r_x=8, n_z=16, r_z=8):
     """
@@ -293,7 +300,7 @@ def compute_sigmoid(z, n_rotations=16, n_x=16, r_x=8, n_z=16, r_z=8):
     - Final computed sigmoid(z) value.
     """
     z_half = z / 2
-    tanh_half = compute_tanh(z_half, n_rotations=n_rotations, n_x=n_x, r_x=r_x, n_z=n_z, r_z=r_z)
+    _,_,tanh_half = compute_tanh(z_half, n_rotations=n_rotations, n_x=n_x, r_x=r_x, n_z=n_z, r_z=r_z)
     
     sigmoid = (1 + tanh_half / (2 ** r_z)) / 2
     return sigmoid
@@ -342,7 +349,7 @@ def testbench(z_values):
         error_sigmoid = abs(cordic_sigmoid_result - numpy_sigmoid)
         errors_sigmoid.append(error_sigmoid)
         """
-        cordic_tanh_result = compute_tanh(z)
+        _,_,cordic_tanh_result = compute_tanh(z)
         
         cordic_tanh_float = cordic_tanh_result / (2 ** 8)
         cordic_results_tanh.append(cordic_tanh_float)
@@ -377,10 +384,78 @@ def testbench(z_values):
     plt.tight_layout()
     plt.show()
 
+def testbench2(z_values):
+    """
+    Test the CORDIC-based sigmoid and tanh implementations.
+
+    This function compares the CORDIC-based sigmoid and tanh
+    with numpy implementations, calculates errors, and plots
+    results for analysis.
+
+    Args:
+    - z_values: Array of input values to test over.
+
+    Outputs:
+    - Plots showing errors and comparisons between CORDIC and numpy results.
+    """
+    cordic_results_tanh = []
+    actual_results_tanh = []
+    errors_tanh = []
+    cordic_results_sigmoid = []
+    actual_results_sigmoid = []
+    errors_sigmoid = []
+    for z in z_values:
+        """
+        cordic_sigmoid_result = compute_sigmoid(z)
+        cordic_results_sigmoid.append(cordic_sigmoid_result)
+
+        numpy_sigmoid = sigmoid(z)
+        actual_results_sigmoid.append(numpy_sigmoid)
+
+        error_sigmoid = abs(cordic_sigmoid_result - numpy_sigmoid)
+        errors_sigmoid.append(error_sigmoid)
+        """
+        _,cordic_cos_result,_ = compute_tanh(z)
+        
+        cordic_tanh_float = cordic_cos_result / (2 ** 8)
+        cordic_results_tanh.append(cordic_tanh_float)
+
+        numpy_tanh_result = np.sinh(z)
+        actual_results_tanh.append(numpy_tanh_result)
+
+        error_tanh = abs(cordic_tanh_float - numpy_tanh_result)
+        errors_tanh.append(error_tanh)
+        
+        #print(f"input z {z} | Cordic Out:{cordic_tanh_float} | Expected Out:{numpy_tanh_result} | error:{error}")
+    
+    fig, axs = plt.subplots(2, 1, figsize=(12, 8), sharex=True, gridspec_kw={'height_ratios': [1, 4]})
+
+    # Plot 1: Error
+    axs[0].plot(z_values, errors_tanh, color="green", label="Error")
+    axs[0].set_ylabel("Error")
+    axs[0].set_title("Error between CORDIC sigmoid and numpy sigmoid")
+    axs[0].grid(True)
+    axs[0].legend()
+
+    # Plot 2: CORDIC tanh vs numpy tanh
+    axs[1].plot(z_values, actual_results_tanh, label="Real-Valued", color="red")
+    axs[1].plot(z_values, cordic_results_tanh, label="CORDIC", color="black", linestyle="--")
+    axs[1].set_xlabel("Input z")
+    axs[1].set_ylabel("sigmoid(z)")
+    axs[1].set_title("CORDIC sigmoid vs numpy sigmoid")
+    axs[1].grid(True)
+    axs[1].legend()
+
+    # Adjust layout
+    plt.tight_layout()
+    plt.show()
 
 
-#z_test_values = np.linspace(-6,6, 1000)
-#testbench(z_test_values)
 
-print(compute_tanh(-3) / 2**8)
-print(np.tanh(-3))
+
+
+z_test_values = np.linspace(-3,3, 500)
+testbench(z_test_values)
+
+print(compute_tanh(-1) / 2**8)
+print(np.tanh(-1))
