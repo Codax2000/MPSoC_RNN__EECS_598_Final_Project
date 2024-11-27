@@ -61,7 +61,7 @@ def analyze_hyperbolic_results():
     # Convert fixed-point results back to float
     sinh_cordic = sinh_fp / (2 ** R)
     cosh_cordic = cosh_fp / (2 ** R)
-   
+
     # Quantization error
     sinh_error = np.abs(sinh_ideal - sinh_cordic)
     cosh_error = np.abs(cosh_ideal - cosh_cordic)

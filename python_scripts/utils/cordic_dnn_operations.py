@@ -102,7 +102,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
     """
     n_rotations = 11
     # account for sigmoid if necessary
-    if is_tanh:
+    if not is_tanh:
         theta = np.trunc(theta / 2)
     
     # set rotation constants in fixed point
@@ -112,7 +112,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
 
     # set inputs to be arrays
     theta = fix_type(theta)
-    x = fp_quantize(Kh_fp, N, R) + np.zeros(theta.shape)
+    x = Kh_fp + np.zeros(theta.shape)
     y = np.zeros(theta.shape)   
     z = theta
 
@@ -138,7 +138,6 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
         y[i+1, :] = y[i, :] - sigma[i, :] * (x[i, :] - np.trunc(x[i, :].astype(int)>>(-j_current+2)))
         z[i+1, :] = z[i, :] + sigma[i, :] * lut_expand[i]
     
-    pdb.set_trace()
     for i in range(len(lut_standard)):
         j_current = index_standard[i]
         
@@ -147,9 +146,9 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
         sigma[i+(M+1), ~filt] = -1
 
         x[i+(M+1)+1, :] = x[i+(M+1), :] - sigma[i+(M+1), :] * \
-            np.trunc(y[i+3, :].astype(int)>>j_current)
+            np.trunc(y[i+(M+1), :].astype(int)>>j_current)
         y[i+(M+1)+1, :] = y[i+(M+1), :] - sigma[i+(M+1), :] * \
-            np.trunc(x[i+3, :].astype(int)>>j_current)
+            np.trunc(x[i+(M+1), :].astype(int)>>j_current)
         z[i+(M+1)+1, :] = z[i+(M+1), :] + sigma[i+(M+1), :] * lut_standard[i]
 
     sinh = x[-1,:]
