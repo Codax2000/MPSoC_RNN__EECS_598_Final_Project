@@ -61,6 +61,18 @@ def cordic_afb(theta, is_tanh=True, N=16, R=8):
     cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
     return div.astype(int)
+    # outMat = np.zeros(theta.shape)
+    # if theta.ndim == 1:
+    #     cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
+    #     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
+    #     outMat = div
+    # elif theta.ndim == 2:
+    #     for i in range(len(theta)):
+    #         cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
+    #         div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
+    #         outMat[i] = div
+            
+    # return outMat.astype(int)
 
 
 def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
@@ -88,7 +100,7 @@ def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
         div_out[-1, :] = div_out[-2, :]
     else:
         div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
-    return div_out
+    return div_out[-1]
 
 
 def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
@@ -163,7 +175,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
     sinh = y[-1,:]
     cosh = x[-1,:]
 
-    return cosh, sinh
+    return cosh.astype(int), sinh.astype(int)
 
 
 def cordic_matrix_multiply(x, A, nx=16, rx=12):
@@ -183,7 +195,7 @@ def cordic_matrix_multiply(x, A, nx=16, rx=12):
     outputs = np.zeros((m))
     for i in range(m):
         outputs[i] = cordic_vector_multiply(x, A[i], nx, rx)
-    return outputs
+    return outputs.astype(int)
 
 
 def cordic_vector_multiply(x, z, n=16, r=12):
