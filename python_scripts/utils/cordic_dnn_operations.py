@@ -16,7 +16,6 @@ get_matrix - get a fixed point matrix for testing
 import numpy as np
 from fp_logic import fp_quantize
 from write_mem_utils import int_to_signed_bits
-import pdb
 
 
 def bbr_mac(xin, yin, zin, nx=16, rx=12):
@@ -48,7 +47,23 @@ def bbr_mac(xin, yin, zin, nx=16, rx=12):
     return y
 
 
-def cordic_linear_divide(xin, yin, n_rotations=10, is_tanh=True, N=16, R=8):
+def cordic_afb(theta, is_tanh=True, N=16, R=8):
+    '''
+    Returns the activation function of the inputs using the CORDIC
+    algorithm in (N, R) notation.
+
+    Inputs:
+        theta - value or 1D numpy array of input values
+        is_tanh - if True, computes tanh. Else, computes sigmoid
+        N - number of binary bits in (N, R)
+        R - number of fractional bits, must satisfy R <= N
+    '''
+    cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
+    div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
+    return div.astype(int)
+
+
+def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
     '''
     Returns the linear division of yin / xin.
 
@@ -74,6 +89,81 @@ def cordic_linear_divide(xin, yin, n_rotations=10, is_tanh=True, N=16, R=8):
     else:
         div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
     return div_out
+
+
+def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
+    """
+    Perform hyperbolic CORDIC computations.
+    
+    This implements the hyperbolic CORDIC pipeline for iterative
+    computation of hyperbolic functions like sinh, cosh, and tanh.
+
+    Args:
+        theta - float or 1D numpy array of values to rotate by, in (N, R)
+                fixed point format
+        is_tanh - if True, computes cordic rotation for tanh AFB value
+        N - total number of bits in fixed point
+        R - number of fractional bits, must satisfy R <= N
+
+    Returns:
+        sinh - 1D numpy array of sinh values corresponding to sinh(theta)
+        cosh - 1D numpy array of cosh values corresponding to cosh(theta)
+    """
+    n_rotations = 13
+    # account for sigmoid if necessary
+    if not is_tanh:
+        theta = np.trunc(theta / 2)
+    
+    # set rotation constants in fixed point
+    M = 1
+    Kh_fp, index_expand, index_standard, lut_expand, lut_standard = \
+        get_hyperbolic_constants(M, n_rotations, N, R)
+
+    # set inputs to be arrays
+    theta = fix_type(theta)
+    x = Kh_fp + np.zeros(theta.shape)
+    y = np.zeros(theta.shape)   
+    z = theta
+
+    # create output arrays (helps with debugging)
+    x_out = np.zeros((1 + len(lut_standard) + len(lut_expand), len(theta)))
+    y_out = np.zeros((1 + len(lut_standard) + len(lut_expand), len(theta)))
+    z_out = np.zeros((1 + len(lut_standard) + len(lut_expand), len(theta)))
+    x_out[0, :] = x
+    y_out[0, :] = y
+    z_out[0, :] = z
+    sigma = np.zeros(z_out.shape)
+    x = x_out
+    y = y_out
+    z = z_out
+
+    for i in range(M+1):
+        j_current = index_expand[i]
+        filt = z[i, :] < 0
+        sigma[i, filt] = 1
+        sigma[i, ~filt] = -1
+
+        x[i+1, :] = x[i, :] - sigma[i, :] * (y[i, :] - np.trunc(y[i, :].astype(int)>>(-j_current+2)))
+        y[i+1, :] = y[i, :] - sigma[i, :] * (x[i, :] - np.trunc(x[i, :].astype(int)>>(-j_current+2)))
+        z[i+1, :] = z[i, :] + sigma[i, :] * lut_expand[i]
+    
+    for i in range(len(lut_standard)):
+        j_current = index_standard[i]
+        
+        filt = z[i+(M+1), :] < 0
+        sigma[i+(M+1),  filt] =  1
+        sigma[i+(M+1), ~filt] = -1
+
+        x[i+(M+1)+1, :] = x[i+(M+1), :] - sigma[i+(M+1), :] * \
+            np.trunc(y[i+(M+1), :].astype(int)>>j_current)
+        y[i+(M+1)+1, :] = y[i+(M+1), :] - sigma[i+(M+1), :] * \
+            np.trunc(x[i+(M+1), :].astype(int)>>j_current)
+        z[i+(M+1)+1, :] = z[i+(M+1), :] + sigma[i+(M+1), :] * lut_standard[i]
+
+    sinh = y[-1,:]
+    cosh = x[-1,:]
+
+    return cosh, sinh
 
 
 def cordic_matrix_multiply(x, A, nx=16, rx=12):
@@ -132,3 +222,72 @@ def get_matrix(m, n, nx=16, rx=12):
     A1 = 0.02 * np.random.randn(m, n)
     A1_fp = fp_quantize(A1, n=nx, r=rx)
     return A1_fp
+
+
+def fix_type(x):
+    '''
+    Ensures that the input is a numpy array.
+
+    Input - x, either numpy array, iterable
+    '''
+    if type(x) != type(np.zeros(1)):
+        x = np.array([x])
+    if len(x.shape) == 2:
+        x = x[0]
+    return x
+
+
+def get_hyperbolic_constants(M, n_rotations, N=16, R=8):
+    '''
+    Returns fixed point constants for rotation in (N, R) notation.
+
+    Outputs:
+    Kh - actually the inverse, 1 / Kh, that x should be initialized to
+    index_expand - rotation indices of expanded range
+    index_standard - rotation indices of standard hyperbolic range
+    lut_expand - rotation LUT values of expanded range
+    lut_standard - rotation LUT values of standard range
+    '''
+    # set appropriate lookup table for the operation
+    
+    index = np.arange(n_rotations)
+    m = -1
+    index += 1
+    extra_numbers = []
+    extra = 4
+    while(extra < n_rotations):
+        extra_numbers.append(extra)
+        extra = 3 * extra + 1
+    extra = np.array(extra_numbers)
+    index = np.concatenate((index, extra))
+    index = np.sort(index)
+    index_standard = index[:n_rotations]
+    index_expand = np.arange(-M, 1, dtype=int)
+    lut = np.arctanh(np.power(2.0, -index))
+    lut_standard = fp_quantize(lut, N, R)
+    lut_standard = lut_standard[:n_rotations]
+    lut_expand = np.arctanh(1-np.power(2.0, index_expand-2))
+    lut_expand = fp_quantize(lut_expand, N, R)
+    Kh = Kh_extended_calc(1, n_rotations)
+    Kh = fp_quantize(1 / Kh, N, R)
+    return Kh, index_expand, index_standard, lut_expand, lut_standard
+
+
+def Kh_extended_calc(M, N):
+    '''
+    Calculate the extended constant Kh for hyperbolic CORDIC.
+    
+    This function computes the product of scaling factors for 
+    hyperbolic iterations. It combines negatively and positively
+    indexed iterations to achieve better convergence.
+
+    Args:
+    - M: Number of negatively indexed iterations.
+    - N: Number of positively indexed iterations.
+
+    Returns:
+    - Kh: The extended constant for hyperbolic scaling.
+    '''
+    product_neg = np.prod([np.sqrt(1 - (1 - 2**(i-2))**2) for i in range(-M, 1)])
+    product_pos = np.prod([np.sqrt(1 - (2**-i)**2) for i in range(1, N+1)])
+    return product_neg * product_pos

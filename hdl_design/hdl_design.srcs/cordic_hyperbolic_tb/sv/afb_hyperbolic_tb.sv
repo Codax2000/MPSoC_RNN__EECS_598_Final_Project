@@ -1,11 +1,13 @@
 `ifndef SYNOPSIS
 `define VIVADO
+`endif
+`ifdef VIVADO
 `timescale 1ns/10ps
 `endif
 
 /**
-Alex Knowlton
-10/29/2024
+Akash Shetty
+11/25/2024
 
 Testbench template lightly based on UVM and BaseJump SystemVerilog coding standards.
 Assumes a module with helpful valid/ready interfaces at both ends and sends data from
@@ -22,7 +24,7 @@ logic yumi_i, valid_o;
 logic [L2-1:0][N-1:0] data_o, expected_data_o;
 
 Global clock and sync reset (active low)
-logic rstb_i, clk_i;
+logic rst, clk;
 
 You should define the following variables based on external Matlab/Python simulations:
 N1 - number of bits in an input word
@@ -37,11 +39,11 @@ T2 - number of values to receive from DUT
 Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
 */
 
-module lstm_layer_tb();
+module cordic_hyperbolic_tb();
 
     // Define fixed-point values
-    parameter N1 = 18;
-    parameter N2 = 18;
+    parameter N1 = 16;
+    parameter N2 = 16;
     parameter R1 = 8;
     parameter R2 = 8;
     
@@ -49,23 +51,23 @@ module lstm_layer_tb();
     parameter L1 = 1;
     
     // L2: Number of words in output
-    parameter L2 = 1;
+    parameter L2 = 2;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 60;
+    parameter T1 = 500;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 80;
+    parameter T2 = 500;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
     logic [L1-1:0][N1-1:0] data_i;
-    logic [L2-1:0][N2-1:0] data_o, expected_data_o;
-    logic rstb_i, clk_i;
+    logic signed [L2-1:0][N2-1:0] data_o, expected_data_o;
+    logic rst, clk;
     
     // create send and receive modules locally
     // create DUT
-    lstm_layer DUT(.*);
+    afb_hyperbolic_handshake #(.N(N1)) DUT(.*);
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
@@ -73,19 +75,19 @@ module lstm_layer_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("lstm_input.mem", input_test_vals);
-        $readmemh("lstm_output.mem", output_test_vals);
+        $readmemh("cordic_hyperbolic_inputs.mem", input_test_vals);
+        $readmemh("cordic_hyperbolic_outputs.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_hyperbolic_tb/mem/cordic_hyperbolic_inputs.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/cordic_hyperbolic_tb/mem/cordic_hyperbolic_outputs.mem", output_test_vals);
 	`endif
     end
     
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1):0] input_counter_n, input_counter_r;
-    logic [$clog2(T2):0] output_counter_n, output_counter_r;
+    logic [$clog2(T1+1):0] input_counter_n, input_counter_r;
+    logic [$clog2(T2+1):0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;
@@ -112,14 +114,14 @@ module lstm_layer_tb();
     // create clock
     parameter CLOCK_PERIOD = 10;
     initial begin
-        clk_i = 1'b0;
-        forever #(CLOCK_PERIOD / 2) clk_i = ~clk_i;
+        clk = 1'b0;
+        forever #(CLOCK_PERIOD / 2) clk = ~clk;
     end
     
     // reset the circuit
     initial begin
-        rstb_i = 1'b0;
-        #(5 * CLOCK_PERIOD) rstb_i = 1'b1;
+        rst = 1'b0;
+        #(5 * CLOCK_PERIOD) rst = 1'b1;
     end
     
     integer fd;
@@ -127,13 +129,13 @@ module lstm_layer_tb();
         // Note: this csv file is for later analysis only and is a convenient wavedump,
         // but is in the sim directory, so not super useful
 	`ifdef VIVADO
-        fd = $fopen("output.csv", "w");
+        fd = $fopen("output_hyperbolic.csv", "w");
 	`else
-	    fd = $fopen("./python_scripts/output.csv", "w");
+	    fd = $fopen("./python_scripts/output_hyperbolic.csv", "w");
 	`endif
         $fwrite(fd, "test_index,expected,received\n");
         forever begin
-            @(negedge clk_i); // wait for the negative edge of the clock
+            @(negedge clk); // wait for the negative edge of the clock
             
             // reasoning: if the output counter has gone all the way up, we are done
             // sending data and can do final checks
@@ -152,8 +154,8 @@ module lstm_layer_tb();
     end
     
     // update counters and LFSR at the clock
-    always_ff @(posedge clk_i) begin
-        if (~rstb_i) begin
+    always_ff @(posedge clk) begin
+        if (~rst) begin
             input_counter_r <= '0;
             output_counter_r <= '0;
             lfsr_r <= 4'hF;
@@ -163,4 +165,7 @@ module lstm_layer_tb();
             lfsr_r <= lfsr_n;
         end
     end
+
+    integer output_file;
+    
 endmodule
