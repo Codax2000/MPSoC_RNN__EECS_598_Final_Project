@@ -53,7 +53,7 @@ module lstm_controller #(
     logic ready, valid;
     logic handshake_in, handshake_out;
     logic counting_x;
-    assign counting_x = addr_n < INPUT_LENGTH;
+    assign counting_x = addr_n >= OUTPUT_LENGTH;
     assign x_ready_o = ready && counting_x;
     assign h_ready_o = ready && !counting_x;
     assign valid = counting_x ? x_valid_i : h_valid_i;
@@ -101,7 +101,7 @@ module lstm_controller #(
     // sequential block
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin
-            addr_r <= '0;
+            addr_r <= OUTPUT_LENGTH;
             data_i_r <= '0;
             ps_e <= eREADY;
         end else begin

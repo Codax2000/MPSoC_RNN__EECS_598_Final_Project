@@ -11,17 +11,17 @@ import numpy as np
 
 
 def main():
-    n = 30  # number of inputs in X
-    m = 40 # number of outputs of Ax + b
-    nx = 18
-    rx = 8
+    n = 3  # number of inputs in X
+    m = 5 # number of outputs of Ax + b
+    nx = 16
+    rx = 12
     x1 = np.random.uniform(-1, 1-1/2**12, n)
     x1_fp = fp_quantize(x1, nx, rx)
     x2 = np.random.uniform(-1, 1-1/2**12, n)
     x2_fp = fp_quantize(x2, nx, rx)
     h1 = np.zeros((m))
     one = fp_quantize(1, nx, rx) - 1
-    input1_fp = np.hstack((x1_fp, h1, one)).astype(int)
+    input1_fp = np.hstack((h1, x1_fp, one)).astype(int)
 
     A1 = get_matrix(m, m+n+1, nx, rx)
     A2 = get_matrix(m, m+n+1, nx, rx)
@@ -36,7 +36,7 @@ def main():
     filt = out1_1 < 0
     out1_1[filt] = 0
 
-    input2_fp = np.hstack((x2_fp, out1_1, one)).astype(int)
+    input2_fp = np.hstack((out1_1, x2_fp, one)).astype(int)
     out2_1 = cordic_matrix_multiply(input2_fp, A1)
     out2_2 = cordic_matrix_multiply(input2_fp, A2)
     out2_3 = cordic_matrix_multiply(input2_fp, A3)

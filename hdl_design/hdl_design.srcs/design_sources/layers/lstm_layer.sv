@@ -19,8 +19,8 @@ module lstm_layer #(
     parameter N_W=18,
     parameter R_X=8,
     parameter R_W=8,
-    parameter INPUT_LENGTH=30,
-    parameter OUTPUT_LENGTH=40,
+    parameter INPUT_LENGTH=3,
+    parameter OUTPUT_LENGTH=5,
     parameter LAYER_NUMBER=6
 ) (
     input logic [N_X-1:0] data_i,
@@ -79,9 +79,8 @@ module lstm_layer #(
     );
 
     // H queue to capture previous output
-    hidden_state_queue #(
-        .LENGTH(OUTPUT_LENGTH),
-        .N_X(N_X)
+    single_queue #(
+        .N(N_X)
     ) h_queue (
         .data_i(data_o),
         .valid_i(output_handshake),
@@ -98,13 +97,13 @@ module lstm_layer #(
     genvar i;
     generate
         for (i = 0; i < 4; i = i + 1) begin
-
             // MAC array communicating with controller
             cordic_mac_array #(
                 .WIDTH(N_X),
                 .FRACTIONAL_BITS(R_X),
                 .N_INPUTS(INPUT_LENGTH+OUTPUT_LENGTH+1),
-                .ARRAY_LENGTH(OUTPUT_LENGTH)
+                .ARRAY_LENGTH(OUTPUT_LENGTH),
+                .INPUT_RESET_COUNT(OUTPUT_LENGTH)
             ) mac_array (
                 .data_i({lstm_data_lo, lstm_mem_lo[i]}),
                 .valid_i(lstm_valid_lo),
