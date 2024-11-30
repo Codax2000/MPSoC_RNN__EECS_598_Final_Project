@@ -8,11 +8,12 @@ from write_mem_utils import write_mem_file, write_matrix_to_files
 from fp_logic import fp_quantize
 from cordic_dnn_operations import get_matrix, cordic_matrix_multiply
 import numpy as np
+import pdb
 
 
 def main():
-    n = 3  # number of inputs in X
-    m = 5 # number of outputs of Ax + b
+    n = 6  # number of inputs in X
+    m = 15 # number of outputs of Ax + b
     nx = 16
     rx = 12
     x1 = np.random.uniform(-1, 1-1/2**12, n)
@@ -27,7 +28,7 @@ def main():
     A2 = get_matrix(m, m+n+1, nx, rx)
     A3 = get_matrix(m, m+n+1, nx, rx)
     A4 = get_matrix(m, m+n+1, nx, rx)
-    
+
     out1_1 = cordic_matrix_multiply(input1_fp, A1)
     out1_2 = cordic_matrix_multiply(input1_fp, A2)
     out1_3 = cordic_matrix_multiply(input1_fp, A3)
@@ -56,6 +57,16 @@ def main():
     write_matrix_to_files(A4, path, nx, 9)
     write_mem_file(inputs.astype(int), f'{path}/lstm_input', nx)
     write_mem_file(outputs.astype(int), f'{path}/lstm_output', nx)
+
+    # print outputs for easier debugging
+    print('A Matrix')
+    print(A1)
+    print('\nInput Vectors')
+    print(input1_fp)
+    print(input2_fp)
+    print('\nOutput Vectors')
+    print(out1_1)
+    print(out2_1)
 
 
 if __name__ == '__main__':

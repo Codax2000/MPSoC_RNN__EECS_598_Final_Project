@@ -90,7 +90,7 @@ module cordic_mac_array
         if (~rstb_i) begin
             ps_e <= eSAMPLE;
             iterate_counter_r = '0;
-            input_counter_r = INPUT_RESET_COUNT;
+            input_counter_r = '0;
             x_input_r <= '0;
             z_input_r <= '0;
         end else begin

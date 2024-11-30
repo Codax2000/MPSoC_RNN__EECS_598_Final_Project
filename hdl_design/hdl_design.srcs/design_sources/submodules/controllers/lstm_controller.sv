@@ -101,7 +101,7 @@ module lstm_controller #(
     // sequential block
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin
-            addr_r <= OUTPUT_LENGTH;
+            addr_r <= '0;
             data_i_r <= '0;
             ps_e <= eREADY;
         end else begin
