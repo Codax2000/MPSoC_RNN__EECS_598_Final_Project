@@ -10,7 +10,8 @@ module cordic_mac_array
     parameter WIDTH = 16,
     parameter FRACTIONAL_BITS = 12,
     parameter N_INPUTS = 6,
-    parameter ARRAY_LENGTH = 1
+    parameter ARRAY_LENGTH = 1,
+    parameter INPUT_RESET_COUNT = 0
 )
 (
     input logic clk_i,

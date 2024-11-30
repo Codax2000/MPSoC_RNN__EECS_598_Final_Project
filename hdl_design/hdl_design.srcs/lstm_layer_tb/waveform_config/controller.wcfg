@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="lstm_layer_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="lstm_layer_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="195.671 ns"></ZoomEndTime>
+      <Cursor1Time time="751.212 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="279"></NameColumnWidth>
+      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="15" />
+   <wvobject fp_name="group1163" type="group">
+      <obj_property name="label">X Handshake</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/x_data_i" type="array">
+         <obj_property name="ElementShortName">x_data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">x_data_i[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/x_valid_i" type="logic">
+         <obj_property name="ElementShortName">x_valid_i</obj_property>
+         <obj_property name="ObjectShortName">x_valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/x_ready_o" type="logic">
+         <obj_property name="ElementShortName">x_ready_o</obj_property>
+         <obj_property name="ObjectShortName">x_ready_o</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1164" type="group">
+      <obj_property name="label">H Handshake</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/h_data_i" type="array">
+         <obj_property name="ElementShortName">h_data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">h_data_i[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/h_valid_i" type="logic">
+         <obj_property name="ElementShortName">h_valid_i</obj_property>
+         <obj_property name="ObjectShortName">h_valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/h_ready_o" type="logic">
+         <obj_property name="ElementShortName">h_ready_o</obj_property>
+         <obj_property name="ObjectShortName">h_ready_o</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1168" type="group">
+      <obj_property name="label">Output Handshake</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[335:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[335:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/controller/handshake_in" type="logic">
+         <obj_property name="ElementShortName">handshake_in</obj_property>
+         <obj_property name="ObjectShortName">handshake_in</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/rstb_i" type="logic">
+      <obj_property name="ElementShortName">rstb_i</obj_property>
+      <obj_property name="ObjectShortName">rstb_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/addr_r" type="array">
+      <obj_property name="ElementShortName">addr_r[3:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_r[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/addr_n" type="array">
+      <obj_property name="ElementShortName">addr_n[3:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_n[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/data_i_r" type="array">
+      <obj_property name="ElementShortName">data_i_r[15:0]</obj_property>
+      <obj_property name="ObjectShortName">data_i_r[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/data_i_n" type="array">
+      <obj_property name="ElementShortName">data_i_n[15:0]</obj_property>
+      <obj_property name="ObjectShortName">data_i_n[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/selected_data_input" type="array">
+      <obj_property name="ElementShortName">selected_data_input[15:0]</obj_property>
+      <obj_property name="ObjectShortName">selected_data_input[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/handshake_in" type="logic">
+      <obj_property name="ElementShortName">handshake_in</obj_property>
+      <obj_property name="ObjectShortName">handshake_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/handshake_out" type="logic">
+      <obj_property name="ElementShortName">handshake_out</obj_property>
+      <obj_property name="ObjectShortName">handshake_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/counting_x" type="logic">
+      <obj_property name="ElementShortName">counting_x</obj_property>
+      <obj_property name="ObjectShortName">counting_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/ps_e" type="array">
+      <obj_property name="ElementShortName">ps_e[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ps_e[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/controller/ns_e" type="array">
+      <obj_property name="ElementShortName">ns_e[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ns_e[1:0]</obj_property>
+   </wvobject>
+</wave_config>
