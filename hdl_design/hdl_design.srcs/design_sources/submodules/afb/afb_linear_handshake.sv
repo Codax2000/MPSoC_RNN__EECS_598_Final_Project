@@ -2,7 +2,7 @@ module afb_linear_handshake #(
     parameter N=16,
     parameter R=12,
     parameter logic IS_TANH=1,
-    parameter N_ITERATIONS=12
+    parameter N_ITERATIONS=13
 ) (
     input logic [1:0][N-1:0] data_i, // theta
     input logic valid_i,
@@ -46,7 +46,7 @@ module afb_linear_handshake #(
         case(ps_e)
             eREADY: begin
                 ns_e = valid_i ? eITERATE : eREADY;
-                count_n = 1;
+                count_n = valid_i ? 1 : 0;
             end
             eITERATE: begin
                 ns_e = count_r == (N_ITERATIONS) ? eDONE : eITERATE;
@@ -55,7 +55,8 @@ module afb_linear_handshake #(
             eDONE: begin
                 ns_e =  !yumi_i ? eDONE : 
                         valid_i ? eITERATE : eREADY;
-                count_n = count_r;
+                count_n = !yumi_i ? count_r : 
+                    valid_i ? 1 : 0;
             end
             default: begin
                 ns_e = eREADY;

@@ -17,8 +17,6 @@ from fp_logic import fp_quantize
 from write_mem_utils import write_mem_file, get_2s_complement_hex_string
 from cordic_dnn_operations import cordic_linear_divide, cordic_hyperbolic, \
     cordic_afb, get_hyperbolic_constants
-import pandas as pd
-import pdb
 
 
 def generate_divide_inputs():
@@ -26,11 +24,11 @@ def generate_divide_inputs():
     R = 12
     inputs = np.linspace(-5, 5, num=500)
     inputs_fp = fp_quantize(inputs, N, R)
-    cosh_fp, sinh_fp = cordic_hyperbolic(inputs_fp, False, N, R)
-    sigm_fp = cordic_linear_divide(cosh_fp, sinh_fp, 12, False, N, R)
+    cosh_fp, sinh_fp = cordic_hyperbolic(inputs_fp, True, N, R)
+    sigm_fp = cordic_linear_divide(cosh_fp, sinh_fp, 12, True, N, R)
 
     # plot just to make sure
-    sigm_ideal = np.exp(inputs) / (1 + np.exp(inputs))
+    sigm_ideal = np.tanh(inputs)
     plt.figure()
     plt.plot(inputs, sigm_ideal, label='ideal')
     plt.plot(inputs, sigm_fp / 2**R, '--', label='CORDIC')
@@ -87,7 +85,7 @@ def generate_hyperbolic_inputs():
 
 
 def main():
-    # generate_divide_inputs()
+    generate_divide_inputs()
     generate_hyperbolic_inputs()
 
 

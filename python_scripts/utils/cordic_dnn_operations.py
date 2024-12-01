@@ -78,18 +78,26 @@ def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
         div_out - divided values after being adjusted for tanh in (N, R)
     '''
     div_out = np.zeros([n_rotations+2, xin.shape[0]])
+    x = np.zeros([n_rotations+2, xin.shape[0]])
+    y = np.zeros([n_rotations+2, xin.shape[0]])
+    x[0, :] = xin
+    y[0, :] = yin
     for i in range(1, n_rotations+1):
-        filt = yin < 0
+        filt = y[i-1, :] < 0
         delta = np.ones(filt.shape)
         delta[filt] = -1
         theta_i = 2**R / np.power(2, i)
         div_out[i, :] = div_out[i - 1, :] + np.trunc(delta * theta_i)
-        yin = yin - np.trunc(xin * delta / (2**i))
+        y[i, :] = y[i-1, :] - np.trunc(x[i-1, :] * delta / (2**i))
+        x[i, :] = x[i-1, :]
     if is_tanh:
         div_out[-1, :] = div_out[-2, :]
     else:
         div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
-    return div_out[-1].astype(int)
+    y[-1, :] = y[-2, :]
+    x[-1, :] = x[-2, :]
+    # pdb.set_trace()
+    return div_out[-1, :].astype(int)
 
 
 def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
@@ -160,8 +168,6 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
         y[i+(M+1)+1, :] = y[i+(M+1), :] - sigma[i+(M+1), :] * \
             np.trunc(x[i+(M+1), :].astype(int)>>j_current)
         z[i+(M+1)+1, :] = z[i+(M+1), :] + sigma[i+(M+1), :] * lut_standard[i]
-
-    pdb.set_trace()
 
     sinh = y[-1,:].astype(int)
     cosh = x[-1,:].astype(int)

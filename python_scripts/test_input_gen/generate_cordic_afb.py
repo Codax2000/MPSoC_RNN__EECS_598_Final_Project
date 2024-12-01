@@ -89,7 +89,7 @@ def analyze_linear_divide_results():
     # plot ideal inputs
     cosh_fp = fp_quantize(np.cosh(inputs))
     sinh_fp = fp_quantize(np.sinh(inputs))
-    zout = cordic_linear_divide(cosh_fp, sinh_fp, 12, True, 16, R)[-1, :] / 2**R
+    zout = cordic_linear_divide(cosh_fp, sinh_fp, 12, True, 16, R) / 2**R
     quant_error = np.abs(np.tanh(inputs) - zout)
 
     # plot division as a tanh function
@@ -124,8 +124,8 @@ def analyze_afb_results():
     tanh_ideal = np.tanh(inputs)
 
     # cordic outputs in fixed point
-    sigm_fp = cordic_afb(inputs_fp, False, N, R)[-1, :] / 2**R
-    tanh_fp = cordic_afb(inputs_fp, True, N, R)[-1, :] / 2**R
+    sigm_fp = cordic_afb(inputs_fp, False, N, R) / 2**R
+    tanh_fp = cordic_afb(inputs_fp, True, N, R) / 2**R
 
     # plot sigmoid outputs
     plt.figure()
@@ -227,16 +227,17 @@ def main():
     analyze_linear_divide_results()
     analyze_hyperbolic_results()
     analyze_afb_results()
-    # analyze_hardware_results()
+    analyze_hardware_results()
     print_hyperbolic_constants(N, R)
 
-    # get expected outputs
-    outputs_tanh = cordic_afb(inputs_fp, True, N, R)[-1, :]
-    outputs_sigm = cordic_afb(inputs_fp, False, N, R)[-1, :]
+    # debug values
+    cosht, sinht = cordic_hyperbolic(inputs_fp[115], is_tanh=False, R=R)
+    pdb.set_trace()
+    out = cordic_linear_divide(cosht, sinht, R=R)
 
-    # get expected outputs for subblocks
-    cosh_sigm, sinh_sigm = cordic_hyperbolic(inputs_fp, False, 16, 12)
-    cosh_tanh, sinh_tanh = cordic_hyperbolic(inputs_fp, True, 16, 12)
+    # get expected outputs
+    outputs_tanh = cordic_afb(inputs_fp, True, N, R)
+    outputs_sigm = cordic_afb(inputs_fp, False, N, R)
 
     # send expected inputs and outputs to files
     path_tanh = './hdl_design/hdl_design.srcs/cordic_tanh_tb/mem/'

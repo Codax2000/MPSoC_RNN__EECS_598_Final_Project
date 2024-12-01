@@ -15,7 +15,7 @@ module afb #(
     parameter N=16,
     parameter R=12,
     parameter logic IS_TANH=1,
-    parameter N_ITERATIONS=12
+    parameter N_ITERATIONS=13
 ) (
     input logic signed [N-1:0] data_i, // theta
     input logic valid_i,
