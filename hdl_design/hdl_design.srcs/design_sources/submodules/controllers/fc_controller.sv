@@ -108,6 +108,7 @@ module fc_controller #(
     ) memories (
         .addr_i(addr_n),
         .clk_i,
+        .rstb_i,
         .data_o(mem_data_lo)
     );
 

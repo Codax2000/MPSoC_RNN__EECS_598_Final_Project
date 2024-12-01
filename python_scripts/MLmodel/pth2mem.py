@@ -10,6 +10,7 @@ from model_matmul import *
 
 modelPath = "python_scripts\\MLmodel\\weights\\epoch50q_manual_int.pth"
 outputPath = "hdl_design\\hdl_design.srcs\\design_sources\\mem_init\\"
+csvOutPath = 'python_scripts\\MLmodel\\weights\\layers\\'
 
 if __name__ == '__main__':
     #load model
@@ -67,7 +68,20 @@ if __name__ == '__main__':
     print("i_gate shape: ", layer4.shape)
     print("f_gate shape: ", layer5.shape)
     print("g_gate shape: ", layer6.shape)
-    print("o_gate shape: ", layer7.shape)
+    print("o_gate shape: ", layer7.shape)   
+
+    # print(layer0)
+
+    np.savetxt(csvOutPath + "layer0.csv", layer0, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer1.csv", layer1, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer2.csv", layer2, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer3.csv", layer3, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer4.csv", layer4, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer5.csv", layer5, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer6.csv", layer6, delimiter=",", fmt="%d")
+    np.savetxt(csvOutPath + "layer7.csv", layer7, delimiter=",", fmt="%d")
+
+    
     
 
     # print(inputline.shape)

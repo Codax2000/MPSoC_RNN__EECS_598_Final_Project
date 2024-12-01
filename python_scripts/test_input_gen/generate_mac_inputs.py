@@ -38,6 +38,19 @@ def plot_heatmap():
     plt.savefig('./pictures/cordic_mac_heatmap.png')
 
 
+<<<<<<< HEAD:python_scripts/utility_functions/bbr_mac.py
+def cordic_vector_multiply(x, z, n=12):
+    y = np.zeros(x.shape)
+    for i in range(len(y)):
+        y[i] = bbr_mac(z[i], y[i], x[i], n)
+    # print(f'X = {x}')
+    # print(f'Z = {z}')
+    # print(f'Y = {np.cumsum(y)}')
+    return np.sum(y)
+
+
+=======
+>>>>>>> main:python_scripts/test_input_gen/generate_mac_inputs.py
 def write_mac_input(x, z, path, n=16):
     with open(path, 'w') as fd:
         for i in range(x.shape[0]):
