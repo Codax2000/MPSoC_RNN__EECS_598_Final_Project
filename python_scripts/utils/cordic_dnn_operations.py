@@ -16,6 +16,7 @@ get_matrix - get a fixed point matrix for testing
 import numpy as np
 from fp_logic import fp_quantize
 from write_mem_utils import int_to_signed_bits
+import pdb
 
 
 def bbr_mac(xin, yin, zin, nx=16, rx=12):
@@ -61,18 +62,6 @@ def cordic_afb(theta, is_tanh=True, N=16, R=8):
     cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
     return div.astype(int)
-    # outMat = np.zeros(theta.shape)
-    # if theta.ndim == 1:
-    #     cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
-    #     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
-    #     outMat = div
-    # elif theta.ndim == 2:
-    #     for i in range(len(theta)):
-    #         cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
-    #         div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
-    #         outMat[i] = div
-            
-    # return outMat.astype(int)
 
 
 def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
@@ -100,7 +89,7 @@ def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
         div_out[-1, :] = div_out[-2, :]
     else:
         div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
-    return div_out[-1]
+    return div_out[-1].astype(int)
 
 
 def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
@@ -133,7 +122,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
 
     # set inputs to be arrays
     theta = fix_type(theta)
-    x = Kh_fp + np.zeros(theta.shape)
+    x = fp_quantize(1, N, R) + np.zeros(theta.shape)
     y = np.zeros(theta.shape)   
     z = theta
 
@@ -172,8 +161,10 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
             np.trunc(x[i+(M+1), :].astype(int)>>j_current)
         z[i+(M+1)+1, :] = z[i+(M+1), :] + sigma[i+(M+1), :] * lut_standard[i]
 
-    sinh = y[-1,:]
-    cosh = x[-1,:]
+    pdb.set_trace()
+
+    sinh = y[-1,:].astype(int)
+    cosh = x[-1,:].astype(int)
 
     return cosh, sinh
 

@@ -44,8 +44,8 @@ module cordic_hyperbolic_tb();
     // Define fixed-point values
     parameter N1 = 16;
     parameter N2 = 16;
-    parameter R1 = 8;
-    parameter R2 = 8;
+    parameter R1 = 12;
+    parameter R2 = 12;
     
     // L1: Number of words in input
     parameter L1 = 1;
@@ -62,8 +62,15 @@ module cordic_hyperbolic_tb();
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
     logic [L1-1:0][N1-1:0] data_i;
-    logic signed [L2-1:0][N2-1:0] data_o, expected_data_o;
+    logic [L2-1:0][N2-1:0] data_o, expected_data_o;
     logic rst, clk;
+    
+    // declare variables for output
+    logic signed [N2-1:0] cosh_out, sinh_out, cosh_exp, sinh_exp;
+    assign cosh_out = data_o[1];
+    assign sinh_out = data_o[0];
+    assign cosh_exp = expected_data_o[1];
+    assign sinh_exp = expected_data_o[0];
     
     // create send and receive modules locally
     // create DUT
@@ -133,7 +140,7 @@ module cordic_hyperbolic_tb();
 	`else
 	    fd = $fopen("./python_scripts/output_hyperbolic.csv", "w");
 	`endif
-        $fwrite(fd, "test_index,expected,received\n");
+        $fwrite(fd, "test_index,cosh_exp,cosh_rec,sinh_exp,sinh_rec\n");
         forever begin
             @(negedge clk); // wait for the negative edge of the clock
             
@@ -148,7 +155,7 @@ module cordic_hyperbolic_tb();
                     $display("Testcase %d passed", output_counter_r + 2'b01);
                 else
                     $display("Testcase %d failed: Expected %h, Received %h", output_counter_r+2'b01, expected_data_o, data_o);
-                $fwrite(fd,"%u,%d,%d\n", output_counter_r,expected_data_o,data_o);
+                $fwrite(fd,"%u,%d,%d,%d,%d\n", output_counter_r,cosh_exp,cosh_out,sinh_exp,sinh_out);
             end
         end
     end
