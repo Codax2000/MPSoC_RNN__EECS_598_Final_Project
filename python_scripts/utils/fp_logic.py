@@ -71,7 +71,7 @@ def fp_mult(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
         is_under_min_value = mantissa_prod < min_value
         mantissa_prod[is_over_max_value] = max_value
         mantissa_prod[is_under_min_value] = min_value
-    return np.array(mantissa_prod)
+    return np.array(mantissa_prod, dtype=int)
 
 
 def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
@@ -100,7 +100,7 @@ def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     z_out = x + y
 
     # now get to the correct number of bits
-    z_out *= np.power(2.0, r_z - r_out)
+    z_out *= np.power(2, r_z - r_out)
     z_out = np.array(np.floor(z_out))  # truncate decimals
     upper_max = np.power(2, n_z - 1) - 1
     lower_max = -np.power(2, n_z - 1)
@@ -108,7 +108,7 @@ def fp_add(x, y, n_x=16, n_y=16, r_x=8, r_y=8, n_z=16, r_z=8):
     is_under_min = z_out < lower_max
     z_out[is_over_max] = upper_max
     z_out[is_under_min] = lower_max
-    return np.array(z_out)
+    return np.array(z_out, dtype=int)
 
 
 if __name__ == '__main__':

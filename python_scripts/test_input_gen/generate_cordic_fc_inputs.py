@@ -9,6 +9,24 @@ from cordic_dnn_operations import cordic_matrix_multiply, get_matrix
 from write_mem_utils import write_mem_file, write_matrix_to_files
 from fp_logic import fp_quantize
 import numpy as np
+<<<<<<< HEAD:python_scripts/utility_functions/generate_cordic_fc_inputs.py
+import pdb
+
+def get_matrix(m, n, nx=16, rx=12):
+    A1 = 2 * np.random.randn(m, n)
+    A1_fp = fp_quantize(A1, n=nx, r=rx)
+    return A1_fp
+
+
+def cordic_matrix_multiply(x, A, r=12):
+    m, n = A.shape
+    outputs = np.zeros((m))
+    for i in range(m):
+        outputs[i] = cordic_vector_multiply(A[i], x, n=r)
+        # outputs[i] = cordic_vector_multiply(x, A[i], n=r)
+    return outputs
+=======
+>>>>>>> main:python_scripts/test_input_gen/generate_cordic_fc_inputs.py
 
 
 def main():
@@ -25,6 +43,7 @@ def main():
     x2_hat_fp[-1] -= 1
     A_fp = get_matrix(m, n + 1)
     print(x_hat_fp)
+    print(A_fp)
     outputs = cordic_matrix_multiply(x_hat_fp, A_fp)
     outputs2 = cordic_matrix_multiply(x2_hat_fp, A_fp)
     outputs = np.hstack((outputs, outputs2))
