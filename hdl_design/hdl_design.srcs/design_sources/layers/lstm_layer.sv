@@ -38,7 +38,7 @@ module lstm_layer #(
     // controller to feed data from input to MAC and select betwen X and H
     logic h_ready_lo, h_valid_lo, lstm_valid_lo;
     logic [3:0] mac_ready_lo, mac_valid_lo, piso_valid_lo, piso_ready_lo;
-    logic relu_ready_lo;
+    logic afb_ready_lo;
     logic [N_X-1:0] h_data_lo, lstm_data_lo;
     logic [3:0][OUTPUT_LENGTH-1:0][N_W-1:0] lstm_mem_lo;
     logic [3:0][OUTPUT_LENGTH-1:0][N_X-1:0] mac_data_lo;
@@ -48,10 +48,10 @@ module lstm_layer #(
     assign lstm_mem_lo = lstm_data_mem_lo[4*OUTPUT_LENGTH*N_W-1:0];
 
     // logic for layer output
-    logic queue_ready_lo, relu_valid_lo;
+    logic queue_ready_lo, afb_valid_lo;
     logic output_handshake;
     assign output_handshake = yumi_i && valid_o;
-    assign valid_o = relu_valid_lo && queue_ready_lo;
+    assign valid_o = afb_valid_lo && queue_ready_lo;
 
     lstm_controller #(
         .N_X(N_X),
@@ -132,22 +132,24 @@ module lstm_layer #(
                 .data_i(mac_data_lo[i]),
 
                 .valid_o(piso_valid_lo[i]),
-                .yumi_i(relu_ready_lo),
+                .yumi_i(afb_ready_lo),
                 .data_o(piso_data_lo[i])
             );
         end
     endgenerate
 
     // AFB block connecting to output
-    lstm_relu_ideal #(
-        .N(N_X)
+    lstm_afb #(
+        .N(N_X),
+        .R(N_R),
+        .N_INPUTS(OUTPUT_LENGTH)
     ) afb (
         .data_i(piso_data_lo),
         .valid_i(piso_valid_lo[0]),
-        .ready_o(relu_ready_lo),
+        .ready_o(afb_ready_lo),
 
         .data_o,
-        .valid_o(relu_valid_lo),
+        .valid_o(afb_valid_lo),
         .yumi_i(output_handshake),
 
         .clk_i,
