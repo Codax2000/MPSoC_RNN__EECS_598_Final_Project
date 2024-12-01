@@ -14,13 +14,27 @@ module mem_array #(
 ) (
     input logic [$clog2(N_WEIGHTS)-1:0] addr_i,
     input logic clk_i,
+    input logic rstb_i,
     output logic [ARRAY_LENGTH-1:0][N_BITS-1:0] data_o
 );
 
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            // TODO: Update this later with memory macro
+            `ifdef VIVADO
+            ROM_inferred #(
+                .N_BITS(N_BITS),
+                .N_ADDR(N_WEIGHTS),
+                .LAYER_NUMBER(LAYER_NUMBER),
+                .MEMORY_INDEX(i)
+            ) mem (
+                .addr_i,
+                .clk_i,
+                .rstb_i,
+                .data_o(data_o[i])
+            );
+            `endif
+            `ifndef VIVADO
             mem_ideal #(
                 .N_BITS(N_BITS),
                 .N_ADDR(N_WEIGHTS),
@@ -29,8 +43,10 @@ module mem_array #(
             ) mem (
                 .addr_i,
                 .clk_i,
+                .rstb_i,
                 .data_o(data_o[i])
             );
+            `endif
         end
     endgenerate
 
