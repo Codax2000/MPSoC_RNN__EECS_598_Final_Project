@@ -121,7 +121,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
     n_rotations = 13
     # account for sigmoid if necessary
     if not is_tanh:
-        theta = np.trunc(theta / 2)
+        theta = theta.astype(int) >> 1
     
     # set rotation constants in fixed point
     M = 1

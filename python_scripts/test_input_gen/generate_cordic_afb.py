@@ -230,11 +230,6 @@ def main():
     analyze_hardware_results()
     print_hyperbolic_constants(N, R)
 
-    # debug values
-    cosht, sinht = cordic_hyperbolic(inputs_fp[115], is_tanh=False, R=R)
-    pdb.set_trace()
-    out = cordic_linear_divide(cosht, sinht, R=R)
-
     # get expected outputs
     outputs_tanh = cordic_afb(inputs_fp, True, N, R)
     outputs_sigm = cordic_afb(inputs_fp, False, N, R)
