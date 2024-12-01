@@ -10,7 +10,8 @@ module cordic_mac_array
     parameter WIDTH = 16,
     parameter FRACTIONAL_BITS = 12,
     parameter N_INPUTS = 6,
-    parameter ARRAY_LENGTH = 1
+    parameter ARRAY_LENGTH = 1,
+    parameter INPUT_RESET_COUNT = 0
 )
 (
     input logic clk_i,
@@ -43,7 +44,10 @@ module cordic_mac_array
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            cordic_mac_slice mac_slice (
+            cordic_mac_slice #(
+                .N_X(WIDTH),
+                .R_X(FRACTIONAL_BITS)
+            ) mac_slice (
                 .clk_i,
                 .rstb_i,
                 .iterate,
