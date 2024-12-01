@@ -175,7 +175,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
     sinh = y[-1,:]
     cosh = x[-1,:]
 
-    return cosh.astype(int), sinh.astype(int)
+    return cosh, sinh
 
 
 def cordic_matrix_multiply(x, A, nx=16, rx=12):
@@ -195,7 +195,7 @@ def cordic_matrix_multiply(x, A, nx=16, rx=12):
     outputs = np.zeros((m))
     for i in range(m):
         outputs[i] = cordic_vector_multiply(x, A[i], nx, rx)
-    return outputs.astype(int)
+    return outputs
 
 
 def cordic_vector_multiply(x, z, n=16, r=12):

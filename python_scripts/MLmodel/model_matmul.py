@@ -12,6 +12,7 @@ from model import model, model_q
 # from bbr_mac import cordic_vector_multiply
 from cordic_dnn_operations import *
 from fp_logic import *
+from write_mem_utils import *
 # from generate_cordic_fc_inputs import cordic_matrix_multiply, get_matrix
 from tqdm import tqdm
 
@@ -117,6 +118,10 @@ def sigmoid(z):
     return 1/(1 + np.exp(-z))
 
 def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
+    memFilePath_ct_in = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\c_t\\"
+    memFilePath_layer1Out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\layer1Out\\"
+    memFilePath_ct_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\c_t\\"
+    memFilePath_ht_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\h_t\\"
     layers_q = []
 
     #quantize all layers
@@ -134,15 +139,17 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
 
         macOut1 = cordic_matrix_multiply(inputline, layers_q[0], fixed_r)#/2**fixed_r
         macOut1 = cordic_afb(macOut1, is_tanh=True, N=fixed_n, R=fixed_r)
-        # macOut1 = fp_quantize(macOut1, fixed_n, fixed_r)
 
         macOut1 = np.append(macOut1, one_q)
 
         macOut2 = cordic_matrix_multiply(macOut1, layers_q[1],fixed_r)#/2**fixed_r
         macOut2 = cordic_afb(macOut2, is_tanh=True, N=fixed_n, R=fixed_r)
-        # macOut2 = fp_quantize(macOut2, fixed_n, fixed_r)
         macOut2 = np.append(macOut2, one_q)
         macOut2 = np.append(h_t, macOut2)
+
+        #write mem file for input to LSTM
+        write_mem_file(c_t, memFilePath_ct_in + str(i), fixed_n)
+        write_mem_file(macOut2, memFilePath_layer1Out + str(i), fixed_n)
 
         lstm_i = cordic_matrix_multiply(macOut2, layers_q[4],fixed_r)#/2**fixed_r
         lstm_f = cordic_matrix_multiply(macOut2, layers_q[5],fixed_r)#/2**fixed_r
@@ -153,40 +160,27 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         lstm_g = cordic_afb(lstm_g, is_tanh=True, N=fixed_n, R=fixed_r)
         lstm_o = cordic_afb(lstm_o, is_tanh=False, N=fixed_n, R=fixed_r)
 
-        # c_t = lstm_f * c_t + lstm_i * lstm_g #replace with fixed point mul later
-        # h_t = lstm_o * np.tanh(c_t)
         c_t_intermediate1 = fp_mult(lstm_f, c_t, n_x=fixed_n, n_y=fixed_n, r_x=fixed_r, r_y=fixed_r, n_z=fixed_n, r_z=fixed_r)
         c_t_intermediate2 = fp_mult(lstm_i, lstm_g, n_x=fixed_n, n_y=fixed_n, r_x=fixed_r, r_y=fixed_r, n_z=fixed_n, r_z=fixed_r)
-        # print(c_t_intermediate1.dtype)
-        # print(c_t_intermediate2.dtype)
         c_t = fp_add(c_t_intermediate1, c_t_intermediate2, n_x=fixed_n, n_y=fixed_n, r_x=fixed_r, r_y=fixed_r, n_z=fixed_n, r_z=fixed_r)
-        # print(h_t.dtype)
-        # print(h_t)
         c_t_tanh = cordic_afb(c_t, is_tanh=True, N=fixed_n, R=fixed_r)
         h_t = fp_mult(lstm_o, c_t_tanh, n_x=fixed_n, n_y=fixed_n, r_x=fixed_r, r_y=fixed_r, n_z=fixed_n, r_z=fixed_r)
-        # c_t = fp_quantize(c_t, fixed_n, fixed_r) /2**fixed_r
-        # h_t = fp_quantize(h_t, fixed_n, fixed_r)
         h_t_1 = np.append(h_t, one_q)
 
-        # print(h_t.dtype)
-        # print(h_t)
-        # print(h_t_1)
+        write_mem_file(h_t, memFilePath_ht_out + str(i), fixed_n)
+        write_mem_file(c_t, memFilePath_ct_out + str(i), fixed_n)
 
         macOut3 = cordic_matrix_multiply(h_t_1, layers_q[2],fixed_r)#/2**fixed_r
         macOut3 = cordic_afb(macOut3, is_tanh=True, N=fixed_n, R=fixed_r)
-        # macOut3 = fp_quantize(macOut3, fixed_n, fixed_r)
         macOut3 = np.append(macOut3, one_q)
-
-
 
         macOut4 = cordic_vector_multiply(macOut3, layers_q[3],fixed_r)#/2**fixed_r
         macOut4 = cordic_afb(macOut4, is_tanh=True, N=fixed_n, R=fixed_r)
-        # macOut4 = fp_quantize(macOut4, fixed_n, fixed_r)
 
         out = np.append(out, macOut4)
         
 
-        if i == 299:
+        if i == 10: # change this base on how far you want to run the cordic model
             return out /2**fixed_r
     return out
 
