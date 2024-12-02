@@ -1,3 +1,7 @@
+`ifndef SYNOPSIS
+`define VIVADO
+`timescale 1ns/10ps
+`endif
 /**
 Alex Knowlton
 10/29/2924
