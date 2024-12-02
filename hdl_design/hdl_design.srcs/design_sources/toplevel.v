@@ -1,6 +1,5 @@
 module toplevel #(
-    parameter N=16,
-    parameter R=8
+    parameter N=16
 ) (
     input signed [N-1:0] data_i,
     input valid_i,
@@ -8,9 +7,23 @@ module toplevel #(
 
     output reg signed [N-1:0] data_o,
     output reg valid_o,
-    input yumi_i
+    input yumi_i,
+
+    input clk_i,
+    input rstb_i
 );
 
-    geo_net #(.N(N), .R(R)) toplevel_net (.*);
+    lstm_layer toplevel_net (
+        .data_i,
+        .ready_o,
+        .valid_i,
+        
+        .data_o,
+        .valid_o,
+        .yumi_i,
+        
+        .clk_i,
+        .rstb_i
+    );
 
 endmodule

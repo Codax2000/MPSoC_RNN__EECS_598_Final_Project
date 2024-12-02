@@ -1,5 +1,7 @@
 `ifndef SYNOPSIS
 `define VIVADO
+`endif
+`ifdef VIVADO
 `timescale 1ns/10ps
 `endif
 
@@ -37,7 +39,7 @@ T2 - number of values to receive from DUT
 Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
 */
 
-module lstm_layer_tb();
+module template_tb();
 
     // Define fixed-point values
     parameter N1 = 16;
@@ -52,28 +54,20 @@ module lstm_layer_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 12;
+    parameter T1 = 300
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 30;
+    parameter T2 = 400;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
-    logic [L1-1:0][N1-1:0] data_i;
-    logic [L2-1:0][N2-1:0] data_o, expected_data_o;
+    logic signed [L1-1:0][N1-1:0] data_i;
+    logic signed [L2-1:0][N2-1:0] data_o, expected_data_o;
     logic rstb_i, clk_i;
     
     // create send and receive modules locally
     // create DUT
-    lstm_layer #(
-        .N_X(16),
-        .N_W(16),
-        .R_X(12),
-        .R_W(12),
-        .INPUT_LENGTH(6),
-        .OUTPUT_LENGTH(15),
-        .LAYER_NUMBER(6)
-    ) DUT(.*);
+    toplevel DUT(.*);
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
@@ -81,19 +75,19 @@ module lstm_layer_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("lstm_input.mem", input_test_vals);
-        $readmemh("lstm_output.mem", output_test_vals);
+        $readmemh("toplevel_input.mem", input_test_vals);
+        $readmemh("toplevel_output.mem", output_test_vals);
 	`else
-	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_input.mem", input_test_vals);
-	    $readmemh("./hdl_design/hdl_design.srcs/lstm_layer_tb/mem/lstm_output.mem", output_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/toplevel_tb/mem/toplevel_input.mem", input_test_vals);
+	    $readmemh("./hdl_design/hdl_design.srcs/toplevel_tb/mem/toplevel_output.mem", output_test_vals);
 	`endif
     end
     
     // **************** DO NOT EDIT BELOW THIS LINE ******************
     
     // counters for input/output addresses
-    logic [$clog2(T1):0] input_counter_n, input_counter_r;
-    logic [$clog2(T2):0] output_counter_n, output_counter_r;
+    logic [$clog2(T1+1):0] input_counter_n, input_counter_r;
+    logic [$clog2(T2+1):0] output_counter_n, output_counter_r;
     
     // declare variables for debugging more easily;
     logic handshake_in, handshake_out;

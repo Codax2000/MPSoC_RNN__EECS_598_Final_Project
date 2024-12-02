@@ -21,21 +21,8 @@ module mem_array #(
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            // `ifdef VIVADO
-            // ROM_inferred #(
-            //     .N_BITS(N_BITS),
-            //     .N_ADDR(N_WEIGHTS),
-            //     .LAYER_NUMBER(LAYER_NUMBER),
-            //     .MEMORY_INDEX(i)
-            // ) mem (
-            //     .addr_i,
-            //     .clk_i,
-            //     .rstb_i,
-            //     .data_o(data_o[i])
-            // );
-            // `endif
-            // `ifndef VIVADO
-            mem_ideal #(
+            `ifdef VIVADO
+            ROM_inferred #(
                 .N_BITS(N_BITS),
                 .N_ADDR(N_WEIGHTS),
                 .LAYER_NUMBER(LAYER_NUMBER),
@@ -43,9 +30,16 @@ module mem_array #(
             ) mem (
                 .addr_i,
                 .clk_i,
+                .rstb_i,
                 .data_o(data_o[i])
             );
-            // `endif
+            `else
+            sram_pdk mem (
+                .addr_i,
+                .clk_i,
+                .data_o(data_o[i])
+            );
+            `endif
         end
     endgenerate
 

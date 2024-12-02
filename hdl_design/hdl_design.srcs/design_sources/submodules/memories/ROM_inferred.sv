@@ -1,3 +1,6 @@
+`ifndef SYNOPSIS
+`define VIVADO
+`endif
 /**
 Alex Knowlton
 4/12/2023
@@ -5,6 +8,7 @@ Alex Knowlton
 Inferred block RAM using Xylinx Vivado.
 */
 
+`ifdef VIVADO
 module ROM_inferred #(
     parameter N_BITS=8,
     parameter N_ADDR=8,
@@ -55,3 +59,4 @@ module ROM_inferred #(
     );
 
 endmodule
+`endif
