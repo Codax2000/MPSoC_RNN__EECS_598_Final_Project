@@ -192,7 +192,7 @@ def cordic_matrix_multiply(x, A, nx=16, rx=12):
     outputs = np.zeros((m))
     for i in range(m):
         outputs[i] = cordic_vector_multiply(x, A[i], nx, rx)
-    return outputs
+    return outputs.astype(int)
 
 
 def cordic_vector_multiply(x, z, n=16, r=12):
@@ -228,7 +228,7 @@ def get_matrix(m, n, nx=16, rx=12):
         A - m by n matrix in (nx, rx) notation drawn from a Gaussian
         distribution with mean 0 and standard deviation sqrt(2)
     '''
-    A1 = 0.02 * np.random.randn(m, n)
+    A1 = 0.5 * np.random.randn(m, n)
     A1_fp = fp_quantize(A1, n=nx, r=rx)
     return A1_fp
 

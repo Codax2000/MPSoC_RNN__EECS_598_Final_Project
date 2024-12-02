@@ -23,8 +23,8 @@ module lstm_layer #(
     parameter N_W=16,
     parameter R_X=12,
     parameter R_W=12,
-    parameter INPUT_LENGTH=6,
-    parameter OUTPUT_LENGTH=15,
+    parameter INPUT_LENGTH=4,
+    parameter OUTPUT_LENGTH=3,
     parameter LAYER_NUMBER=6
 ) (
     input logic [N_X-1:0] data_i,
@@ -84,7 +84,7 @@ module lstm_layer #(
 
     // H queue to capture previous output
     hidden_state_queue #(
-        .N(N_X),
+        .N_X(N_X),
         .LENGTH(OUTPUT_LENGTH)
     ) h_queue (
         .data_i(data_o),
@@ -145,7 +145,7 @@ module lstm_layer #(
     // AFB block connecting to output
     lstm_afb #(
         .N(N_X),
-        .R(N_R),
+        .R(R_X),
         .N_INPUTS(OUTPUT_LENGTH)
     ) afb (
         .data_i(piso_data_lo),
