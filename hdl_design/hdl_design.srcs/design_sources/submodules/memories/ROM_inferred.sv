@@ -1,3 +1,6 @@
+`ifndef SYNOPSIS
+`define VIVADO
+`endif
 /**
 Alex Knowlton
 4/12/2023

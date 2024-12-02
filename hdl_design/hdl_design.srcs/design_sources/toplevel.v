@@ -13,6 +13,17 @@ module toplevel #(
     input rstb_i
 );
 
-    lstm_layer toplevel_net (.*);
+    lstm_layer toplevel_net (
+        .data_i,
+        .ready_o,
+        .valid_i,
+        
+        .data_o,
+        .valid_o,
+        .yumi_i,
+        
+        .clk_i,
+        .rstb_i
+    );
 
 endmodule

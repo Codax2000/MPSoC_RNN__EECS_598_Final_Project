@@ -34,12 +34,7 @@ module mem_array #(
                 .data_o(data_o[i])
             );
             `else
-            mem_ideal #(
-                .N_BITS(N_BITS),
-                .N_ADDR(N_WEIGHTS),
-                .LAYER_NUMBER(LAYER_NUMBER),
-                .MEMORY_INDEX(i)
-            ) mem (
+            sram_pdk mem (
                 .addr_i,
                 .clk_i,
                 .data_o(data_o[i])

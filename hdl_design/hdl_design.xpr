@@ -188,10 +188,8 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/design_sources/toplevel.v">
+      <File Path="$PSRCDIR/design_sources/toplevel.v">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PSRCDIR/design_sources/toplevel.v"/>
-          <Attr Name="ImportTime" Val="1733155135"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -2133,14 +2131,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/toplevel_tb/imports/toplevel_tb/mem/toplevel_output.mem">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PSRCDIR/toplevel_tb/mem/toplevel_output.mem"/>
-          <Attr Name="ImportTime" Val="1731428538"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/toplevel_tb/imports/toplevel_tb/waveform_config/toplevel_waveform.wcfg">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PSRCDIR/toplevel_tb/waveform_config/toplevel_waveform.wcfg"/>
@@ -2148,10 +2138,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/toplevel_tb/imports/toplevel_tb/mem/toplevel_input.mem">
+      <File Path="$PSRCDIR/toplevel_tb/mem/toplevel_output.mem">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PSRCDIR/toplevel_tb/mem/toplevel_input.mem"/>
-          <Attr Name="ImportTime" Val="1731428538"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/toplevel_tb/mem/toplevel_input.mem">
+        <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
