@@ -5,6 +5,7 @@ Alex Knowlton
 Inferred block RAM using Xylinx Vivado.
 */
 
+`ifdef VIVADO
 module ROM_inferred #(
     parameter N_BITS=8,
     parameter N_ADDR=8,
@@ -55,3 +56,4 @@ module ROM_inferred #(
     );
 
 endmodule
+`endif
