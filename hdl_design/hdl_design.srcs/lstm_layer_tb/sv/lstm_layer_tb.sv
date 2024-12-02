@@ -52,10 +52,10 @@ module lstm_layer_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 8;
+    parameter T1 = 4;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 6;
+    parameter T2 = 4;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;

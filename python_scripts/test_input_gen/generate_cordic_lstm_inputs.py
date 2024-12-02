@@ -18,10 +18,10 @@ def activation_function(xi, xu, xf, xo, ct, nx=16, rx=12):
     ot = cordic_afb(xo, is_tanh=False, N=nx, R=rx)
     mult1 = pointwise_mult(ut, it, nx, rx)
     mult2 = pointwise_mult(ft, ct, nx, rx)
-    ct = mult1 + mult2
-    tan_out = cordic_afb(ct, is_tanh=True, N=nx, R=rx)
+    add_out = mult1 + mult2
+    tan_out = cordic_afb(add_out, is_tanh=True, N=nx, R=rx)
     ht = pointwise_mult(ot, tan_out, nx=rx, rx=rx)
-    return ct, ht
+    return ht, add_out
 
 
 def pointwise_mult(x1, x2, nx=16, rx=12):
@@ -38,8 +38,8 @@ def pointwise_mult(x1, x2, nx=16, rx=12):
 
 
 def main():
-    n = 4  # number of inputs in X
-    m = 3 # number of outputs of Ax + b
+    n = 2  # number of inputs in X
+    m = 2 # number of outputs of Ax + b
     nx = 16
     rx = 12
     x1 = np.random.uniform(-1, 1-1/2**12, n)
@@ -61,7 +61,7 @@ def main():
     out1_3 = cordic_matrix_multiply(input1_fp, A3)
     out1_4 = cordic_matrix_multiply(input1_fp, A4)
 
-    out1, ct = activation_function(out1_1, out1_2, out1_3, out1_4, ct, nx, rx)
+    out1, ct1 = activation_function(out1_1, out1_2, out1_3, out1_4, ct, nx, rx)
 
     input2_fp = np.hstack((out1, x2_fp, one)).astype(int)
     out2_1 = cordic_matrix_multiply(out1, A1)
@@ -69,7 +69,7 @@ def main():
     out2_3 = cordic_matrix_multiply(out1, A3)
     out2_4 = cordic_matrix_multiply(out1, A4)
 
-    out2, ct = activation_function(out2_1, out2_2, out2_3, out2_4, ct, nx, rx)
+    out2, ct2 = activation_function(out2_1, out2_2, out2_3, out2_4, ct1, nx, rx)
 
     inputs = np.hstack((x1_fp, x2_fp))
     outputs = np.hstack((out1, out2))
@@ -86,12 +86,30 @@ def main():
     # print outputs for easier debugging
     print('A Matrix')
     print(A1)
+    print()
+    print(A2)
+    print()
+    print(A3)
+    print()
+    print(A4)
     print('\nInput Vectors')
     print(input1_fp)
     print(input2_fp)
     print('\nOutput Vectors')
     print(out1_1)
+    print(out1_2)
+    print(out1_3)
+    print(out1_4)
     print(out2_1)
+    print(out2_2)
+    print(out2_3)
+    print(out2_4)
+    print('\nAFB Output')
+    print(out1)
+    print(out2)
+    print('\nCt outputs')
+    print(ct1)
+    print(ct2)
 
 
 if __name__ == '__main__':

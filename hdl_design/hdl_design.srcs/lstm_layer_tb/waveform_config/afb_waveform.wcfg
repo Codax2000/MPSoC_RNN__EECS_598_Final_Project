@@ -11,18 +11,27 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2,565.844 ns"></ZoomStartTime>
-      <ZoomEndTime time="3,446.887 ns"></ZoomEndTime>
-      <Cursor1Time time="2,928.894 ns"></Cursor1Time>
+      <ZoomStartTime time="2,287.041 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,740.804 ns"></ZoomEndTime>
+      <Cursor1Time time="2,425.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="367"></NameColumnWidth>
-      <ValueColumnWidth column_width="221"></ValueColumnWidth>
+      <ValueColumnWidth column_width="197"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="13" />
+   <WVObjectSize size="16" />
    <wvobject fp_name="/lstm_layer_tb/DUT/afb/data_i" type="array">
       <obj_property name="ElementShortName">data_i[3:0][15:0]</obj_property>
       <obj_property name="ObjectShortName">data_i[3:0][15:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/ready_o" type="logic">
+      <obj_property name="ElementShortName">ready_o</obj_property>
+      <obj_property name="ObjectShortName">ready_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/valid_i" type="logic">
+      <obj_property name="ElementShortName">valid_i</obj_property>
+      <obj_property name="ObjectShortName">valid_i</obj_property>
    </wvobject>
    <wvobject fp_name="group1020" type="group">
       <obj_property name="label">i_sigmoid</obj_property>
@@ -239,6 +248,12 @@
          <obj_property name="ElementShortName">yumi_i</obj_property>
          <obj_property name="ObjectShortName">yumi_i</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/data_r" type="array">
+      <obj_property name="ElementShortName">data_r[1:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">data_r[1:0][15:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="group1069" type="group">
       <obj_property name="label">c_queue</obj_property>
