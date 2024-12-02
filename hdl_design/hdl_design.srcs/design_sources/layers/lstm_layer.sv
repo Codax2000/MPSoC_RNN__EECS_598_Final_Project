@@ -1,3 +1,7 @@
+`ifndef SYNOPSIS
+`define VIVADO
+`timescale 1ns/10ps
+`endif
 /**
 Alex Knowlton
 11/2/2024
@@ -50,7 +54,7 @@ module lstm_layer #(
     // logic for layer output
     logic queue_ready_lo, afb_valid_lo;
     logic output_handshake;
-    assign output_handshake = yumi_i && valid_o;
+    assign output_handshake = yumi_i && valid_o && queue_ready_lo;
     assign valid_o = afb_valid_lo && queue_ready_lo;
 
     lstm_controller #(
@@ -80,7 +84,7 @@ module lstm_layer #(
 
     // H queue to capture previous output
     hidden_state_queue #(
-        .N(N_X),
+        .N_X(N_X),
         .LENGTH(OUTPUT_LENGTH)
     ) h_queue (
         .data_i(data_o),
@@ -141,7 +145,7 @@ module lstm_layer #(
     // AFB block connecting to output
     lstm_afb #(
         .N(N_X),
-        .R(N_R),
+        .R(R_X),
         .N_INPUTS(OUTPUT_LENGTH)
     ) afb (
         .data_i(piso_data_lo),

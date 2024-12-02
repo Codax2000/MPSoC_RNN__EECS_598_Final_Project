@@ -26,7 +26,6 @@ module mem_ideal #(
         data_o <= mem[addr_i];
 
     // initialize memory
-    // TODO: make this parametrized as LAYER_NUMBER_MEMORY_INDEX.mem
     localparam logic [7:0] zero = 8'h30;
     localparam logic [7:0] ones = zero + (MEMORY_INDEX % 10);
     localparam logic [7:0] tens = zero + ((MEMORY_INDEX / 10) % 10);

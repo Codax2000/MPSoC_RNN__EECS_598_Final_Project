@@ -51,7 +51,7 @@ module afb_hyperbolic_handshake#(
                   16'sh0080,
                   16'sh0040,
                   16'sh0020,
-                  16'sb0010,
+                  16'sh0010,
                   16'sh0008,
                   16'sh0004,
                   16'sh0002,
