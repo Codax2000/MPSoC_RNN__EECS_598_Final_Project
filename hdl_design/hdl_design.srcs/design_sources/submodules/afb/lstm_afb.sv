@@ -37,8 +37,7 @@ module lstm_afb #(
     logic mult2_valid_lo, mult2_ready_lo;
     logic signed [N-1:0] mult2_data_lo;
 
-    logic mult3_valid_lo, mult3_ready_lo;
-    logic signed [N-1:0] mult3_data_lo;
+    logic mult3_ready_lo;
 
     logic out_tanh_valid_lo, out_tanh_ready_lo;
     logic signed [N-1:0] out_tanh_data_lo;
@@ -46,18 +45,28 @@ module lstm_afb #(
     logic c_queue_valid_lo, c_queue_ready_lo;
     logic signed [N-1:0] c_queue_data_lo;
 
+    // output signals and concatenated controls
+    logic [5:0] valid_li;
+    assign ready_o = i_sigmoid_ready_lo && u_tanh_ready_lo && f_sigmoid_ready_lo && o_sigmoid_ready_lo;
+    assign valid_li[0] = ready_o && valid_i;
+    assign valid_li[1] = mult1_ready_lo && i_sigmoid_valid_lo && u_tanh_valid_lo;
+    assign valid_li[2] = mult2_ready_lo && f_sigmoid_valid_lo && c_queue_valid_lo;
+    assign valid_li[3] = c_adder_ready_lo && mult1_valid_lo && mult2_valid_lo;
+    assign valid_li[4] = c_queue_ready_lo && out_tanh_ready_lo && c_adder_valid_lo;
+    assign valid_li[5] = mult3_ready_lo && o_sigmoid_valid_lo && out_tanh_valid_lo;
+
     afb #(
         .N(N),
         .R(R),
         .IS_TANH(1'b0)
     ) i_sigmoid (
         .data_i(data_i[0]),
-        .ready_o(i_sigmoid_valid_lo),
-        .valid_i(valid_i && u_tanh_ready_lo && f_sigmoid_ready_lo && o_sigmoid_ready_lo),
+        .ready_o(i_sigmoid_ready_lo),
+        .valid_i(valid_li[0]),
 
         .data_o(i_sigmoid_data_lo),
         .valid_o(i_sigmoid_valid_lo),
-        .yumi_i(mult1_ready_lo && u_tanh_valid_lo),
+        .yumi_i(valid_li[1]),
 
         .clk_i,
         .rstb_i
@@ -69,12 +78,12 @@ module lstm_afb #(
         .IS_TANH(1'b1)
     ) u_tanh (
         .data_i(data_i[1]),
-        .ready_o(u_tanh_valid_lo),
-        .valid_i(valid_i && i_sigmoid_ready_lo && f_sigmoid_ready_lo && o_sigmoid_ready_lo),
+        .ready_o(u_tanh_ready_lo),
+        .valid_i(valid_li[0]),
 
         .data_o(u_tanh_data_lo),
         .valid_o(u_tanh_valid_lo),
-        .yumi_i(i_sigmoid_valid_lo && mult1_ready_lo),
+        .yumi_i(valid_li[1]),
 
         .clk_i,
         .rstb_i
@@ -86,12 +95,12 @@ module lstm_afb #(
         .IS_TANH(1'b0)
     ) f_sigmoid (
         .data_i(data_i[2]),
-        .ready_o(f_sigmoid_valid_lo),
-        .valid_i(valid_i && i_sigmoid_ready_lo && u_tanh_ready_lo && o_sigmoid_ready_lo),
+        .ready_o(f_sigmoid_ready_lo),
+        .valid_i(valid_li[0]),
 
         .data_o(f_sigmoid_data_lo),
         .valid_o(f_sigmoid_valid_lo),
-        .yumi_i(mult2_ready_lo && c_queue_valid_lo),
+        .yumi_i(valid_li[2]),
 
         .clk_i,
         .rstb_i
@@ -103,12 +112,12 @@ module lstm_afb #(
         .IS_TANH(1'b0)
     ) o_sigmoid (
         .data_i(data_i[3]),
-        .ready_o(o_sigmoid_valid_lo),
-        .valid_i(valid_i && i_sigmoid_ready_lo && f_sigmoid_ready_lo && u_tanh_ready_lo),
+        .ready_o(o_sigmoid_ready_lo),
+        .valid_i(valid_li[0]),
 
         .data_o(o_sigmoid_data_lo),
         .valid_o(o_sigmoid_valid_lo),
-        .yumi_i(mult3_ready_lo && out_tanh_valid_lo),
+        .yumi_i(valid_li[5]),
 
         .clk_i,
         .rstb_i
@@ -125,12 +134,12 @@ module lstm_afb #(
         .rstb_i,
         
         .data_i({i_sigmoid_data_lo, u_tanh_data_lo}),
-        .valid_i(u_tanh_valid_lo && i_sigmoid_valid_lo),
+        .valid_i(valid_li[1]),
         .ready_o(mult1_ready_lo),
 
         .data_o(mult1_data_lo),
         .valid_o(mult1_valid_lo),
-        .yumi_i(c_adder_ready_lo && mult2_valid_lo)
+        .yumi_i(valid_li[3])
     );
 
     cordic_mac_array #(
@@ -143,13 +152,13 @@ module lstm_afb #(
         .clk_i,
         .rstb_i,
 
-        .data_i({f_sigmoid_data_lo, c_queue_data_lo}),
+        .data_i({c_queue_data_lo, f_sigmoid_data_lo}),
         .ready_o(mult2_ready_lo),
-        .valid_i(c_queue_valid_lo && f_sigmoid_valid_lo),
+        .valid_i(valid_li[2]),
 
         .data_o(mult2_data_lo),
         .valid_o(mult2_valid_lo),
-        .yumi_i(c_adder_ready_lo && mult1_valid_lo)
+        .yumi_i(valid_li[3])
     );
 
     handshake_adder #(
@@ -160,27 +169,27 @@ module lstm_afb #(
 
         .data_i({mult1_data_lo, mult2_data_lo}),
         .ready_o(c_adder_ready_lo),
-        .valid_i(mult1_valid_lo && mult2_valid_lo),
+        .valid_i(valid_li[3]),
 
         .data_o(c_adder_data_lo),
         .valid_o(c_adder_valid_lo),
-        .yumi_i(out_tanh_ready_lo && c_queue_ready_lo)
+        .yumi_i(valid_li[4])
     );
     
-    hidden_state_queue #(
-        .LENGTH(N_INPUTS),
-        .N_X(N)
-    ) c_queue (
+    c_queue #(
+        .N(N),
+        .LENGTH(N_INPUTS)
+    ) c_feedback_queue (
         .clk_i,
         .rstb_i,
 
         .data_i(c_adder_data_lo),
         .ready_o(c_queue_ready_lo),
-        .valid_i(out_tanh_ready_lo && c_adder_valid_lo),
+        .valid_i(valid_li[4]),
 
         .data_o(c_queue_data_lo),
         .valid_o(c_queue_valid_lo),
-        .yumi_i(f_sigmoid_valid_lo && mult2_ready_lo)
+        .yumi_i(valid_li[2])
     );
 
     afb #(
@@ -193,11 +202,11 @@ module lstm_afb #(
 
         .data_i(c_adder_data_lo),
         .ready_o(out_tanh_ready_lo),
-        .valid_i(c_queue_ready_lo && c_adder_valid_lo),
+        .valid_i(valid_li[4]),
 
         .data_o(out_tanh_data_lo),
         .valid_o(out_tanh_valid_lo),
-        .yumi_i(mult3_ready_lo && o_sigmoid_valid_lo)
+        .yumi_i(valid_li[5])
     );
 
     cordic_mac_array #(
@@ -212,7 +221,7 @@ module lstm_afb #(
 
         .data_i({out_tanh_data_lo, o_sigmoid_data_lo}),
         .ready_o(mult3_ready_lo),
-        .valid_i(out_tanh_valid_lo && o_sigmoid_valid_lo),
+        .valid_i(valid_li[5]),
 
         .data_o,
         .valid_o,

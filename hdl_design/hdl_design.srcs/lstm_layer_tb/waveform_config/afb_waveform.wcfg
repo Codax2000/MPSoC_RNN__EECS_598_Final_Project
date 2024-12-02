@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="lstm_layer_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="lstm_layer_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="2,349.312 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,615.100 ns"></ZoomEndTime>
+      <Cursor1Time time="2,427.729 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="367"></NameColumnWidth>
+      <ValueColumnWidth column_width="189"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="16" />
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/data_i" type="array">
+      <obj_property name="ElementShortName">data_i[3:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">data_i[3:0][15:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/data_i[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/data_i[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/data_i[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/data_i[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/ready_o" type="logic">
+      <obj_property name="ElementShortName">ready_o</obj_property>
+      <obj_property name="ObjectShortName">ready_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/valid_i" type="logic">
+      <obj_property name="ElementShortName">valid_i</obj_property>
+      <obj_property name="ObjectShortName">valid_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="group1020" type="group">
+      <obj_property name="label">i_sigmoid</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/i_sigmoid/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/i_sigmoid/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/i_sigmoid/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/i_sigmoid/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/i_sigmoid/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/i_sigmoid/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1027" type="group">
+      <obj_property name="label">u_tanh</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/u_tanh/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/u_tanh/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/u_tanh/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/u_tanh/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/u_tanh/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/u_tanh/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1034" type="group">
+      <obj_property name="label">f_sigmoid</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/f_sigmoid/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/f_sigmoid/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/f_sigmoid/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/f_sigmoid/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/f_sigmoid/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/f_sigmoid/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1041" type="group">
+      <obj_property name="label">o_sigmoid</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/o_sigmoid/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/o_sigmoid/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/o_sigmoid/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/o_sigmoid/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/o_sigmoid/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/o_sigmoid/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1048" type="group">
+      <obj_property name="label">mult1</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult1/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult1/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult1/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult1/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult1/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult1/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1055" type="group">
+      <obj_property name="label">mult2</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult2/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult2/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult2/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult2/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult2/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult2/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1062" type="group">
+      <obj_property name="label">c_adder</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_adder/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_adder/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_adder/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_adder/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_adder/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_adder/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/data_r" type="array">
+      <obj_property name="ElementShortName">data_r[1:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">data_r[1:0][15:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="group1069" type="group">
+      <obj_property name="label">c_queue</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/c_feedback_queue/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1076" type="group">
+      <obj_property name="label">out_tanh</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/out_tanh/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/out_tanh/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/out_tanh/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/out_tanh/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/out_tanh/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/out_tanh/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1083" type="group">
+      <obj_property name="label">mult3</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/data_i" type="array">
+         <obj_property name="ElementShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[1:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/valid_i" type="logic">
+         <obj_property name="ElementShortName">valid_i</obj_property>
+         <obj_property name="ObjectShortName">valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/ready_o" type="logic">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/data_o" type="array">
+         <obj_property name="ElementShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[0:0][15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/valid_o" type="logic">
+         <obj_property name="ElementShortName">valid_o</obj_property>
+         <obj_property name="ObjectShortName">valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/yumi_i" type="logic">
+         <obj_property name="ElementShortName">yumi_i</obj_property>
+         <obj_property name="ObjectShortName">yumi_i</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/lstm_layer_tb/DUT/afb/mult3/rstb_i" type="logic">
+      <obj_property name="ElementShortName">rstb_i</obj_property>
+      <obj_property name="ObjectShortName">rstb_i</obj_property>
+   </wvobject>
+</wave_config>

@@ -16,6 +16,7 @@ get_matrix - get a fixed point matrix for testing
 import numpy as np
 from fp_logic import fp_quantize
 from write_mem_utils import int_to_signed_bits
+import pdb
 
 
 def bbr_mac(xin, yin, zin, nx=16, rx=12):
@@ -61,18 +62,6 @@ def cordic_afb(theta, is_tanh=True, N=16, R=8):
     cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
     return div.astype(int)
-    # outMat = np.zeros(theta.shape)
-    # if theta.ndim == 1:
-    #     cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
-    #     div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
-    #     outMat = div
-    # elif theta.ndim == 2:
-    #     for i in range(len(theta)):
-    #         cosh, sinh = cordic_hyperbolic(theta, is_tanh, N, R)
-    #         div = cordic_linear_divide(cosh, sinh, is_tanh=is_tanh, N=N, R=R)
-    #         outMat[i] = div
-            
-    # return outMat.astype(int)
 
 
 def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
@@ -89,18 +78,26 @@ def cordic_linear_divide(xin, yin, n_rotations=12, is_tanh=True, N=16, R=8):
         div_out - divided values after being adjusted for tanh in (N, R)
     '''
     div_out = np.zeros([n_rotations+2, xin.shape[0]])
+    x = np.zeros([n_rotations+2, xin.shape[0]])
+    y = np.zeros([n_rotations+2, xin.shape[0]])
+    x[0, :] = xin
+    y[0, :] = yin
     for i in range(1, n_rotations+1):
-        filt = yin < 0
+        filt = y[i-1, :] < 0
         delta = np.ones(filt.shape)
         delta[filt] = -1
         theta_i = 2**R / np.power(2, i)
         div_out[i, :] = div_out[i - 1, :] + np.trunc(delta * theta_i)
-        yin = yin - np.trunc(xin * delta / (2**i))
+        y[i, :] = y[i-1, :] - np.trunc(x[i-1, :] * delta / (2**i))
+        x[i, :] = x[i-1, :]
     if is_tanh:
         div_out[-1, :] = div_out[-2, :]
     else:
         div_out[-1, :] = (div_out[-2, :] + 2**R) / 2
-    return div_out[-1]
+    y[-1, :] = y[-2, :]
+    x[-1, :] = x[-2, :]
+    # pdb.set_trace()
+    return div_out[-1, :].astype(int)
 
 
 def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
@@ -124,7 +121,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
     n_rotations = 13
     # account for sigmoid if necessary
     if not is_tanh:
-        theta = np.trunc(theta / 2)
+        theta = theta.astype(int) >> 1
     
     # set rotation constants in fixed point
     M = 1
@@ -133,7 +130,7 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
 
     # set inputs to be arrays
     theta = fix_type(theta)
-    x = Kh_fp + np.zeros(theta.shape)
+    x = fp_quantize(1, N, R) + np.zeros(theta.shape)
     y = np.zeros(theta.shape)   
     z = theta
 
@@ -172,8 +169,8 @@ def cordic_hyperbolic(theta, is_tanh=True, N=16, R=8):
             np.trunc(x[i+(M+1), :].astype(int)>>j_current)
         z[i+(M+1)+1, :] = z[i+(M+1), :] + sigma[i+(M+1), :] * lut_standard[i]
 
-    sinh = y[-1,:]
-    cosh = x[-1,:]
+    sinh = y[-1,:].astype(int)
+    cosh = x[-1,:].astype(int)
 
     return cosh, sinh
 
@@ -195,7 +192,7 @@ def cordic_matrix_multiply(x, A, nx=16, rx=12):
     outputs = np.zeros((m))
     for i in range(m):
         outputs[i] = cordic_vector_multiply(x, A[i], nx, rx)
-    return outputs
+    return outputs.astype(int)
 
 
 def cordic_vector_multiply(x, z, n=16, r=12):
@@ -231,7 +228,7 @@ def get_matrix(m, n, nx=16, rx=12):
         A - m by n matrix in (nx, rx) notation drawn from a Gaussian
         distribution with mean 0 and standard deviation sqrt(2)
     '''
-    A1 = 0.02 * np.random.randn(m, n)
+    A1 = 0.5 * np.random.randn(m, n)
     A1_fp = fp_quantize(A1, n=nx, r=rx)
     return A1_fp
 
