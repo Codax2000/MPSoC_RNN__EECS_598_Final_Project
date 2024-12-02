@@ -7,7 +7,10 @@ module toplevel #(
 
     output reg signed [N-1:0] data_o,
     output reg valid_o,
-    input yumi_i
+    input yumi_i,
+
+    input clk_i,
+    input rstb_i
 );
 
     lstm_layer toplevel_net (.*);
