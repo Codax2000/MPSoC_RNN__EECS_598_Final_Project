@@ -10,8 +10,6 @@
 *  Creation date : Mon December 02 2024                              *
 *********************************************************************/
 
-`timescale 1ns/100fs
-
 `define numAddr 7
 `define numWords 128
 `define wordLength 16
