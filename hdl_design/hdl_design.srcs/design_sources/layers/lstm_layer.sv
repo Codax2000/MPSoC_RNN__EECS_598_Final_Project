@@ -23,8 +23,8 @@ module lstm_layer #(
     parameter N_W=16,
     parameter R_X=12,
     parameter R_W=12,
-    parameter INPUT_LENGTH=2,
-    parameter OUTPUT_LENGTH=2,
+    parameter INPUT_LENGTH=6,
+    parameter OUTPUT_LENGTH=15,
     parameter LAYER_NUMBER=6
 ) (
     input logic [N_X-1:0] data_i,
@@ -54,7 +54,7 @@ module lstm_layer #(
     // logic for layer output
     logic queue_ready_lo, afb_valid_lo;
     logic output_handshake;
-    assign output_handshake = yumi_i && valid_o;
+    assign output_handshake = yumi_i && valid_o && queue_ready_lo;
     assign valid_o = afb_valid_lo && queue_ready_lo;
 
     lstm_controller #(

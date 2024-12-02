@@ -38,8 +38,8 @@ def pointwise_mult(x1, x2, nx=16, rx=12):
 
 
 def main():
-    n = 2  # number of inputs in X
-    m = 2 # number of outputs of Ax + b
+    n = 6  # number of inputs in X
+    m = 15 # number of outputs of Ax + b
     nx = 16
     rx = 12
     x1 = np.random.uniform(-1, 1-1/2**12, n)
@@ -64,10 +64,10 @@ def main():
     out1, ct1 = activation_function(out1_1, out1_2, out1_3, out1_4, ct, nx, rx)
 
     input2_fp = np.hstack((out1, x2_fp, one)).astype(int)
-    out2_1 = cordic_matrix_multiply(out1, A1)
-    out2_2 = cordic_matrix_multiply(out1, A2)
-    out2_3 = cordic_matrix_multiply(out1, A3)
-    out2_4 = cordic_matrix_multiply(out1, A4)
+    out2_1 = cordic_matrix_multiply(input2_fp, A1)
+    out2_2 = cordic_matrix_multiply(input2_fp, A2)
+    out2_3 = cordic_matrix_multiply(input2_fp, A3)
+    out2_4 = cordic_matrix_multiply(input2_fp, A4)
 
     out2, ct2 = activation_function(out2_1, out2_2, out2_3, out2_4, ct1, nx, rx)
 
