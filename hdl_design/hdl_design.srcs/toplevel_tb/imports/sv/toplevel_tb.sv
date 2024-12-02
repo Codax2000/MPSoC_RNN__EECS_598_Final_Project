@@ -39,7 +39,7 @@ T2 - number of values to receive from DUT
 Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
 */
 
-module toplevel_tb();
+module template_tb();
 
     // Define fixed-point values
     parameter N1 = 16;

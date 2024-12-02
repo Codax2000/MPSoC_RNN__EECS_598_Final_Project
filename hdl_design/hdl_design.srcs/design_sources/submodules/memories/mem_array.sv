@@ -21,7 +21,7 @@ module mem_array #(
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            `ifndef SYNOPSIS
+            `ifdef VIVADO
             ROM_inferred #(
                 .N_BITS(N_BITS),
                 .N_ADDR(N_WEIGHTS),
@@ -33,8 +33,7 @@ module mem_array #(
                 .rstb_i,
                 .data_o(data_o[i])
             );
-            `endif
-            `ifdef SYNOPSIS
+            `else
             mem_ideal #(
                 .N_BITS(N_BITS),
                 .N_ADDR(N_WEIGHTS),
