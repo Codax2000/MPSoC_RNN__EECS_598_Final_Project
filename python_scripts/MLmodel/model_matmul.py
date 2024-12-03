@@ -56,7 +56,7 @@ def main():
         plt.plot(gt[i].squeeze().cpu())
         plt.plot(pred_q[i].squeeze().cpu())
         plt.plot(out_ideal, linestyle= ':', linewidth=3)
-        plt.plot(range(0,300), out_cordic)
+        plt.plot(range(0,2000), out_cordic)
         plt.title("LSTM Temperature Prediction")
         plt.legend(["ground truth", "pred fixed", "pred fixed matmul", "pred cordic"]) 
         plt.xlabel("Time(steps)")
@@ -118,10 +118,14 @@ def sigmoid(z):
     return 1/(1 + np.exp(-z))
 
 def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
-    memFilePath_ct_in = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\c_t\\"
-    memFilePath_layer1Out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\layer1Out\\"
-    memFilePath_ct_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\c_t\\"
+    # memFilePath_ct_in = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\c_t\\"
+    memFilePath_layer1Out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\x_t\\"
+    # memFilePath_ct_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\c_t\\"
     memFilePath_ht_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\h_t\\"
+    #vectors for the mem files
+    inputVec = np.array([]).astype(int)
+    outputVec = np.array([]).astype(int)
+
     layers_q = []
 
     #quantize all layers
@@ -144,12 +148,9 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
 
         macOut2 = cordic_matrix_multiply(macOut1, layers_q[1],fixed_r)#/2**fixed_r
         macOut2 = cordic_afb(macOut2, is_tanh=True, N=fixed_n, R=fixed_r)
+        inputVec = np.append(inputVec, macOut2)
         macOut2 = np.append(macOut2, one_q)
         macOut2 = np.append(h_t, macOut2)
-
-        #write mem file for input to LSTM
-        write_mem_file(c_t, memFilePath_ct_in + str(i), fixed_n)
-        write_mem_file(macOut2, memFilePath_layer1Out + str(i), fixed_n)
 
         lstm_i = cordic_matrix_multiply(macOut2, layers_q[4],fixed_r)#/2**fixed_r
         lstm_f = cordic_matrix_multiply(macOut2, layers_q[5],fixed_r)#/2**fixed_r
@@ -167,9 +168,10 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         h_t = fp_mult(lstm_o, c_t_tanh, n_x=fixed_n, n_y=fixed_n, r_x=fixed_r, r_y=fixed_r, n_z=fixed_n, r_z=fixed_r)
         h_t_1 = np.append(h_t, one_q)
 
-        write_mem_file(h_t, memFilePath_ht_out + str(i), fixed_n)
-        write_mem_file(c_t, memFilePath_ct_out + str(i), fixed_n)
+        
+        outputVec = np.append(outputVec, h_t)
 
+        
         macOut3 = cordic_matrix_multiply(h_t_1, layers_q[2],fixed_r)#/2**fixed_r
         macOut3 = cordic_afb(macOut3, is_tanh=True, N=fixed_n, R=fixed_r)
         macOut3 = np.append(macOut3, one_q)
@@ -180,7 +182,14 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         out = np.append(out, macOut4)
         
 
-        if i == 10: # change this base on how far you want to run the cordic model
+        if i == 1999: # change this base on how far you want to run the cordic model
+            #generate mem file for the first 2000 iterations
+            print(inputVec.shape)
+            print(outputVec.shape)
+            print(inputVec)
+            print(outputVec)
+            write_mem_file(inputVec, memFilePath_layer1Out + str(i+1), fixed_n)
+            write_mem_file(outputVec, memFilePath_ht_out + str(i+1), fixed_n)
             return out /2**fixed_r
     return out
 
