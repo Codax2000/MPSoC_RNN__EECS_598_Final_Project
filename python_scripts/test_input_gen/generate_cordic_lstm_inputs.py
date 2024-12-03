@@ -61,8 +61,6 @@ def main():
     out1_3 = cordic_matrix_multiply(input1_fp, A3)
     out1_4 = cordic_matrix_multiply(input1_fp, A4)
 
-    pdb.set_trace()
-
     out1, ct1 = activation_function(out1_1, out1_2, out1_3, out1_4, ct, nx, rx)
 
     input2_fp = np.hstack((out1, x2_fp, one)).astype(int)
@@ -112,14 +110,6 @@ def main():
     print('\nCt outputs')
     print(ct1)
     print(ct2)
-
-    print('\nActual Outputs')
-    A1_float = A1 / 2**12
-    input_float = input1_fp / 2**12
-    pdb.set_trace()
-    output_float = A1_float @ input_float.reshape((71, 1))
-    print(output_float.T[:10])
-    print((out1_1 / 2**12)[:10])
 
 
 

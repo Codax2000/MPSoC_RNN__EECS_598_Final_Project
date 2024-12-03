@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="cordic_mac_array_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="cordic_mac_array_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,300.000 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="335"></NameColumnWidth>
+      <ValueColumnWidth column_width="124"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="21" />
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /z_i" type="array">
+      <obj_property name="ElementShortName">z_i[15:0]</obj_property>
+      <obj_property name="ObjectShortName">z_i[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /index" type="array">
+      <obj_property name="ElementShortName">index[3:0]</obj_property>
+      <obj_property name="ObjectShortName">index[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /rstb_i" type="logic">
+      <obj_property name="ElementShortName">rstb_i</obj_property>
+      <obj_property name="ObjectShortName">rstb_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /iterate" type="logic">
+      <obj_property name="ElementShortName">iterate</obj_property>
+      <obj_property name="ObjectShortName">iterate</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /clear" type="logic">
+      <obj_property name="ElementShortName">clear</obj_property>
+      <obj_property name="ObjectShortName">clear</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /y_o" type="array">
+      <obj_property name="ElementShortName">y_o[15:0]</obj_property>
+      <obj_property name="ObjectShortName">y_o[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /diff" type="array">
+      <obj_property name="ElementShortName">diff[3:0]</obj_property>
+      <obj_property name="ObjectShortName">diff[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /y_extended" type="array">
+      <obj_property name="ElementShortName">y_extended[20:0]</obj_property>
+      <obj_property name="ObjectShortName">y_extended[20:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /y_n" type="array">
+      <obj_property name="ElementShortName">y_n[20:0]</obj_property>
+      <obj_property name="ObjectShortName">y_n[20:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /x_shift_sel_ext" type="array">
+      <obj_property name="ElementShortName">x_shift_sel_ext[20:0]</obj_property>
+      <obj_property name="ObjectShortName">x_shift_sel_ext[20:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /x_shift" type="array">
+      <obj_property name="ElementShortName">x_shift[15:0]</obj_property>
+      <obj_property name="ObjectShortName">x_shift[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /x_shift_neg" type="array">
+      <obj_property name="ElementShortName">x_shift_neg[15:0]</obj_property>
+      <obj_property name="ObjectShortName">x_shift_neg[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /x_shift_sel" type="array">
+      <obj_property name="ElementShortName">x_shift_sel[15:0]</obj_property>
+      <obj_property name="ObjectShortName">x_shift_sel[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /dir" type="logic">
+      <obj_property name="ElementShortName">dir</obj_property>
+      <obj_property name="ObjectShortName">dir</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /N_X" type="array">
+      <obj_property name="ElementShortName">N_X[31:0]</obj_property>
+      <obj_property name="ObjectShortName">N_X[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /R_X" type="array">
+      <obj_property name="ElementShortName">R_X[31:0]</obj_property>
+      <obj_property name="ObjectShortName">R_X[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /N_INPUTS" type="array">
+      <obj_property name="ElementShortName">N_INPUTS[31:0]</obj_property>
+      <obj_property name="ObjectShortName">N_INPUTS[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /R_local" type="array">
+      <obj_property name="ElementShortName">R_local[3:0]</obj_property>
+      <obj_property name="ObjectShortName">R_local[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /MAX_VALUE" type="array">
+      <obj_property name="ElementShortName">MAX_VALUE[15:0]</obj_property>
+      <obj_property name="ObjectShortName">MAX_VALUE[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cordic_mac_array_tb/DUT/\genblk1[0].mac_slice /MIN_VALUE" type="array">
+      <obj_property name="ElementShortName">MIN_VALUE[15:0]</obj_property>
+      <obj_property name="ObjectShortName">MIN_VALUE[15:0]</obj_property>
+   </wvobject>
+</wave_config>

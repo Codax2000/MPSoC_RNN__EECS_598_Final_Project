@@ -228,7 +228,7 @@ def get_matrix(m, n, nx=16, rx=12):
         A - m by n matrix in (nx, rx) notation drawn from a Gaussian
         distribution with mean 0 and standard deviation sqrt(2)
     '''
-    A1 = 0.05 * np.random.randn(m, n)
+    A1 = np.random.uniform(-8, 8, (m, n))
     A1_fp = fp_quantize(A1, n=nx, r=rx)
     return A1_fp
 
