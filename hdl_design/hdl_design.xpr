@@ -59,7 +59,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="zcu104"/>
-    <Option Name="WTXSimLaunchSim" Val="55"/>
+    <Option Name="WTXSimLaunchSim" Val="58"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -213,6 +213,7 @@
       </Config>
     </FileSet>
     <FileSet Name="template_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/template_tb" RelGenDir="$PGENDIR/template_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/afb/relu_afb.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -255,6 +256,7 @@
       </Config>
     </FileSet>
     <FileSet Name="fc_layer_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/fc_layer_tb" RelGenDir="$PGENDIR/fc_layer_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/memories/ROM_inferred.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -371,6 +373,7 @@
       </Config>
     </FileSet>
     <FileSet Name="lstm_layer_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/lstm_layer_tb" RelGenDir="$PGENDIR/lstm_layer_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/memories/ROM_inferred.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1464,6 +1467,7 @@
       </Config>
     </FileSet>
     <FileSet Name="afb_sigmoid_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/afb_sigmoid_tb" RelGenDir="$PGENDIR/afb_sigmoid_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/afb/afb.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1525,6 +1529,7 @@
       </Config>
     </FileSet>
     <FileSet Name="afb_tanh_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/afb_tanh_tb" RelGenDir="$PGENDIR/afb_tanh_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/afb/afb.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1586,6 +1591,7 @@
       </Config>
     </FileSet>
     <FileSet Name="cordic_divide_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/cordic_divide_tb" RelGenDir="$PGENDIR/cordic_divide_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/afb/afb_linear_handshake.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1633,6 +1639,7 @@
       </Config>
     </FileSet>
     <FileSet Name="cordic_hyperbolic_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/cordic_hyperbolic_tb" RelGenDir="$PGENDIR/cordic_hyperbolic_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/afb/afb_hyperbolic_handshake.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1680,6 +1687,7 @@
       </Config>
     </FileSet>
     <FileSet Name="cordic_mac_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/cordic_mac_tb" RelGenDir="$PGENDIR/cordic_mac_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/design_sources/submodules/mac/cordic_mac_array.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1762,6 +1770,7 @@
       </Config>
     </FileSet>
     <FileSet Name="toplevel_tb" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/toplevel_tb" RelGenDir="$PGENDIR/toplevel_tb">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/toplevel_tb/imports/sv/toplevel_tb.sv">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PSRCDIR/toplevel_tb/sv/toplevel_tb.sv"/>
@@ -2786,9 +2795,7 @@
   <Runs Version="1" Minor="22">
     <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="true" WriteIncrSynthDcp="false" State="current" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/synth_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024">
-          <Desc>Vivado Synthesis Defaults</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024"/>
         <Step Id="synth_design"/>
       </Strategy>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2024"/>
@@ -2797,9 +2804,7 @@
     </Run>
     <Run Id="blk_mem_gen_0_synth_1" Type="Ft3:Synth" SrcSet="blk_mem_gen_0" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="blk_mem_gen_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/blk_mem_gen_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/blk_mem_gen_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/blk_mem_gen_0_synth_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024">
-          <Desc>Vivado Synthesis Defaults</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024"/>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
@@ -2809,9 +2814,7 @@
     </Run>
     <Run Id="clk_wiz_0_synth_1" Type="Ft3:Synth" SrcSet="clk_wiz_0" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="clk_wiz_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/clk_wiz_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/clk_wiz_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/clk_wiz_0_synth_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024">
-          <Desc>Vivado Synthesis Defaults</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024"/>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
@@ -2821,9 +2824,7 @@
     </Run>
     <Run Id="proc_sys_reset_0_synth_1" Type="Ft3:Synth" SrcSet="proc_sys_reset_0" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="proc_sys_reset_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/proc_sys_reset_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/proc_sys_reset_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/proc_sys_reset_0_synth_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024">
-          <Desc>Vivado Synthesis Defaults</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2024"/>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
@@ -2833,9 +2834,7 @@
     </Run>
     <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="constrs_1" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" State="current" SynthRun="synth_1" IncludeInArchive="true" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/impl_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024">
-          <Desc>Default settings for Implementation.</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024"/>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>
@@ -2852,9 +2851,7 @@
     </Run>
     <Run Id="blk_mem_gen_0_impl_1" Type="Ft2:EntireDesign" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="blk_mem_gen_0" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="blk_mem_gen_0_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/blk_mem_gen_0_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/blk_mem_gen_0_impl_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024">
-          <Desc>Default settings for Implementation.</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024"/>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>
@@ -2871,9 +2868,7 @@
     </Run>
     <Run Id="clk_wiz_0_impl_1" Type="Ft2:EntireDesign" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="clk_wiz_0" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="clk_wiz_0_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/clk_wiz_0_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/clk_wiz_0_impl_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024">
-          <Desc>Default settings for Implementation.</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024"/>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>
@@ -2890,9 +2885,7 @@
     </Run>
     <Run Id="proc_sys_reset_0_impl_1" Type="Ft2:EntireDesign" Part="xczu7ev-ffvc1156-2-e" ConstrsSet="proc_sys_reset_0" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="proc_sys_reset_0_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/proc_sys_reset_0_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/proc_sys_reset_0_impl_1" ParallelReportGen="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024">
-          <Desc>Default settings for Implementation.</Desc>
-        </StratHandle>
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2024"/>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>

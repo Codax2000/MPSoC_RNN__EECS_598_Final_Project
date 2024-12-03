@@ -90,8 +90,8 @@ module cordic_mac_array
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin
             ps_e <= eSAMPLE;
-            iterate_counter_r = '0;
-            input_counter_r = '0;
+            iterate_counter_r <= '0;
+            input_counter_r <= '0;
             x_input_r <= '0;
             z_input_r <= '0;
         end else begin
