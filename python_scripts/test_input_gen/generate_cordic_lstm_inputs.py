@@ -35,7 +35,7 @@ def main():
     out1_3 = cordic_matrix_multiply(input1_fp, A3)
     out1_4 = cordic_matrix_multiply(input1_fp, A4)
 
-    out1, ct1 = activation_function(out1_1, out1_2, out1_3, out1_4, ct, nx, rx)
+    out1, ct1 = activation_function(out1_1, out1_3, out1_2, out1_4, ct, nx, rx)
 
     input2_fp = np.hstack((out1, x2_fp, one)).astype(int)
     out2_1 = cordic_matrix_multiply(input2_fp, A1)
@@ -43,7 +43,7 @@ def main():
     out2_3 = cordic_matrix_multiply(input2_fp, A3)
     out2_4 = cordic_matrix_multiply(input2_fp, A4)
 
-    out2, ct2 = activation_function(out2_1, out2_2, out2_3, out2_4, ct1, nx, rx)
+    out2, ct2 = activation_function(out2_1, out2_3, out2_2, out2_4, ct1, nx, rx)
 
     inputs = np.hstack((x1_fp, x2_fp))
     outputs = np.hstack((out1, out2))

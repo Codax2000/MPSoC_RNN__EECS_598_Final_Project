@@ -77,7 +77,7 @@ module lstm_afb #(
         .R(R),
         .IS_TANH(1'b1)
     ) u_tanh (
-        .data_i(data_i[1]),
+        .data_i(data_i[2]),
         .ready_o(u_tanh_ready_lo),
         .valid_i(valid_li[0]),
 
@@ -94,7 +94,7 @@ module lstm_afb #(
         .R(R),
         .IS_TANH(1'b0)
     ) f_sigmoid (
-        .data_i(data_i[2]),
+        .data_i(data_i[1]),
         .ready_o(f_sigmoid_ready_lo),
         .valid_i(valid_li[0]),
 
