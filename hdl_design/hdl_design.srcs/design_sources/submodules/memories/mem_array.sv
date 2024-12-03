@@ -14,16 +14,14 @@ module mem_array #(
 ) (
     input logic [$clog2(N_WEIGHTS)-1:0] addr_i,
     input logic clk_i,
-    output logic [ARRAY_LENGTH-1:0][N_BITS-1:0] data_o
-    `ifdef VIVADO
-    ,input logic rstb_i
-    `endif
+    output logic [ARRAY_LENGTH-1:0][N_BITS-1:0] data_o,
+    input logic rstb_i
 );
 
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            `ifdef VIVADO
+            `ifndef SYNOPSIS
             ROM_inferred #(
                 .N_BITS(N_BITS),
                 .N_ADDR(N_WEIGHTS),

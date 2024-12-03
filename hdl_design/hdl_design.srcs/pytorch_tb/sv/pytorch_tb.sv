@@ -1,10 +1,4 @@
-`ifndef SYNOPSIS
 `define VIVADO
-`endif
-`ifdef VIVADO
-`timescale 1ns/10ps
-`endif
-
 /**
 Alex Knowlton
 10/29/2024
@@ -67,7 +61,18 @@ module pytorch_tb();
     
     // create send and receive modules locally
     // create DUT
-    toplevel DUT(.*);
+    toplevel DUT (
+        .data_i(data_i),
+        .ready_o(ready_o),
+        .valid_i(valid_i),
+        
+        .data_o(data_o),
+        .valid_o(valid_o),
+        .yumi_i(yumi_i),
+        
+        .clk_i(clk_i),
+        .rstb_i(rstb_i)
+    );
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];

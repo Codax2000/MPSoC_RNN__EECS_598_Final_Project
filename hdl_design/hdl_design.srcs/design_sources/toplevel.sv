@@ -1,39 +1,46 @@
 module toplevel #(
     parameter N=16
 ) (
-    input signed [N-1:0] data_i,
-    input valid_i,
-    output reg ready_o,
+    input logic signed [N-1:0] data_i,
+    input logic valid_i,
+    output logic ready_o,
 
-    output reg signed [N-1:0] data_o,
-    output reg valid_o,
-    input yumi_i,
+    output logic signed [N-1:0] data_o,
+    output logic valid_o,
+    input logic yumi_i,
 
-    input clk_i,
-    input rstb_i
+    input logic clk_i,
+    input logic rstb_i
 );
-    wire [N-1:0] lstm_data_lo;
-    wire lstm_valid_lo;
-    wire lstm_yumi_i;
+    logic signed [N-1:0] lstm_data_lo;
+    logic lstm_valid_lo;
+    logic lstm_yumi_i;
 
-    wire fc1_ready_lo;
-    wire [N-1:0]fc1_data_lo;
-    wire fc1_valid_lo;
+    logic fc1_ready_lo;
+    logic signed [N-1:0] fc1_data_lo;
+    logic fc1_valid_lo;
 
-    wire tanh1_ready_lo;
-    wire [N-1:0]tanh1_data_lo;
-    wire tanh1_valid_lo;
+    logic tanh1_ready_lo;
+    logic signed [N-1:0] tanh1_data_lo;
+    logic tanh1_valid_lo;
 
-    wire [N-1:0]fc2_data_lo;
-    wire fc2_ready_lo;
-    wire fc2_valid_lo;
+    logic signed [N-1:0]fc2_data_lo;
+    logic fc2_ready_lo;
+    logic fc2_valid_lo;
 
-    wire tanh2_ready_lo;
-    wire [N-1:0]tanh2_data_lo;
-    wire tanh2_valid_lo;
+    logic tanh2_ready_lo;
+    logic signed [N-1:0]tanh2_data_lo;
+    logic tanh2_valid_lo;
 
-
-    lstm_layer toplevel_net (
+    lstm_layer #(
+        .N_X(16),
+        .N_W(16),
+        .R_X(12),
+        .R_W(12),
+        .INPUT_LENGTH(30),
+        .OUTPUT_LENGTH(40),
+        .LAYER_NUMBER(4)
+    ) toplevel_net (
         .data_i(data_i),
         .ready_o(ready_o),
         .valid_i(valid_i),
@@ -48,9 +55,9 @@ module toplevel #(
 
 
     fc_layer #(
-        .LAYER_NUMBER=2
-        .INPUT_LENGTH=40
-        .OUTPUT_LENGTH=20
+        .LAYER_NUMBER(2),
+        .INPUT_LENGTH(40),
+        .OUTPUT_LENGTH(20)
     )fc1(
         .clk_i(clk_i),
         .rstb_i(rstb_i),
@@ -80,10 +87,10 @@ module toplevel #(
     );
 
     fc_layer #(
-        .LAYER_NUMBER=3
-        .INPUT_LENGTH=20
-        .OUTPUT_LENGTH=1
-    )fc2(
+        .LAYER_NUMBER(3),
+        .INPUT_LENGTH(20),
+        .OUTPUT_LENGTH(1)
+    ) fc2 (
         .clk_i(clk_i),
         .rstb_i(rstb_i),
 
@@ -99,7 +106,7 @@ module toplevel #(
     afb tanh2(
         .data_i(fc2_data_lo),
         .ready_o(tanh2_data_lo),
-        .valid_i(tanh2_valid_lo),
+        .valid_i(fc2_valid_lo),
         
         .data_o(data_o),
         .valid_o(valid_o),
@@ -109,6 +116,5 @@ module toplevel #(
         .rstb_i(rstb_i)
     );
 
-    
-
+   
 endmodule
