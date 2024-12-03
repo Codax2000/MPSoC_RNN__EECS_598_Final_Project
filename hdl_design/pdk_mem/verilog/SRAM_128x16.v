@@ -7,8 +7,10 @@
 *  Word number   : 128                                               *
 *  Adress width  : 7     bits                                        *
 *  ---------------------------------------------------------------   *
-*  Creation date : Mon December 02 2024                              *
+*  Creation date : Tue December 03 2024                              *
 *********************************************************************/
+
+`timescale 1ns/100fs
 
 `define numAddr 7
 `define numWords 128

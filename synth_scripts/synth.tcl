@@ -4,24 +4,27 @@
 #                             #
 ###############################
 
-
-set COURSE_NAME $::env(MK_COURSE_NAME)
+set MK_COURSE_NAME "EECS598-002"
+set MK_DESIGN_NAME "lstm_layer"
+set MK_USE_NUM_CORES 4
+set MK_MEM_SUFFIX "typ_1d05_25"
+set COURSE_NAME $MK_COURSE_NAME
 puts "\[$COURSE_NAME\] Running script [info script]\n"
 
 set PDK_PATH $::env(SAED32_PATH)
 puts "PDK path at $PDK_PATH"
 
-set DESIGN_NAME $::env(MK_DESIGN_NAME)
-set RTL_SOURCE_FILES  [glob -nocomplain src/*.v	src/*.sv src/*.vh src/*.svh]
+set DESIGN_NAME $MK_DESIGN_NAME
+set RTL_SOURCE_FILES  [glob -nocomplain hdl_design/hdl_design.srcs/design_sources/submodules/*.sv hdl_design/hdl_design.srcs/design_sources/submodules/afb/*.sv hdl_design/hdl_design.srcs/design_sources/submodules/controllers/*.sv hdl_design/hdl_design.srcs/design_sources/submodules/mac/*.sv hdl_design/hdl_design.srcs/design_sources/submodules/memories/*.sv hdl_design/hdl_design.srcs/design_sources/submodules/*.v hdl_design/hdl_design.srcs/design_sources/layers/lstm_layer.sv]
 set NETLIST_FILES ""
-set DESIGN_DEFINES ""
+set DESIGN_DEFINES "SYNOPSIS"
 set DESIGN_PATH          "[pwd]"
 set REPORTS_DIR "${DESIGN_PATH}/reports"
 set RESULTS_DIR "${DESIGN_PATH}/results"
-set CONSTRAINTS_FILE "${DESIGN_PATH}/scripts/constraints.tcl"
-set USE_NUM_CORES $::env(MK_USE_NUM_CORES)
+set CONSTRAINTS_FILE "${DESIGN_PATH}/synth_scripts/constraints.tcl"
+set USE_NUM_CORES $MK_USE_NUM_CORES
 set ADDITIONAL_SEARCH_PATH ""
-set MEM_SUFFIX $::env(MK_MEM_SUFFIX)
+set MEM_SUFFIX $MK_MEM_SUFFIX
 
 ##########################################################################################
 # Library Setup Variables
@@ -34,8 +37,7 @@ set TYP_LIBRARY_SET               [glob -nocomplain "${PDK_PATH}/lib/stdcell_rvt
 
 set corner_case "typ"
 set TARGET_LIBRARY_FILES        ${TYP_LIBRARY_SET}
-set ADDITIONAL_LINK_LIB_FILES   "[glob -nocomplain ${DESIGN_PATH}/memory/db/*_${MEM_SUFFIX}_ccs.db]
-                                   [glob -nocomplain ${DESIGN_PATH}/blocks/*/export/*.db]"
+set ADDITIONAL_LINK_LIB_FILES   "[glob -nocomplain ${DESIGN_PATH}/hdl_design/pdk_mem/db/*_${MEM_SUFFIX}_ccs.db]"
 
 set_app_var sh_new_variable_message false
 #################################################################################
