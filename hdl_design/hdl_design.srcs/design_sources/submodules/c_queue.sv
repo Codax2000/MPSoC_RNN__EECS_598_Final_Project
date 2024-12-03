@@ -20,13 +20,13 @@ module c_queue #(
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;
     assign valid_o = ps_e == eFULL;
-    assign ready_o = ps_e == eREADY || yumi_i;
-    assign data_n = handshake_in ? {data_i, data_r[LENGTH-1:1]} : data_r;
+    assign ready_o = ps_e == eREADY;
+    assign data_n = (ps_e == eREADY && valid_i) ? {data_i, data_r[LENGTH-1:1]} : data_r;
     assign data_o = data_r[0];
 
     always_comb begin
         case (ps_e)
-            eFULL: ns_e = yumi_i && (!valid_i) ? eREADY : eFULL;
+            eFULL: ns_e = yumi_i ? eREADY : eFULL;
             eREADY: ns_e = valid_i ? eFULL : eREADY;
         endcase
     end
