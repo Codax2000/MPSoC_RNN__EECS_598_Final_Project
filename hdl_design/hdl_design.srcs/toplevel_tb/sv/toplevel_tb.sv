@@ -39,7 +39,7 @@ T2 - number of values to receive from DUT
 Instantiate the DUT, you should only have to declare parameters and then connect using DUT (.*)
 */
 
-module template_tb();
+module toplevel_tb();
 
     // Define fixed-point values
     parameter N1 = 16;
@@ -54,10 +54,10 @@ module template_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 90;
+    parameter T1 = 60000;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 120;
+    parameter T2 = 80000;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -67,7 +67,18 @@ module template_tb();
     
     // create send and receive modules locally
     // create DUT
-    toplevel DUT(.*);
+    lstm_layer DUT(
+        .data_i(data_i),
+        .ready_o(ready_o),
+        .valid_i(valid_i),
+        
+        .data_o(data_o),
+        .valid_o(valid_o),
+        .yumi_i(yumi_i),
+        
+        .clk_i(clk_i),
+        .rstb_i(rstb_i)
+    );
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];
@@ -75,8 +86,8 @@ module template_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("toplevel_input.mem", input_test_vals);
-        $readmemh("toplevel_output.mem", output_test_vals);
+        $readmemh("in_2000.mem", input_test_vals);
+        $readmemh("out_2000.mem", output_test_vals);
 	`else
 	    $readmemh("./hdl_design/hdl_design.srcs/toplevel_tb/mem/toplevel_input.mem", input_test_vals);
 	    $readmemh("./hdl_design/hdl_design.srcs/toplevel_tb/mem/toplevel_output.mem", output_test_vals);
