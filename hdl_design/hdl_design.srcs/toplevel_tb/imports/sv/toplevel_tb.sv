@@ -54,10 +54,10 @@ module toplevel_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 90;
+    parameter T1 = 60000;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 120;
+    parameter T2 = 80000;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;
@@ -86,8 +86,8 @@ module toplevel_tb();
     
     initial begin
 	`ifdef VIVADO
-        $readmemh("toplevel_input.mem", input_test_vals);
-        $readmemh("toplevel_output.mem", output_test_vals);
+        $readmemh("in_2000.mem", input_test_vals);
+        $readmemh("out_2000.mem", output_test_vals);
 	`else
 	    $readmemh("./hdl_design/hdl_design.srcs/toplevel_tb/mem/toplevel_input.mem", input_test_vals);
 	    $readmemh("./hdl_design/hdl_design.srcs/toplevel_tb/mem/toplevel_output.mem", output_test_vals);

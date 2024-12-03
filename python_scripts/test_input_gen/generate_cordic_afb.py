@@ -168,7 +168,7 @@ def analyze_hardware_results():
     q_tanh = np.abs(tanh_ideal - tanh_fp)
 
     # plot sigmoid
-    plt.figure(figsize=(20, 7))
+    plt.figure(figsize=(8, 10))
     plt.subplot(8, 1, 1)
     plt.plot(inputs, q_sigm)
     plt.grid()
