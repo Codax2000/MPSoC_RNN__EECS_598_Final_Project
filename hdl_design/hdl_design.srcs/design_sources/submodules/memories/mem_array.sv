@@ -14,8 +14,10 @@ module mem_array #(
 ) (
     input logic [$clog2(N_WEIGHTS)-1:0] addr_i,
     input logic clk_i,
-    input logic rstb_i,
     output logic [ARRAY_LENGTH-1:0][N_BITS-1:0] data_o
+    `ifdef VIVADO
+    ,input logic rstb_i
+    `endif
 );
 
     genvar i;

@@ -21,8 +21,8 @@ module handshake_adder # (
     enum logic {eREADY, eFULL} ps_e, ns_e;
     logic handshake_in, handshake_out;
     assign data_o_n = handshake_in ? sum : data_o;
-    assign handshake_in = valid_i && ready_o;
-    assign handshake_out = valid_o && yumi_i;
+    assign handshake_in = valid_i && (ps_e == eREADY);
+    assign handshake_out = (ps_e == eFULL) && yumi_i;
     assign valid_o = ps_e == eFULL;
     assign ready_o = ps_e == eREADY;
 
