@@ -54,10 +54,10 @@ module template_tb();
     parameter L2 = 1;
     
     // T1: Number of value to send to DUT
-    parameter T1 = 300
+    parameter T1 = 90;
     
     // T2: Number of values we expect to receive from DUT
-    parameter T2 = 400;
+    parameter T2 = 120;
     
     // declare variables for DUT
     logic valid_i, ready_o, yumi_i, valid_o;

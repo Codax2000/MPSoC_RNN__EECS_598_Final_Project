@@ -14,16 +14,16 @@ module toplevel #(
 );
 
     lstm_layer toplevel_net (
-        .data_i,
-        .ready_o,
-        .valid_i,
+        .data_i(data_i),
+        .ready_o(ready_o),
+        .valid_i(valid_i),
         
-        .data_o,
-        .valid_o,
-        .yumi_i,
+        .data_o(data_o),
+        .valid_o(valid_o),
+        .yumi_i(yumi_i),
         
-        .clk_i,
-        .rstb_i
+        .clk_i(clk_i),
+        .rstb_i(rstb_i)
     );
 
 endmodule

@@ -46,7 +46,8 @@ module cordic_mac_array
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
             cordic_mac_slice #(
                 .N_X(WIDTH),
-                .R_X(FRACTIONAL_BITS)
+                .R_X(FRACTIONAL_BITS),
+                .N_INPUTS(N_INPUTS)
             ) mac_slice (
                 .clk_i,
                 .rstb_i,
