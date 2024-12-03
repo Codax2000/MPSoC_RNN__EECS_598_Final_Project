@@ -24,12 +24,12 @@ module handshake_adder # (
     assign handshake_in = valid_i && ready_o;
     assign handshake_out = valid_o && yumi_i;
     assign valid_o = ps_e == eFULL;
-    assign ready_o = ps_e == eREADY || yumi_i;
+    assign ready_o = ps_e == eREADY;
 
     always_comb begin
         case (ps_e)
             eREADY: ns_e = handshake_in ? eFULL : eREADY;
-            eFULL: ns_e = handshake_out && !handshake_in ? eREADY : eFULL;
+            eFULL: ns_e = handshake_out ? eREADY : eFULL;
         endcase
     end
 
