@@ -15,7 +15,7 @@ from fp_logic import *
 from write_mem_utils import *
 # from generate_cordic_fc_inputs import cordic_matrix_multiply, get_matrix
 from tqdm import tqdm
-
+import pandas as pd
 
 def main():
     fixed_r = 12
@@ -23,6 +23,11 @@ def main():
     #varify model weights:
     modelPath_q = "python_scripts\\MLmodel\\weights\\epoch50q_manual.pth"
     modelPath = 'python_scripts\\MLmodel\\weights\\epoch50.pth'
+    HDLevalPath = 'python_scripts\eval\output.csv'
+    df = pd.read_csv(HDLevalPath)
+    acceleratorPred = df['received'].to_numpy() * 2**-fixed_r
+
+
     device = torch.device("cpu")
     net_q = model_q()
     net = model()
@@ -34,7 +39,6 @@ def main():
     inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\all_key'
     test_dataset_q = TextDataset(data_dir=inference_data_dir_q, key_dir=inference_key_dir)
     test_loader_q = DataLoader(test_dataset_q)
-    # weights_dir_q = 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth'
     criterion = nn.SmoothL1Loss() #use SmoothL1Loss loss to optimize
 
     layers = []
@@ -45,28 +49,71 @@ def main():
         layers.append(torch.tensor(np.loadtxt(weightsPath + fname, delimiter=',')).to(torch.int16))
 
     #inference
-    gt, pred_q, loss = inference(net_q, modelPath_q, test_loader_q, criterion, device)
+    # gt, pred_q, loss = inference(net_q, modelPath_q, test_loader_q, criterion, device)
     gt, pred, loss = inference(net, modelPath, test_loader_q, criterion, device)
     # out_float = inference(net, modelPath, test_loader_q, criterion, device)
-    out_ideal = ideal_matmul_model(input_q, layers, fixed_r = fixed_r)
-    out_cordic = cordic_matmul_model(input_q, layers, fixed_n = fixed_n, fixed_r = fixed_r)
+    # out_ideal = ideal_matmul_model(input_q, layers, fixed_r = fixed_r)
+    # out_cordic = cordic_matmul_model(input_q, layers, fixed_n = fixed_n, fixed_r = fixed_r)
 
     for i in range(len(gt)):
-        plt.figure()
-        plt.plot(gt[i].squeeze().cpu())
-        plt.plot(pred_q[i].squeeze().cpu())
-        plt.plot(out_ideal, linestyle= ':', linewidth=3)
-        plt.plot(range(0,2000), out_cordic)
-        plt.title("LSTM Temperature Prediction")
-        plt.legend(["ground truth", "pred fixed", "pred fixed matmul", "pred cordic"]) 
-        plt.xlabel("Time(steps)")
-        plt.ylabel("Temperature(normalized)")
+        gt_cur = gt[i].squeeze().cpu()
+        pred_cur =  pred[i].squeeze().cpu()
 
-        plt.figure()
-        plt.plot(pred_q[i].squeeze().cpu() - out_ideal)
-        plt.plot(pred[i].squeeze().cpu() - out_ideal)
-        plt.legend(["quantized - quantized matmul", "float - quantized matmul"])
-        plt.title("Diff")
+        fig, ax = plt.subplots(2, 1, gridspec_kw={'height_ratios': [1, 4]}, figsize=(10, 8))
+
+        # Top plot (Absolute Error)
+        ax[0].plot(np.abs(gt_cur[:len(acceleratorPred)] - acceleratorPred))
+        ax[0].plot(np.abs(gt_cur[:len(acceleratorPred)] - pred_cur[:len(acceleratorPred)]))
+        ax[0].legend(["Accelerator Prediction", "Ref. Floating-point Prediction"], loc="upper right")
+        ax[0].set_xlabel("Time (steps)")
+        ax[0].set_ylabel("Absolute Error")
+        ax[0].set_title("Absolute Error in Temperature (normalized)")
+
+        # Bottom plot (Performance Comparison)
+        ax[1].plot(gt_cur[:len(acceleratorPred)])
+        ax[1].plot(acceleratorPred)
+        ax[1].plot(pred_cur[:len(acceleratorPred)])
+        ax[1].legend(["Sensor Data", "Accelerator Prediction", "Ref. Floating-point Prediction"], loc="upper right")
+        ax[1].set_xlabel("Time (steps)")
+        ax[1].set_ylabel("Temperature (normalized)")
+        ax[1].set_title("Performance Comparison of Floating-point and Fixed-point Models")
+
+        # Adjust layout to reduce overlap
+        plt.tight_layout()
+        plt.savefig('./pictures/lstm_performance_comparison.png')
+        plt.show()
+        
+
+        # plt.figure()
+        # plt.plot(np.abs(gt_cur[:len(acceleratorPred)] - acceleratorPred))
+        # plt.plot(np.abs(gt_cur[:len(acceleratorPred)] - pred_cur[:len(acceleratorPred)]))
+        # plt.legend(["Accelerator Prediction", "Ref. Floating-point Prediction"]) 
+        # plt.xlabel("Time(steps)")
+        # plt.ylabel("Absolute Error in Temperature(normalized)")
+        
+        # plt.figure()
+        # plt.plot(gt_cur[:len(acceleratorPred)])
+        # plt.plot(acceleratorPred)
+        # plt.plot(pred_cur[:len(acceleratorPred)])
+        # plt.legend(["Sensor Data","Accelerator Prediction", "Ref. Floating-point Prediction"]) 
+        # plt.xlabel("Time(steps)")
+        # plt.ylabel("Temperature(normalized)")
+        # plt.title("Performance Comparison of Floating point and Fixed Point Model")
+        
+        # plt.plot(gt[i].squeeze().cpu())
+        # plt.plot(pred_q[i].squeeze().cpu())
+        # plt.plot(out_ideal, linestyle= ':', linewidth=3)
+        # plt.plot(range(0,2000), out_cordic)
+        # plt.title("LSTM Temperature Prediction")
+        # plt.legend(["ground truth", "pred fixed", "pred fixed matmul", "pred cordic"]) 
+        # plt.xlabel("Time(steps)")
+        # plt.ylabel("Temperature(normalized)")
+
+        # plt.figure()
+        # plt.plot(pred_q[i].squeeze().cpu() - out_ideal)
+        # plt.plot(pred[i].squeeze().cpu() - out_ideal)
+        # plt.legend(["quantized - quantized matmul", "float - quantized matmul"])
+        # plt.title("Diff")
 
     plt.show()
 
