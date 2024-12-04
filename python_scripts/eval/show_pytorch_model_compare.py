@@ -13,6 +13,7 @@ def main():
     plt.xlabel('Time Index')
     plt.ylabel('Temperature (Normalized)')
     plt.title('Received HDL Time-series plot')
+    plt.grid()
     plt.tight_layout()
     plt.savefig('./pictures/hdl_predictions.png')
     df.to_csv('./python_scripts/eval/output.csv', index=False)

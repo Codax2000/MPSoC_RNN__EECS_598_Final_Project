@@ -61,7 +61,7 @@ module pytorch_tb();
     
     // create send and receive modules locally
     // create DUT
-    toplevel DUT (
+    pytorch_toplevel DUT (
         .data_i(data_i),
         .ready_o(ready_o),
         .valid_i(valid_i),

@@ -1,0 +1,55 @@
+{
+  "schema": "xilinx.com:schema:json_instance:1.0",
+  "ip_inst": {
+    "xci_name": "design_1_toplevel_0_0",
+    "cell_name": "toplevel_0",
+    "component_reference": "xilinx.com:module_ref:toplevel:1.0",
+    "ip_revision": "1",
+    "gen_directory": "../../../../../../project_1.gen/sources_1/bd/design_1/ip/design_1_toplevel_0_0",
+    "parameters": {
+      "component_parameters": {
+        "N": [ { "value": "16", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "Component_Name": [ { "value": "design_1_toplevel_0_0", "resolve_type": "user", "usage": "all" } ]
+      },
+      "model_parameters": {
+        "N": [ { "value": "16", "resolve_type": "generated", "format": "long", "usage": "all" } ]
+      },
+      "project_parameters": {
+        "ARCHITECTURE": [ { "value": "zynquplus" } ],
+        "BASE_BOARD_PART": [ { "value": "xilinx.com:zcu104:part0:1.1" } ],
+        "BOARD_CONNECTIONS": [ { "value": "" } ],
+        "DEVICE": [ { "value": "xczu7ev" } ],
+        "NEXTGEN_VERSAL": [ { "value": "0" } ],
+        "PACKAGE": [ { "value": "ffvc1156" } ],
+        "PREFHDL": [ { "value": "VERILOG" } ],
+        "SILICON_REVISION": [ { "value": "" } ],
+        "SIMULATOR_LANGUAGE": [ { "value": "MIXED" } ],
+        "SPEEDGRADE": [ { "value": "-2" } ],
+        "STATIC_POWER": [ { "value": "" } ],
+        "TEMPERATURE_GRADE": [ { "value": "E" } ]
+      },
+      "runtime_parameters": {
+        "IPCONTEXT": [ { "value": "IP_Integrator" } ],
+        "IPREVISION": [ { "value": "1" } ],
+        "MANAGED": [ { "value": "TRUE" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../project_1.gen/sources_1/bd/design_1/ip/design_1_toplevel_0_0" } ],
+        "SELECTEDSIMMODEL": [ { "value": "" } ],
+        "SHAREDDIR": [ { "value": "../../../../../../eecs598/hdl_design/hdl_design.srcs/design_sources/ipshared" } ],
+        "SWVERSION": [ { "value": "2024.1" } ],
+        "SYNTHESISFLOW": [ { "value": "OOC_HIERARCHICAL" } ]
+      }
+    },
+    "boundary": {
+      "ports": {
+        "data_i": [ { "direction": "in", "size_left": "15", "size_right": "0" } ],
+        "valid_i": [ { "direction": "in" } ],
+        "ready_o": [ { "direction": "out" } ],
+        "data_o": [ { "direction": "out", "size_left": "15", "size_right": "0" } ],
+        "valid_o": [ { "direction": "out" } ],
+        "yumi_i": [ { "direction": "in" } ],
+        "clk_i": [ { "direction": "in" } ],
+        "rstb_i": [ { "direction": "in" } ]
+      }
+    }
+  }
+}
