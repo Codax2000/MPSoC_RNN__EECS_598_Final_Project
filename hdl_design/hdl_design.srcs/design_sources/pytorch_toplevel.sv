@@ -1,3 +1,11 @@
+/**
+Alex Knowlton and Akash Shetty
+12/4/24
+
+Module with an LSTM layer followed by 2 fully connected layers for test
+prediction comparison with the reference model.
+*/
+
 module pytorch_toplevel #(
     parameter N=16
 ) (

@@ -1,3 +1,10 @@
+/**
+Aman Khan
+12/4/24
+
+Verilog wrapper for instantiation in a Vivado block diagram
+*/
+
 module toplevel #(
     parameter N=16
 ) (
