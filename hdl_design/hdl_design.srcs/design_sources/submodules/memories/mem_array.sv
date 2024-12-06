@@ -10,18 +10,18 @@ module mem_array #(
     parameter N_BITS=16,
     parameter LAYER_NUMBER=1,
     parameter ARRAY_LENGTH=16,
-    parameter N_WEIGHTS=16
+    parameter N_WEIGHTS=128
 ) (
     input logic [$clog2(N_WEIGHTS)-1:0] addr_i,
     input logic clk_i,
-    input logic rstb_i,
-    output logic [ARRAY_LENGTH-1:0][N_BITS-1:0] data_o
+    output logic [ARRAY_LENGTH-1:0][N_BITS-1:0] data_o,
+    input logic rstb_i
 );
 
     genvar i;
     generate
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
-            `ifdef VIVADO
+            `ifndef SYNOPSIS
             ROM_inferred #(
                 .N_BITS(N_BITS),
                 .N_ADDR(N_WEIGHTS),

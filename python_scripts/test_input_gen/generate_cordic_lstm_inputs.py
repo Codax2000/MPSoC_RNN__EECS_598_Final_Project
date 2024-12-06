@@ -6,35 +6,9 @@ sys.path.append(utils_path)
 
 from write_mem_utils import write_mem_file, write_matrix_to_files
 from fp_logic import fp_quantize
-from cordic_dnn_operations import get_matrix, cordic_matrix_multiply, cordic_afb, bbr_mac
+from cordic_dnn_operations import get_matrix, cordic_matrix_multiply, activation_function
 import numpy as np
 import pdb
-
-
-def activation_function(xi, xu, xf, xo, ct, nx=16, rx=12):
-    it = cordic_afb(xi, is_tanh=False, N=nx, R=rx)
-    ut = cordic_afb(xu, is_tanh=True, N=nx, R=rx)
-    ft = cordic_afb(xf, is_tanh=False, N=nx, R=rx)
-    ot = cordic_afb(xo, is_tanh=False, N=nx, R=rx)
-    mult1 = pointwise_mult(ut, it, nx, rx)
-    mult2 = pointwise_mult(ft, ct, nx, rx)
-    add_out = mult1 + mult2
-    tan_out = cordic_afb(add_out, is_tanh=True, N=nx, R=rx)
-    ht = pointwise_mult(ot, tan_out, nx=rx, rx=rx)
-    return ht, add_out
-
-
-def pointwise_mult(x1, x2, nx=16, rx=12):
-    '''
-    Returns vector of pointwise multiplication between x1 and x2
-    Inputs
-    x1 - first vector, must have shape (N,)
-    x2 - second vector, must also have shape (N,) and be within [-1, 1)
-    '''
-    result = np.zeros(x1.shape)
-    for i in range(x1.shape[0]):
-        result[i] = bbr_mac(x1[i], 0, x2[i], nx, rx)
-    return result.astype(int)
 
 
 def main():
@@ -61,9 +35,7 @@ def main():
     out1_3 = cordic_matrix_multiply(input1_fp, A3)
     out1_4 = cordic_matrix_multiply(input1_fp, A4)
 
-    pdb.set_trace()
-
-    out1, ct1 = activation_function(out1_1, out1_2, out1_3, out1_4, ct, nx, rx)
+    out1, ct1 = activation_function(out1_1, out1_3, out1_2, out1_4, ct, nx, rx)
 
     input2_fp = np.hstack((out1, x2_fp, one)).astype(int)
     out2_1 = cordic_matrix_multiply(input2_fp, A1)
@@ -71,7 +43,7 @@ def main():
     out2_3 = cordic_matrix_multiply(input2_fp, A3)
     out2_4 = cordic_matrix_multiply(input2_fp, A4)
 
-    out2, ct2 = activation_function(out2_1, out2_2, out2_3, out2_4, ct1, nx, rx)
+    out2, ct2 = activation_function(out2_1, out2_3, out2_2, out2_4, ct1, nx, rx)
 
     inputs = np.hstack((x1_fp, x2_fp))
     outputs = np.hstack((out1, out2))
@@ -112,14 +84,6 @@ def main():
     print('\nCt outputs')
     print(ct1)
     print(ct2)
-
-    print('\nActual Outputs')
-    A1_float = A1 / 2**12
-    input_float = input1_fp / 2**12
-    pdb.set_trace()
-    output_float = A1_float @ input_float.reshape((71, 1))
-    print(output_float.T[:10])
-    print((out1_1 / 2**12)[:10])
 
 
 

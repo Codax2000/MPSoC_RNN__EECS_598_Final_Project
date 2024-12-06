@@ -46,7 +46,8 @@ module cordic_mac_array
         for (i = 0; i < ARRAY_LENGTH; i = i + 1) begin
             cordic_mac_slice #(
                 .N_X(WIDTH),
-                .R_X(FRACTIONAL_BITS)
+                .R_X(FRACTIONAL_BITS),
+                .N_INPUTS(N_INPUTS)
             ) mac_slice (
                 .clk_i,
                 .rstb_i,
@@ -89,8 +90,8 @@ module cordic_mac_array
     always_ff @(posedge clk_i) begin
         if (~rstb_i) begin
             ps_e <= eSAMPLE;
-            iterate_counter_r = '0;
-            input_counter_r = '0;
+            iterate_counter_r <= '0;
+            input_counter_r <= '0;
             x_input_r <= '0;
             z_input_r <= '0;
         end else begin

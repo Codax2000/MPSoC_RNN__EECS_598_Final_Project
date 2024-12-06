@@ -73,7 +73,7 @@ module lstm_layer_tb();
         .INPUT_LENGTH(30),
         .OUTPUT_LENGTH(40),
         .LAYER_NUMBER(6)
-    ) DUT(.*);
+    ) DUT (.*);
     
     // create memories for input/output values and initialize them
     logic [L1-1:0][N1-1:0] input_test_vals [T1-1:0];

@@ -58,8 +58,6 @@ module afb_hyperbolic_handshake#(
                   16'sh0001};
     
     
- 
-
     logic signed [N-1:0] x_out_n, x_out_r, y_out_n, y_out_r;
     logic signed [N-1:0] z_in_n, z_in_r;
     
@@ -96,7 +94,6 @@ module afb_hyperbolic_handshake#(
                                  x_out_r + (y_shift_e):
                     z_in_r[N-1] ? x_out_r - (y_shift):
                                  x_out_r + (y_shift);
-
 
 
     assign valid_o = (ps_e == eDONE);                    

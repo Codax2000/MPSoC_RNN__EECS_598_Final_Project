@@ -19,6 +19,41 @@ from write_mem_utils import int_to_signed_bits
 import pdb
 
 
+def activation_function(xi, xu, xf, xo, ct, nx=16, rx=12):
+    '''
+    Implements activation function of LSTM layer
+    Returns:
+        ht, ct - output and hidden state
+    Inputs
+        xi thrun xo = output of matrix mult
+        ct - previous hidden state
+        (nx, rx) - fixed point notation (must be 16, 12 to work)
+    '''
+    it = cordic_afb(xi, is_tanh=False, N=nx, R=rx)
+    ut = cordic_afb(xu, is_tanh=True, N=nx, R=rx)
+    ft = cordic_afb(xf, is_tanh=False, N=nx, R=rx)
+    ot = cordic_afb(xo, is_tanh=False, N=nx, R=rx)
+    mult1 = pointwise_mult(ut, it, nx, rx)
+    mult2 = pointwise_mult(ft, ct, nx, rx)
+    add_out = mult1 + mult2
+    tan_out = cordic_afb(add_out, is_tanh=True, N=nx, R=rx)
+    ht = pointwise_mult(ot, tan_out, nx=rx, rx=rx)
+    return ht, add_out
+
+
+def pointwise_mult(x1, x2, nx=16, rx=12):
+    '''
+    Returns vector of pointwise multiplication between x1 and x2
+    Inputs
+    x1 - first vector, must have shape (N,)
+    x2 - second vector, must also have shape (N,) and be within [-1, 1)
+    '''
+    result = np.zeros(x1.shape)
+    for i in range(x1.shape[0]):
+        result[i] = bbr_mac(x1[i], 0, x2[i], nx, rx)
+    return result.astype(int)
+
+
 def bbr_mac(xin, yin, zin, nx=16, rx=12):
     '''
     Computes y_in + zin * xin where all three numbers are in (nx,rx) fixed
@@ -228,7 +263,7 @@ def get_matrix(m, n, nx=16, rx=12):
         A - m by n matrix in (nx, rx) notation drawn from a Gaussian
         distribution with mean 0 and standard deviation sqrt(2)
     '''
-    A1 = 0.05 * np.random.randn(m, n)
+    A1 = np.random.uniform(-8, 8, (m, n))
     A1_fp = fp_quantize(A1, n=nx, r=rx)
     return A1_fp
 

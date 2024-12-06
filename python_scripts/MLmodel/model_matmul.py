@@ -15,7 +15,7 @@ from fp_logic import *
 from write_mem_utils import *
 # from generate_cordic_fc_inputs import cordic_matrix_multiply, get_matrix
 from tqdm import tqdm
-
+import pandas as pd
 
 def main():
     fixed_r = 12
@@ -23,6 +23,11 @@ def main():
     #varify model weights:
     modelPath_q = "python_scripts\\MLmodel\\weights\\epoch50q_manual.pth"
     modelPath = 'python_scripts\\MLmodel\\weights\\epoch50.pth'
+    HDLevalPath = 'python_scripts\eval\output.csv'
+    df = pd.read_csv(HDLevalPath)
+    acceleratorPred = df['received'].to_numpy() * 2**-fixed_r
+
+
     device = torch.device("cpu")
     net_q = model_q()
     net = model()
@@ -34,7 +39,6 @@ def main():
     inference_key_dir = 'python_scripts\\MLmodel\\Dataset\\all_key'
     test_dataset_q = TextDataset(data_dir=inference_data_dir_q, key_dir=inference_key_dir)
     test_loader_q = DataLoader(test_dataset_q)
-    # weights_dir_q = 'python_scripts\\MLmodel\\weights\\epoch50q_manual.pth'
     criterion = nn.SmoothL1Loss() #use SmoothL1Loss loss to optimize
 
     layers = []
@@ -45,28 +49,71 @@ def main():
         layers.append(torch.tensor(np.loadtxt(weightsPath + fname, delimiter=',')).to(torch.int16))
 
     #inference
-    gt, pred_q, loss = inference(net_q, modelPath_q, test_loader_q, criterion, device)
+    # gt, pred_q, loss = inference(net_q, modelPath_q, test_loader_q, criterion, device)
     gt, pred, loss = inference(net, modelPath, test_loader_q, criterion, device)
     # out_float = inference(net, modelPath, test_loader_q, criterion, device)
-    out_ideal = ideal_matmul_model(input_q, layers, fixed_r = fixed_r)
-    out_cordic = cordic_matmul_model(input_q, layers, fixed_n = fixed_n, fixed_r = fixed_r)
+    # out_ideal = ideal_matmul_model(input_q, layers, fixed_r = fixed_r)
+    # out_cordic = cordic_matmul_model(input_q, layers, fixed_n = fixed_n, fixed_r = fixed_r)
 
     for i in range(len(gt)):
-        plt.figure()
-        plt.plot(gt[i].squeeze().cpu())
-        plt.plot(pred_q[i].squeeze().cpu())
-        plt.plot(out_ideal, linestyle= ':', linewidth=3)
-        plt.plot(range(0,300), out_cordic)
-        plt.title("LSTM Temperature Prediction")
-        plt.legend(["ground truth", "pred fixed", "pred fixed matmul", "pred cordic"]) 
-        plt.xlabel("Time(steps)")
-        plt.ylabel("Temperature(normalized)")
+        gt_cur = gt[i].squeeze().cpu()
+        pred_cur =  pred[i].squeeze().cpu()
 
-        plt.figure()
-        plt.plot(pred_q[i].squeeze().cpu() - out_ideal)
-        plt.plot(pred[i].squeeze().cpu() - out_ideal)
-        plt.legend(["quantized - quantized matmul", "float - quantized matmul"])
-        plt.title("Diff")
+        fig, ax = plt.subplots(2, 1, gridspec_kw={'height_ratios': [1, 4]}, figsize=(10, 8))
+
+        # Top plot (Absolute Error)
+        ax[0].plot(np.abs(gt_cur[:len(acceleratorPred)] - acceleratorPred))
+        ax[0].plot(np.abs(gt_cur[:len(acceleratorPred)] - pred_cur[:len(acceleratorPred)]))
+        ax[0].legend(["Accelerator Prediction", "Ref. Floating-point Prediction"], loc="upper right")
+        ax[0].set_xlabel("Time (steps)")
+        ax[0].set_ylabel("Absolute Error")
+        ax[0].set_title("Absolute Error in Temperature (normalized)")
+
+        # Bottom plot (Performance Comparison)
+        ax[1].plot(gt_cur[:len(acceleratorPred)])
+        ax[1].plot(acceleratorPred)
+        ax[1].plot(pred_cur[:len(acceleratorPred)])
+        ax[1].legend(["Sensor Data", "Accelerator Prediction", "Ref. Floating-point Prediction"], loc="upper right")
+        ax[1].set_xlabel("Time (steps)")
+        ax[1].set_ylabel("Temperature (normalized)")
+        ax[1].set_title("Performance Comparison of Floating-point and Fixed-point Models")
+
+        # Adjust layout to reduce overlap
+        plt.tight_layout()
+        plt.savefig('./pictures/lstm_performance_comparison.png')
+        plt.show()
+        
+
+        # plt.figure()
+        # plt.plot(np.abs(gt_cur[:len(acceleratorPred)] - acceleratorPred))
+        # plt.plot(np.abs(gt_cur[:len(acceleratorPred)] - pred_cur[:len(acceleratorPred)]))
+        # plt.legend(["Accelerator Prediction", "Ref. Floating-point Prediction"]) 
+        # plt.xlabel("Time(steps)")
+        # plt.ylabel("Absolute Error in Temperature(normalized)")
+        
+        # plt.figure()
+        # plt.plot(gt_cur[:len(acceleratorPred)])
+        # plt.plot(acceleratorPred)
+        # plt.plot(pred_cur[:len(acceleratorPred)])
+        # plt.legend(["Sensor Data","Accelerator Prediction", "Ref. Floating-point Prediction"]) 
+        # plt.xlabel("Time(steps)")
+        # plt.ylabel("Temperature(normalized)")
+        # plt.title("Performance Comparison of Floating point and Fixed Point Model")
+        
+        # plt.plot(gt[i].squeeze().cpu())
+        # plt.plot(pred_q[i].squeeze().cpu())
+        # plt.plot(out_ideal, linestyle= ':', linewidth=3)
+        # plt.plot(range(0,2000), out_cordic)
+        # plt.title("LSTM Temperature Prediction")
+        # plt.legend(["ground truth", "pred fixed", "pred fixed matmul", "pred cordic"]) 
+        # plt.xlabel("Time(steps)")
+        # plt.ylabel("Temperature(normalized)")
+
+        # plt.figure()
+        # plt.plot(pred_q[i].squeeze().cpu() - out_ideal)
+        # plt.plot(pred[i].squeeze().cpu() - out_ideal)
+        # plt.legend(["quantized - quantized matmul", "float - quantized matmul"])
+        # plt.title("Diff")
 
     plt.show()
 
@@ -118,10 +165,14 @@ def sigmoid(z):
     return 1/(1 + np.exp(-z))
 
 def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
-    memFilePath_ct_in = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\c_t\\"
-    memFilePath_layer1Out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\layer1Out\\"
-    memFilePath_ct_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\c_t\\"
+    # memFilePath_ct_in = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\c_t\\"
+    memFilePath_layer1Out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\input\\x_t\\"
+    # memFilePath_ct_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\c_t\\"
     memFilePath_ht_out = "hdl_design\\hdl_design.srcs\\design_sources\\sampleIO\\output\\h_t\\"
+    #vectors for the mem files
+    inputVec = np.array([]).astype(int)
+    outputVec = np.array([]).astype(int)
+
     layers_q = []
 
     #quantize all layers
@@ -144,12 +195,9 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
 
         macOut2 = cordic_matrix_multiply(macOut1, layers_q[1],fixed_r)#/2**fixed_r
         macOut2 = cordic_afb(macOut2, is_tanh=True, N=fixed_n, R=fixed_r)
+        inputVec = np.append(inputVec, macOut2)
         macOut2 = np.append(macOut2, one_q)
         macOut2 = np.append(h_t, macOut2)
-
-        #write mem file for input to LSTM
-        write_mem_file(c_t, memFilePath_ct_in + str(i), fixed_n)
-        write_mem_file(macOut2, memFilePath_layer1Out + str(i), fixed_n)
 
         lstm_i = cordic_matrix_multiply(macOut2, layers_q[4],fixed_r)#/2**fixed_r
         lstm_f = cordic_matrix_multiply(macOut2, layers_q[5],fixed_r)#/2**fixed_r
@@ -167,9 +215,10 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         h_t = fp_mult(lstm_o, c_t_tanh, n_x=fixed_n, n_y=fixed_n, r_x=fixed_r, r_y=fixed_r, n_z=fixed_n, r_z=fixed_r)
         h_t_1 = np.append(h_t, one_q)
 
-        write_mem_file(h_t, memFilePath_ht_out + str(i), fixed_n)
-        write_mem_file(c_t, memFilePath_ct_out + str(i), fixed_n)
+        
+        outputVec = np.append(outputVec, h_t)
 
+        
         macOut3 = cordic_matrix_multiply(h_t_1, layers_q[2],fixed_r)#/2**fixed_r
         macOut3 = cordic_afb(macOut3, is_tanh=True, N=fixed_n, R=fixed_r)
         macOut3 = np.append(macOut3, one_q)
@@ -180,7 +229,14 @@ def cordic_matmul_model(input, layers, fixed_n = 16, fixed_r = 6):
         out = np.append(out, macOut4)
         
 
-        if i == 10: # change this base on how far you want to run the cordic model
+        if i == 1999: # change this base on how far you want to run the cordic model
+            #generate mem file for the first 2000 iterations
+            print(inputVec.shape)
+            print(outputVec.shape)
+            print(inputVec)
+            print(outputVec)
+            write_mem_file(inputVec, memFilePath_layer1Out + str(i+1), fixed_n)
+            write_mem_file(outputVec, memFilePath_ht_out + str(i+1), fixed_n)
             return out /2**fixed_r
     return out
 

@@ -168,13 +168,13 @@ def analyze_hardware_results():
     q_tanh = np.abs(tanh_ideal - tanh_fp)
 
     # plot sigmoid
-    plt.figure(figsize=(20, 7))
-    plt.subplot(4, 2, 1)
+    plt.figure(figsize=(8, 10))
+    plt.subplot(8, 1, 1)
     plt.plot(inputs, q_sigm)
     plt.grid()
     plt.ylabel('Quantization Error')
     plt.title('Sigmoid Function')
-    plt.subplot(4, 2, (3, 5))
+    plt.subplot(8, 1, (2, 4))
     plt.plot(inputs, sigm_ideal, label='ideal')
     plt.plot(inputs, sigm_fp, '--', label='CORDIC HDL')
     plt.xlabel('$\\theta$')
@@ -183,12 +183,12 @@ def analyze_hardware_results():
     plt.grid()
 
     # plot tanh
-    plt.subplot(4, 2, 2)
+    plt.subplot(8, 1, 5)
     plt.plot(inputs, q_tanh)
     plt.grid()
     plt.ylabel('Quantization Error')
     plt.title('Tanh Function')
-    plt.subplot(4, 2, (4, 6))
+    plt.subplot(8, 1, (6, 8))
     plt.plot(inputs, tanh_ideal, label='ideal')
     plt.plot(inputs, tanh_fp, '--', label='CORDIC HDL')
     plt.xlabel('$\\theta$')
