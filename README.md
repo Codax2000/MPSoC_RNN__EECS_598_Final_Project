@@ -13,7 +13,7 @@ there are some things to keep in mind.
 the `template_tb` testbench, which is a template we used.
 3. Tests are done by generating .mem files for input and expected outputs in
 Python, which the `template_tb` directory is written for.
-4. Memories are initialized as ROMs using `.mem` files, which are synthesizeable using Vivado, but not with VCS. Note: memory naming convention is `j_iii.mem`, where `j` is the layer number (passed as a parameter during instantiation) and `iii` represents the matrix row. LSTM layers in design are matrices 4-7, since there are 4 separate matrices.
+4. Memories are initialized as ROMs using `.mem` files, which are synthesizeable using Vivado, but not with VCS. Note: memory naming convention is `j_iii.mem`, where `j` is the layer number (passed as a parameter during instantiation) and `iii` represents the matrix row. LSTM layers in design are layers 4-7, since there are 4 separate matrices.
 5. It is possible to run tests using VCS, but **only if they do not require mem files for matrix multiplication**. So the AFB and MAC testbenches will work in VCS, but LSTM and FC testbenches will not.
 6. When running tests, remove all `.mem` files from the Vivado design sources. The reason is that by default, Vivado adds all design sources to all simulation sets, and design `.mem` files will interfere with test `.mem` files. Make sure to add them back
 for Vivado synthesis so that the block RAM will actually output the correct weight.
@@ -67,7 +67,7 @@ All python files are in the `python_scripts` directory.
 
 ```
 python_scripts
-|- eval  // folder for scripts that are only for analyzing simulation outpu
+|- eval  // folder for scripts that are only for analyzing simulation output
 |- MLmodel  // PyTorch model
 |- test_input_gen  // for generating inputs to testbenches and some analysis
 |- test_install  // folder for ensuring libraries are imported correctly
